@@ -6,5 +6,8 @@ This app is built for IOS only. The main purpose of building this app  is testin
 * SwiftUI - UI Frameword
 
 
+#### Screenshot(prototype):
+![Homepage](./screen/Hello-world.png)
+
 #### Demo:
 Coming soon
