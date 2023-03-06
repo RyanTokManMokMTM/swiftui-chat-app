@@ -102,7 +102,9 @@ struct SignUpView: View {
                     .padding(.horizontal)
 
                     Button(action: {
-                        print("login")
+                        Task.init{
+                            await self.sendSignUpRequest()
+                        }
                     }){
                         Group{
                             Image(systemName: "arrow.right")
@@ -135,6 +137,22 @@ struct SignUpView: View {
     
     private func isAllowToLogin() -> Bool {
         return !self.email.isEmpty && !self.password.isEmpty && !self.userName.isEmpty && !self.comfirmPassword.isEmpty
+    }
+    
+    private func sendSignUpRequest() async {
+        let req = SignUpReq(email: self.email, name: self.userName, password: self.password)
+        let resp = await ChatAppService.shared.UserSignUp(req: req)
+        switch resp {
+        case .success(let data):
+//            withAnimation{
+//                self.isSignUp = false
+//            }
+            print(data)
+            break
+        case .failure(let err):
+            print(err)
+            break
+        }
     }
 }
 

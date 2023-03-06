@@ -16,33 +16,35 @@ struct ChattingView: View {
     var body: some View {
         VStack{
             ScrollView(.vertical){
-                VStack{
-                    
-                    ForEach(messages) { message in
-                        ChatBubble(direction: message.sender == chatUserData.id ? .receiver : .sender, chatUser: chatUserData, contentType: message.content_type){
-                            
-                            if message.content_type == 1 {
-                                Text(message.content)
-                                    .padding()
-                                    .foregroundColor(Color.white)
-                                    .background(Color.green)
-                            }else {
-                                AsyncImage(url: message.PhotoURL, content: {img in
-                                    img
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                    
-                                    //                                        .background(.green)
-                                }, placeholder: {
-                                    ProgressView()
-                                })
+                    VStack{
+                        
+                        ForEach(messages) { message in
+                            ChatBubble(direction: message.sender == chatUserData.id ? .receiver : .sender, chatUser: chatUserData, contentType: message.content_type){
+                                
+                                if message.content_type == 1 {
+                                    Text(message.content)
+                                        .padding()
+                                        .foregroundColor(Color.white)
+                                        .background(Color.green)
+                                }else {
+                                    AsyncImage(url: message.PhotoURL, content: {img in
+                                        img
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                        
+                                        //                                        .background(.green)
+                                    }, placeholder: {
+                                        ProgressView()
+                                    })
+                                }
+                                
                             }
-                            
                         }
                     }
-                }
+
                 
             }
+            
             InputField()
         }
         .onAppear{
@@ -60,17 +62,17 @@ struct ChattingView: View {
         .toolbar{
             ToolbarItem(placement: .navigationBarLeading){
                 HStack(){
-                    AsyncImage(url: chatUserData.AvatarURL, content: { img in
-                        img
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width:35,height: 35)
-                            .clipShape(Circle())
-                        
-                    }, placeholder: {
-                        ProgressView()
-                            .frame(width:35,height: 35)
-                    })
+//                    AsyncImage(url: chatUserData.AvatarURL, content: { img in
+//                        img
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fill)
+//                            .frame(width:35,height: 35)
+//                            .clipShape(Circle())
+//                        
+//                    }, placeholder: {
+//                        ProgressView()
+//                            .frame(width:35,height: 35)
+//                    })
                     
                     Text(chatUserData.name)
                         .bold()
@@ -114,6 +116,29 @@ struct ChattingView: View {
     func InputField() -> some View{
         VStack{
             HStack{
+                Button(action:{
+                    //send the message
+                    
+                }){
+                    Image(systemName: "plus.circle.fill")
+                        .imageScale(.large)
+                        .foregroundColor( .blue)
+//
+//                        .disabled(message.isEmpty)
+                }
+                
+                Button(action:{
+                    //send the message
+                    
+                }){
+                    Image(systemName: "photo.fill")
+                        .imageScale(.large)
+                        .foregroundColor( .blue)
+//
+//                        .disabled(message.isEmpty)
+                }
+                
+                
                 TextField("訊息",text:$text)
                     .padding(.horizontal)
                     .frame(height:37)
@@ -126,19 +151,19 @@ struct ChattingView: View {
                     }
                 
                 //Send Button
-                Button(action:{
-                    //send the message
-                    
-                }){
-                    Image(systemName: "paperplane.fill")
-                        .foregroundColor( .white)
-                        .frame(width: 37, height: 37)
-                        .background(
-                            Circle()
-                                .foregroundColor( .green)
-                        )
-//                        .disabled(message.isEmpty)
-                }
+//                Button(action:{
+//                    //send the message
+//
+//                }){
+//                    Image(systemName: "paperplane.fill")
+//                        .foregroundColor( .white)
+//                        .frame(width: 37, height: 37)
+//                        .background(
+//                            Circle()
+//                                .foregroundColor( .green)
+//                        )
+////                        .disabled(message.isEmpty)
+//                }
             }
             .frame(height: 37)
         }

@@ -8,8 +8,31 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var userModel = UserViewModel()
+    @State private var loginSate = true
+    @State private var isShowMenu = false
     var body: some View {
-        HomeView()
+        
+        ZStack{
+            NavigationStack{
+                HomeView(isShowMenu: $isShowMenu)
+            }
+            .accentColor(.green)
+            .fullScreenCover(isPresented: $loginSate){
+                SignInView(isLogin: $loginSate)
+                    .environmentObject(userModel)
+            }
+            
+            if isShowMenu {
+                SideMenu(isShow: $isShowMenu)
+                    .environmentObject(userModel)
+            }
+
+        }
+        
+        
+        
+      
     }
 }
 

@@ -12,8 +12,10 @@ struct SignInView: View {
     @State private var password : String = ""
     @State private var isCheck = false
     @State private var isSignUp = false
+    @AppStorage("jwt") var token : String = ""
+    @Binding var isLogin : Bool
+    @EnvironmentObject private var userViewModel : UserViewModel
     var body: some View {
-        //         NavigationSplitView(
         ZStack{
             VStack{
                 HStack{
@@ -67,7 +69,10 @@ struct SignInView: View {
                 .padding(.horizontal)
 
                 Button(action: {
-                    print("login")
+                   
+                    Task.init{
+                        await self.sendSignInRequest()
+                    }
                 }){
                     Group{
                         Image(systemName: "arrow.right")
@@ -114,10 +119,25 @@ struct SignInView: View {
     private func isAllowToLogin() -> Bool {
         return !self.email.isEmpty && !self.password.isEmpty
     }
+    
+    private func sendSignInRequest() async{
+        let req = SignInReq(email: self.email, password: self.password)
+        let resp = await ChatAppService.shared.UserSignIn(req: req)
+        switch resp {
+        case .success(let data):
+//            self.isLogin = true
+            self.isLogin = false
+            self.userViewModel.profile = data.user_info
+            break
+        case .failure(let err):
+            print(err.localizedDescription)
+            break
+        }
+    }
 }
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView()
+        SignInView(isLogin: .constant(false))
     }
 }

@@ -26,8 +26,10 @@ struct HomeView: View {
     @State private var search = ""
     @State private var isShowSheet = false
     @State private var isActive = true
+    @Binding var isShowMenu : Bool
     var body: some View {
-        NavigationStack{
+        ZStack{
+ 
             TabView(selection:$index){
                 //            NavigationStack{
                 Message(isActive: $isActive)
@@ -76,7 +78,9 @@ struct HomeView: View {
                 
                 ToolbarItem(placement: .navigationBarLeading){
                     Button(action:{
-                        
+                        withAnimation{
+                            self.isShowMenu = true
+                        }
                     }){
                         Image(systemName: "list.bullet")
                             .imageScale(.large)
@@ -104,12 +108,13 @@ struct HomeView: View {
             }
             .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
         }
-        .accentColor(.green)
+//        .accentColor(.green)
+        
     }
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        HomeView(isShowMenu: .constant(false))
     }
 }
