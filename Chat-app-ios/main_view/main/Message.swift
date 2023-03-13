@@ -8,37 +8,57 @@
 import SwiftUI
 
 struct Message: View {
+    @Environment(\.managedObjectContext) var context
+    @EnvironmentObject private var userModel : UserViewModel
+    @StateObject private var messageModel = MessageViewModel()
+    @StateObject private var roomModel = PersistenceController.shared
+//    @FetchRequest(entity: ActiveRooms.entity(),sortDescriptors: [NSSortDescriptor(keyPath: \ActiveRooms.last_sent_time, ascending: false)]) private var rooms : FetchedResults<ActiveRooms>
+    
+    
     @Binding var isActive : Bool
+    @State private var isChat = false
     var body: some View {
-        ScrollView(.vertical,showsIndicators: false){
+        
+        List{
             ScrollView(.horizontal,showsIndicators: false){
                 HStack(spacing: 12){
-                    
+
                     AddActiveItme(url: URL(string: "https://i.ibb.co/MP6cDM1/9c7edaa9edbf5d777ead3820b69373f4.jpg")!)
-                    
+
                     ForEach(dummyActiveStory, id: \.id) { data in
                         UserAvatarItem(avatarURL: data.AvatarURL, isRead: data.isRead)
                             .padding(.vertical,5)
-                            
+
                     }
                 }
                 .padding(.horizontal)
                 .padding(.vertical,5)
             }
-        
+            .listRowInsets(EdgeInsets())
             
-            ForEach(dummyActiveChat, id: \.id) { data in
-                NavigationLink(destination: ChattingView(chatUserData: data, messages: dummyChattingMessageRoom1, isActive: $isActive)){
+            ForEach(roomModel.rooms,id:\.id){ data in
+                NavigationLink(value: data) {
                     ContentRow(data: data)
-                        .padding(.horizontal)
-                        .padding(.vertical,8)
+                        .swipeActions{
+                            Button(role: .destructive) {
+                                print("Deleting conversation")
+                            } label: {
+                                Label("Delete", systemImage: "trash.fill")
+                            }
+                        }
                 }
-//                .buttonStyle(.plain)
-                
             }
         }
+        .listStyle(.plain)
+        .navigationDestination(for: ActiveRooms.self){data in
+            ChattingView(chatUserData: data,messages: dummyChattingMessageRoom1)
+                .environmentObject(userModel)
+        }
+        
+        
     }
     
+
     @ViewBuilder
     private func AddActiveItme(url : URL) -> some View {
         VStack{
@@ -68,6 +88,18 @@ struct Message: View {
         }
         
     }
+    
+//    private func addActiveRoomTest(){
+//        rooms.forEach{ r in
+//            context.delete(r)
+//        }
+//
+//        do {
+//           try context.save()
+//        }catch {
+//            print("save error")
+//        }
+//    }
 }
 
 struct Message_Previews: PreviewProvider {

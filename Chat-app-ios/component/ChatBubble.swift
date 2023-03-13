@@ -86,14 +86,14 @@ struct TextBubbleShape: Shape {
 }
 
 struct ChatBubble<Content> : View where Content : View {
-    let chatUser : ContentInfo
+    let userAvatarURL : URL
     let direction : TextBubbleShape.Direction
     let content :()->Content
     let contentType : Int
-    init(direction : TextBubbleShape.Direction,chatUser : ContentInfo,contentType : Int,@ViewBuilder content : @escaping ()->Content){
+    init(direction : TextBubbleShape.Direction,userAvatarURL : URL,contentType : Int,@ViewBuilder content : @escaping ()->Content){
         self.direction = direction
         self.content = content
-        self.chatUser = chatUser
+        self.userAvatarURL = userAvatarURL
         self.contentType = contentType
     }
     
@@ -104,7 +104,7 @@ struct ChatBubble<Content> : View where Content : View {
             }
             HStack(alignment:.bottom){
                 if direction == .receiver {
-                    AsyncImage(url: chatUser.AvatarURL, content: { img in
+                    AsyncImage(url: userAvatarURL, content: { img in
                        img
                             .resizable()
                             .aspectRatio(contentMode: .fill)

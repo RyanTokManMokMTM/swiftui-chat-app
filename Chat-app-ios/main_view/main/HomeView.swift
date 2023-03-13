@@ -21,18 +21,27 @@ let tags : [MenuTag] = [
 
 
 struct HomeView: View {
+    @EnvironmentObject private var userModel : UserViewModel
     @Environment(\.colorScheme) var colorScheme
+    
+    
+
     @State private var index = 0
     @State private var search = ""
     @State private var isShowSheet = false
     @State private var isActive = true
     @Binding var isShowMenu : Bool
+    @Binding var menuTab : Int
+    
+    
+    @State private var isShowProfile : Bool = false
     var body: some View {
         ZStack{
  
             TabView(selection:$index){
-                //            NavigationStack{
+                
                 Message(isActive: $isActive)
+                    .environmentObject(userModel)
                     .tabItem{
                         VStack{
                             Image(systemName: "message.fill")
@@ -41,6 +50,7 @@ struct HomeView: View {
                     }
                     .tag(0)
                     .badge(99)
+                
                 
                 CallView()
                     .tabItem{
@@ -51,6 +61,7 @@ struct HomeView: View {
                         
                     }
                     .tag(1)
+                    .environmentObject(userModel)
                 
                 //            NavigationStack{
                 FriendContent()
@@ -63,6 +74,7 @@ struct HomeView: View {
                     }
                     .tag(2)
                     .badge(5)
+                    .environmentObject(userModel)
                 
                 
                 
@@ -108,13 +120,20 @@ struct HomeView: View {
             }
             .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
         }
+        .sheet(isPresented: $isShowSheet){
+            AddContent(isAddContent: $isShowSheet)
+        }
+
+      
 //        .accentColor(.green)
         
     }
+    
+
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(isShowMenu: .constant(false))
+        HomeView(isShowMenu: .constant(false), menuTab: .constant(0))
     }
 }

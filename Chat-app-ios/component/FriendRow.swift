@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct FriendRow: View {
-    let data : ContentUser
+    let data : UserProfile
     var body: some View {
         HStack(alignment:.center,spacing:12){
-            AsyncImage(url: data.avatarURL, content: { img in
+            AsyncImage(url: data.AvatarURL, content: { img in
                img
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -32,11 +32,11 @@ struct FriendRow: View {
     }
 }
 
-struct FriendRow_Previews: PreviewProvider {
-    static var previews: some View {
-        FriendRow(data: ContentUser(name: "jackson.tmm", avatar: "https://i.ibb.co/zf5XCDm/3fef478737ea0f4abe5d69db3e25d71e.jpg"))
-    }
-}
+//struct FriendRow_Previews: PreviewProvider {
+//    static var previews: some View {
+//        FriendRow(data: ContentUser(name: "jackson.tmm", avatar: "https://i.ibb.co/zf5XCDm/3fef478737ea0f4abe5d69db3e25d71e.jpg"))
+//    }
+//}
 
 struct ContentUser : Identifiable {
     let id = UUID().uuidString

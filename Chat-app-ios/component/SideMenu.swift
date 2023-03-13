@@ -7,17 +7,20 @@
 
 import SwiftUI
 
-struct SideMenu: View {
+struct SideMenu<Content:View>: View {
     //    struct SideMenu : View {
     @EnvironmentObject private var userVM : UserViewModel
     @Binding var isShow : Bool
+    @Binding var isShowProfile : Bool
     @State private var offset = 0.0
     @State private var isAnimated = false
     @State private var isEditProfile = false
+    
+    var content : () -> Content
     var body : some View {
         VStack{
             menu()
-                .offset(x : self.isAnimated ? 0 : -UIScreen.main.bounds.width / 1.5)
+                .offset(x : self.isAnimated ? 0 : -UIScreen.main.bounds.width / 1.2)
                 .transition(.move(edge: .leading))
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height,alignment:.leading)
@@ -43,13 +46,15 @@ struct SideMenu: View {
     private func menu() -> some View {
         VStack(alignment:.leading,spacing:12){
             menuHeader()
-            Spacer()
+                .padding(.horizontal,18)
+                .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+                .padding(.top)
+//                .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+//                .padding(.bottom)
+            content()
+            
         }
-        .padding(.horizontal,18)
-        .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-        .padding(.top)
-        .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
-        .padding(.bottom)
+    
         .frame(width: UIScreen.main.bounds.width / 1.2, height: UIScreen.main.bounds.height,alignment:.leading)
         .background(Color.white.clipShape(CustomConer(coners: [.bottomRight,.topRight])))
         
@@ -119,8 +124,16 @@ struct SideMenu: View {
             
             Spacer()
             
-            Image(systemName: "gearshape")
-                .imageScale(.large)
+            Button(action: {
+                withAnimation{
+                    self.isShowProfile.toggle()
+                }
+            }, label: {
+                Image(systemName: "gearshape")
+                    .imageScale(.large)
+            })
+            .buttonStyle(.plain)
+
         }
 
     }
@@ -128,8 +141,8 @@ struct SideMenu: View {
     
 }
 
-struct SideMenu_Previews: PreviewProvider {
-    static var previews: some View {
-        SideMenu(isShow: .constant(false))
-    }
-}
+//struct SideMenu_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SideMenu(isShow: .constant(false))
+//    }
+//}

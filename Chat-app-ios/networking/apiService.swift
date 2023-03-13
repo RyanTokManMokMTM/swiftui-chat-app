@@ -20,6 +20,7 @@ protocol APIService {
     func GetUserInfo(req : GetUserInfoReq) async -> Result<GetUserInfoResp,Error>
     func UpdateUserInfo(req : UpdateUserInfoReq) async -> Result<UpdateUserInfoResp,Error>
     func UploadUserAvatar(imgData : Data) async -> Result<UploadAvatarResp,Error>
+    func SearchUser(email : String) async -> Result<SearchUserResp,Error>
     
     func AddFriend(req : AddFriendReq) async -> Result<AddFriendResp,Error>
     func DeleteFriend(req : DeleteFriendReq) async -> Result<DeleteFriendResp,Error>
@@ -72,6 +73,7 @@ enum APIEndPoint : String,CaseIterable {
     case UserProfile
     case UpdateUserProfile
     case UploadAvatar
+    case SearchUser
     
     case AddFriend
     case DeleteFriend
@@ -98,6 +100,8 @@ enum APIEndPoint : String,CaseIterable {
         case .UserProfile : return "/user/profile"
         case .UpdateUserProfile : return "/user/profile/"
         case .UploadAvatar : return "/user/avatar"
+        case .SearchUser : return "/user/search"
+            
             
         case .AddFriend : return "/user/friend"
         case .DeleteFriend : return "/user/friend"

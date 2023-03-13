@@ -8,11 +8,16 @@
 import SwiftUI
 
 struct SignInView: View {
+   
     @State private var email : String = ""
     @State private var password : String = ""
     @State private var isCheck = false
     @State private var isSignUp = false
-    @AppStorage("jwt") var token : String = ""
+    @AppStorage("token") var token : String = ""
+    @AppStorage("userName") var userEmail : String = ""
+    @AppStorage("password") var userPassword : String = ""
+    @AppStorage("userAvatar") var userAvatar : String = ""
+    
     @Binding var isLogin : Bool
     @EnvironmentObject private var userViewModel : UserViewModel
     var body: some View {
@@ -121,18 +126,31 @@ struct SignInView: View {
     }
     
     private func sendSignInRequest() async{
+        BenHubState.shared.SetWait(message: "Loading...")
         let req = SignInReq(email: self.email, password: self.password)
         let resp = await ChatAppService.shared.UserSignIn(req: req)
-        switch resp {
-        case .success(let data):
-//            self.isLogin = true
-            self.isLogin = false
-            self.userViewModel.profile = data.user_info
-            break
-        case .failure(let err):
-            print(err.localizedDescription)
-            break
+        DispatchQueue.main.async {
+            switch resp {
+            case .success(let data):
+                BenHubState.shared.isWaiting = false
+                withAnimation{
+                    self.isLogin = false
+                }
+//                print(data.token)
+                UserDefaults.standard.set(data.token, forKey: "token")
+                self.userViewModel.profile = data.user_info
+                PersistenceController.shared.FetchUserActiveRooms(userID: Int16(data.user_info.id))
+                BenHubState.shared.AlertMessage(sysImg: "checkmark", message: "login successed!")
+                Webcoket.shared.connect() //TODO: connect to ws server
+                break
+            case .failure(let err):
+                BenHubState.shared.isWaiting = false
+                BenHubState.shared.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
+                print(err.localizedDescription)
+                break
+            }
         }
+       
     }
 }
 

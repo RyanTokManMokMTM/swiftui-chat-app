@@ -13,7 +13,7 @@ class ChatAppService : APIService {
     private let Client = URLSession.shared
     private let Decoder = JSONDecoder()
     private let Encoder = JSONEncoder()
-    @AppStorage("token") private var token : String = ""
+
     
     func HealthCheck() async -> Result<HealthCheckResp,Error>{
         guard let url = URL(string: HTTP_HOST + APIEndPoint.HealthCheck.rawValue) else {
@@ -22,7 +22,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
     
         
         return await self.AsyncFetchAndDecode(request: request)
@@ -36,6 +37,7 @@ class ChatAppService : APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -53,6 +55,7 @@ class ChatAppService : APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+       
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -69,7 +72,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
         
         return await self.AsyncFetchAndDecode(request: request)
     }
@@ -81,8 +85,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         return await self.AsyncPostAndDecode(request: request)
     }
     
@@ -104,11 +108,34 @@ class ChatAppService : APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         request.httpBody = httpBody as Data
 //        request.addValue("content-type", forHTTPHeaderField: "application/json")
 
         return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func SearchUser(email : String) async -> Result<SearchUserResp,Error> {
+        guard var URLComp = URLComponents(string: HTTP_HOST + APIEndPoint.SearchUser.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        let queryItems = [
+            URLQueryItem(name: "query", value: email)
+        ]
+        
+        URLComp.queryItems = queryItems
+        
+        guard let finalURL = URLComp.url else {
+            return .failure(APIError.badUrl)
+        }
+        print(finalURL.absoluteString)
+        var request = URLRequest(url: finalURL)
+//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "GET"
+        
+        return await AsyncFetchAndDecode(request: request)
     }
     
     func AddFriend(req : AddFriendReq) async -> Result<AddFriendResp,Error> {
@@ -118,8 +145,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -137,8 +164,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -154,11 +181,12 @@ class ChatAppService : APIService {
             return .failure(APIError.badUrl)
         }
         
+        print(url.absoluteString)
+        
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
-    
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         return await self.AsyncFetchAndDecode(request: request)
     }
     
@@ -169,8 +197,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -188,8 +216,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         
         return await self.AsyncPostAndDecode(request: request)
     }
@@ -201,8 +229,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         
         
         return await self.AsyncPostAndDecode(request: request)
@@ -215,8 +243,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -234,9 +262,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
-     
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         
         return await self.AsyncPostAndDecode(request: request)
     }
@@ -255,7 +282,7 @@ class ChatAppService : APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         request.httpBody = httpbody as Data
        
         return await self.AsyncPostAndDecode(request: request)
@@ -268,8 +295,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -287,8 +314,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -306,8 +333,8 @@ class ChatAppService : APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        request.addValue("content-type", forHTTPHeaderField: "application/json")
-        request.addValue("Authorization", forHTTPHeaderField: "Bearer " + self.token)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
         do {
             let body = try Encoder.encode(req)
             request.httpBody = body
@@ -332,9 +359,11 @@ class ChatAppService : APIService {
             }else{
                 //MARK: this code need to status code block !!!
                 let errResp = try self.Decoder.decode(ErrorResp.self, from: data)
+               
                 return .failure(errResp)
             }
         } catch {
+           
             return .failure(error)
         }
       
@@ -365,5 +394,8 @@ class ChatAppService : APIService {
         }
     }
     
+    private func getUserToken() -> String {
+        return UserDefaults.standard.string(forKey: "token") ?? ""
+    }
 
 }

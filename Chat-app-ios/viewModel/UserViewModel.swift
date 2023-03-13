@@ -8,6 +8,27 @@
 import Foundation
 class UserViewModel : ObservableObject {
     @Published var profile : UserProfile?
+    @Published var friendsList : [UserProfile] = [UserProfile]()
+    
+    func GetUserFriendList() async{
+        DispatchQueue.main.async {
+            BenHubState.shared.SetWait(message: "Loading...")
+        }
+
+        let resp = await ChatAppService.shared.GetFriendList()
+        DispatchQueue.main.async {
+            switch resp{
+            case .success(let data):
+                BenHubState.shared.isWaiting = false
+                self.friendsList = data.friends
+                
+            case .failure(let err):
+                
+                BenHubState.shared.isWaiting = false
+                BenHubState.shared.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
+            }
+        }
+    }
 }
 
 struct UserProfile : Identifiable ,Decodable {
@@ -16,6 +37,7 @@ struct UserProfile : Identifiable ,Decodable {
     let name : String
     let email : String
     let avatar : String
+    let cover : String
     
     var UserUUID : UUID {
         return UUID(uuidString: self.uuid)!
@@ -23,5 +45,9 @@ struct UserProfile : Identifiable ,Decodable {
     
     var AvatarURL : URL {
         return URL(string: RESOURCES_HOST  + self.avatar)!
+    }
+    
+    var CoverURL : URL {
+        return URL(string: RESOURCES_HOST  + self.cover)!
     }
 }

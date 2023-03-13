@@ -14,7 +14,7 @@ enum TabItems : String,CaseIterable {
 
 struct CallView: View {
     @State private var tabs : TabItems = .Contents
-   
+    @EnvironmentObject private var userModel : UserViewModel
     var body: some View {
         VStack{
             Picker("", selection: $tabs){
@@ -27,13 +27,18 @@ struct CallView: View {
             switch tabs {
             case .Contents:
                 ScrollView(.vertical,showsIndicators: false){
-                    ForEach(dummyContentList, id: \.id) { data in
+                    ForEach(self.userModel.friendsList, id: \.id) { data in
                         CallRow(data: data)
                             .padding(.vertical,6)
                             .padding(.horizontal)
                         
                     }
                     
+                }
+                .onAppear{
+                    Task.init{
+                        await userModel.GetUserFriendList()
+                    }
                 }
             case .Record:
                 ScrollView(.vertical,showsIndicators: false){

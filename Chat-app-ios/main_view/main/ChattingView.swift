@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct ChattingView: View {
-    let chatUserData : ContentInfo
+    @EnvironmentObject private var userModel : UserViewModel
+//    @EnvironmentObject private var messageModel : MessageViewModel
+    let chatUserData : ActiveRooms
     let messages : [MessageData]
-    @Binding var isActive : Bool
+//    @Binding var isActive : Bool
     @State private var text : String = ""
     @FocusState private var isFocus : Bool
     var body: some View {
         VStack{
             ScrollView(.vertical){
                     VStack{
-                        
                         ForEach(messages) { message in
-                            ChatBubble(direction: message.sender == chatUserData.id ? .receiver : .sender, chatUser: chatUserData, contentType: message.content_type){
-                                
+                            ChatBubble(direction: message.sender == userModel.profile!.id ? .receiver : .sender, userAvatarURL: message.AvatarURL, contentType: message.content_type){
+
                                 if message.content_type == 1 {
                                     Text(message.content)
                                         .padding()
@@ -31,13 +32,13 @@ struct ChattingView: View {
                                         img
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                        
+
                                         //                                        .background(.green)
                                     }, placeholder: {
                                         ProgressView()
                                     })
                                 }
-                                
+
                             }
                         }
                     }
@@ -47,34 +48,12 @@ struct ChattingView: View {
             
             InputField()
         }
-        .onAppear{
-            withAnimation{
-                self.isActive = true
-            }
-            
-        }.onDisappear{
-            withAnimation{
-                print("false")
-                self.isActive = false
-            }
-            
-        }
         .toolbar{
             ToolbarItem(placement: .navigationBarLeading){
                 HStack(){
-//                    AsyncImage(url: chatUserData.AvatarURL, content: { img in
-//                        img
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fill)
-//                            .frame(width:35,height: 35)
-//                            .clipShape(Circle())
-//                        
-//                    }, placeholder: {
-//                        ProgressView()
-//                            .frame(width:35,height: 35)
-//                    })
+
                     
-                    Text(chatUserData.name)
+                    Text(self.chatUserData.name ?? "UNKNOW CHAT")
                         .bold()
                         .font(.system(size: 15))
                         .foregroundColor(.black)
@@ -172,15 +151,16 @@ struct ChattingView: View {
     }
 }
 
-struct ChattingView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChattingView(chatUserData: dummyActiveChat[0],messages: dummyChattingMessageRoom1, isActive: .constant(true))
-    }
-}
+//struct ChattingView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChattingView(chatUserData: dummyActiveChat[0],messages: dummyChattingMessageRoom1, isActive: .constant(true))
+//    }
+//}
 
 struct MessageData : Identifiable {
     let id = UUID().uuidString
-    let sender : Int 
+    let sender : Int
+    let sender_avatar : String
     let content : String
     let message_type : Int
     let content_type : Int
@@ -189,5 +169,9 @@ struct MessageData : Identifiable {
     
     var PhotoURL : URL {
         return URL(string: PicURL)!
+    }
+    
+    var AvatarURL : URL {
+        return URL(string: RESOURCES_HOST + sender_avatar)!
     }
 }

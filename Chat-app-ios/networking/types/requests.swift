@@ -47,6 +47,7 @@ struct GetUserInfoResp : Decodable{
     let name : String
     let email : String
     let avatar : String
+    let cover : String
 }
 
 struct UpdateUserInfoReq : Encodable {
@@ -62,6 +63,16 @@ struct UpdateUserInfoResp : Decodable {
 struct UploadAvatarResp : Decodable {
     let code : UInt
     let path : String
+}
+
+struct SearchUserResp : Decodable{
+    let code : UInt
+    let results : [SearchUserResult]?
+}
+
+struct SearchUserResult : Decodable{
+    let user_info : UserProfile
+    var is_friend : Bool
 }
 
 struct AddFriendReq : Encodable {
@@ -81,18 +92,7 @@ struct DeleteFriendResp : Decodable {
 }
 
 struct GetFriendListResp : Decodable {
-    let friend_list : [FriendInfo]
-}
-
-struct FriendInfo : Decodable , Identifiable {
-    let id : UInt
-    let uuid : String
-    let name : String
-    let avatar : String
-    
-    var AvatarURL : URL {
-        return URL(string: RESOURCES_HOST + self.avatar)!
-    }
+    let friends : [UserProfile]
 }
 
 struct CreateGroupReq : Encodable {
@@ -101,7 +101,7 @@ struct CreateGroupReq : Encodable {
 
 struct CreateGroupResp : Decodable {
     let code : UInt
-    let group_id : UInt
+    let group_uuid : String
 }
 
 struct JoinGroupReq {

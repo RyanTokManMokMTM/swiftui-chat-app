@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct FriendContent: View {
+    @EnvironmentObject private var userModel : UserViewModel
     var body: some View {
-        List(dummyContentList) { data in
-            FriendRow(data: data)
+        List {
+            ForEach(self.userModel.friendsList,id: \.id) {data in
+                FriendRow(data: data)
+            }
         }
         .listStyle(.plain)
+        .onAppear{
+            Task.init {
+                await userModel.GetUserFriendList()
+            }
+        }
     }
 }
 
