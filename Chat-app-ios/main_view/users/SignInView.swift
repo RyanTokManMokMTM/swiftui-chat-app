@@ -20,6 +20,7 @@ struct SignInView: View {
     
     @Binding var isLogin : Bool
     @EnvironmentObject private var userViewModel : UserViewModel
+    @EnvironmentObject private var UDM : UserDataModel
     var body: some View {
         ZStack{
             VStack{
@@ -139,9 +140,14 @@ struct SignInView: View {
 //                print(data.token)
                 UserDefaults.standard.set(data.token, forKey: "token")
                 self.userViewModel.profile = data.user_info
-                PersistenceController.shared.FetchUserActiveRooms(userID: Int16(data.user_info.id))
+                
+                if !UDM.fetchUserData(id: Int16(data.user_info.id)) {
+                    UDM.addUserData(id: Int16(data.user_info.id), uuid: data.user_info.uuid, email: data.user_info.email, name: data.user_info.name, avatar: data.user_info.avatar)
+                }
+               
                 BenHubState.shared.AlertMessage(sysImg: "checkmark", message: "login successed!")
                 Webcoket.shared.connect() //TODO: connect to ws server
+//                Webcoket.shared.userData = UDM
                 break
             case .failure(let err):
                 BenHubState.shared.isWaiting = false

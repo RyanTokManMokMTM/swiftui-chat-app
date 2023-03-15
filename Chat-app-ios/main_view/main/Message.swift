@@ -8,15 +8,14 @@
 import SwiftUI
 
 struct Message: View {
-    @Environment(\.managedObjectContext) var context
     @EnvironmentObject private var userModel : UserViewModel
     @StateObject private var messageModel = MessageViewModel()
-    @StateObject private var roomModel = PersistenceController.shared
-//    @FetchRequest(entity: ActiveRooms.entity(),sortDescriptors: [NSSortDescriptor(keyPath: \ActiveRooms.last_sent_time, ascending: false)]) private var rooms : FetchedResults<ActiveRooms>
-    
+    @EnvironmentObject private var UDM : UserDataModel
+
     
     @Binding var isActive : Bool
     @State private var isChat = false
+
     var body: some View {
         
         List{
@@ -24,7 +23,7 @@ struct Message: View {
                 HStack(spacing: 12){
 
                     AddActiveItme(url: URL(string: "https://i.ibb.co/MP6cDM1/9c7edaa9edbf5d777ead3820b69373f4.jpg")!)
-
+                    
                     ForEach(dummyActiveStory, id: \.id) { data in
                         UserAvatarItem(avatarURL: data.AvatarURL, isRead: data.isRead)
                             .padding(.vertical,5)
@@ -36,23 +35,36 @@ struct Message: View {
             }
             .listRowInsets(EdgeInsets())
             
-            ForEach(roomModel.rooms,id:\.id){ data in
-                NavigationLink(value: data) {
-                    ContentRow(data: data)
-                        .swipeActions{
-                            Button(role: .destructive) {
-                                print("Deleting conversation")
-                            } label: {
-                                Label("Delete", systemImage: "trash.fill")
+            if UDM.info != nil {
+                ForEach($UDM.rooms){ data in
+                    NavigationLink(value: data.wrappedValue) {
+                        ContentRow(data: data)
+                            .swipeActions{
+                                Button(role: .destructive) {
+                                    print("Deleting conversation")
+                                } label: {
+                                    Label("Delete", systemImage: "trash.fill")
+                                }
                             }
-                        }
+                    }
                 }
+                
             }
+           
+ 
         }
         .listStyle(.plain)
         .navigationDestination(for: ActiveRooms.self){data in
-            ChattingView(chatUserData: data,messages: dummyChattingMessageRoom1)
+            ChattingView(chatUserData: data,messages: $UDM.currentRoomMessage)
                 .environmentObject(userModel)
+                .onAppear{
+                    self.UDM.currentRoom = self.UDM.findOneRoomWithIndex(uuid: data.id!)!
+                    self.UDM.fetchCurrentRoomMessage()
+                }
+                .onDisappear{
+                    self.UDM.currentRoom = -1
+                    self.UDM.currentRoomMessage.removeAll()
+                }
         }
         
         
@@ -88,18 +100,7 @@ struct Message: View {
         }
         
     }
-    
-//    private func addActiveRoomTest(){
-//        rooms.forEach{ r in
-//            context.delete(r)
-//        }
-//
-//        do {
-//           try context.save()
-//        }catch {
-//            print("save error")
-//        }
-//    }
+
 }
 
 struct Message_Previews: PreviewProvider {

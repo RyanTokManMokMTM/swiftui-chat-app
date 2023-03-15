@@ -11,7 +11,7 @@ struct ChattingView: View {
     @EnvironmentObject private var userModel : UserViewModel
 //    @EnvironmentObject private var messageModel : MessageViewModel
     let chatUserData : ActiveRooms
-    let messages : [MessageData]
+    @Binding var messages : [RoomMessages]
 //    @Binding var isActive : Bool
     @State private var text : String = ""
     @FocusState private var isFocus : Bool
@@ -20,24 +20,25 @@ struct ChattingView: View {
             ScrollView(.vertical){
                     VStack{
                         ForEach(messages) { message in
-                            ChatBubble(direction: message.sender == userModel.profile!.id ? .receiver : .sender, userAvatarURL: message.AvatarURL, contentType: message.content_type){
+                            ChatBubble(direction: message.sender_uuid!.uuidString != userModel.profile!.uuid ? .receiver : .sender, userAvatarURL: message.AvatarURL, contentType: Int(message.content_type ?? 1)){
 
                                 if message.content_type == 1 {
-                                    Text(message.content)
+                                    Text(message.content ?? "")
                                         .padding()
                                         .foregroundColor(Color.white)
                                         .background(Color.green)
-                                }else {
-                                    AsyncImage(url: message.PhotoURL, content: {img in
-                                        img
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-
-                                        //                                        .background(.green)
-                                    }, placeholder: {
-                                        ProgressView()
-                                    })
                                 }
+//                                }else {
+//                                    AsyncImage(url: message.PhotoURL, content: {img in
+//                                        img
+//                                            .resizable()
+//                                            .aspectRatio(contentMode: .fill)
+//
+//                                        //                                        .background(.green)
+//                                    }, placeholder: {
+//                                        ProgressView()
+//                                    })
+//                                }
 
                             }
                         }

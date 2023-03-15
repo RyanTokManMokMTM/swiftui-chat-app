@@ -8,16 +8,24 @@
         <attribute name="message_type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="unread_message" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="user_id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RoomMessages" inverseName="room" inverseEntity="RoomMessages"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDatas" inverseName="rooms" inverseEntity="UserDatas"/>
     </entity>
-    <entity name="RoomMessages" representedClassName="RoomMessages" syncable="YES" codeGenerationType="class">
+    <entity name="RoomMessages" representedClassName="RoomMessages" syncable="YES">
         <attribute name="content" optional="YES" attributeType="String"/>
         <attribute name="content_type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="sende_id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sender_avatar" optional="YES" attributeType="String"/>
+        <attribute name="sender_uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="sent_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActiveRooms" inverseName="messages" inverseEntity="ActiveRooms"/>
+    </entity>
+    <entity name="UserDatas" representedClassName="UserDatas" syncable="YES">
+        <attribute name="avatar" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="rooms" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ActiveRooms" inverseName="user" inverseEntity="ActiveRooms"/>
     </entity>
 </model>

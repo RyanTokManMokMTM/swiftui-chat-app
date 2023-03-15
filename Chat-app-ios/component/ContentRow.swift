@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentRow: View {
     @Environment(\.colorScheme) var colorScheme
-    var data : ActiveRooms
+    @Binding var data : ActiveRooms
     var body: some View {
         HStack(alignment:.top,spacing:10){
             AsyncImage(url: data.AvatarURL, content: { img in

@@ -22,6 +22,7 @@ let tags : [MenuTag] = [
 
 struct HomeView: View {
     @EnvironmentObject private var userModel : UserViewModel
+    @EnvironmentObject private var UDM : UserDataModel
     @Environment(\.colorScheme) var colorScheme
     
     
@@ -39,9 +40,9 @@ struct HomeView: View {
         ZStack{
  
             TabView(selection:$index){
-                
                 Message(isActive: $isActive)
                     .environmentObject(userModel)
+                    .environmentObject(UDM)
                     .tabItem{
                         VStack{
                             Image(systemName: "message.fill")
@@ -122,6 +123,7 @@ struct HomeView: View {
         }
         .sheet(isPresented: $isShowSheet){
             AddContent(isAddContent: $isShowSheet)
+                .environmentObject(UDM)
         }
 
       

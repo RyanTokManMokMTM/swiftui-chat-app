@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 struct AddContent: View {
     @EnvironmentObject private var userModel : UserViewModel
+    @EnvironmentObject private var UDM : UserDataModel
     @StateObject var hub = BenHubState.shared
     @Binding var isAddContent : Bool
 
@@ -113,18 +114,19 @@ struct AddContent: View {
     }
     
     private func CreateActiveRoom(data : UserProfile){
-        if let room = PersistenceController.shared.FindOneRoom(uuid: UUID(uuidString: data.uuid)!, userID: Int16(userModel.profile!.id)) {
+        
+        if let room = UDM.findOneRoom(uuid: UUID(uuidString: data.uuid)!){
             print("room is stored")
             self.isAddContent = false
             NavigationState.shared.navigationRoomPath.append(room)
             return
         }
-        
-        if let room = PersistenceController.shared.CreateUserActiveRoom(id: data.uuid, name: data.name, avatar: data.avatar , user_id: Int16(userModel.profile!.id), message_type: 1){
-            
+
+        if let room = UDM.addRoom(id: data.uuid, name: data.name, avatar: data.avatar, message_type: 1) {
             self.isAddContent = false
             NavigationState.shared.navigationRoomPath.append(room)
         }
+
         
     }
     

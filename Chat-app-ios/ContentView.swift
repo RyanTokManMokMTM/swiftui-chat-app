@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
     @StateObject var hub = BenHubState.shared
     @StateObject var path = NavigationState.shared
     @StateObject var userModel = UserViewModel()
@@ -22,6 +23,7 @@ struct ContentView: View {
             NavigationStack(path:$path.navigationRoomPath){
                 HomeView(isShowMenu: $isShowMenu,menuTab: $menuIndex)
                     .environmentObject(userModel)
+                    .environmentObject(UDM)
     
             }
             .accentColor(.green)
@@ -65,6 +67,7 @@ struct ContentView: View {
             if self.loginSate {
                 SignInView(isLogin: $loginSate)
                     .environmentObject(userModel)
+                    .environmentObject(UDM)
                     .transition(.move(edge: .bottom))
                     .background(.white)
                     .zIndex(1)

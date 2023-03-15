@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Combine
 
 
 struct WSMessage : Codable {
@@ -18,14 +18,29 @@ struct WSMessage : Codable {
     let contentType : Int32?
     let type : Int32?
     let messageType : Int32?
+
 }
+
 
 final class Webcoket {
     let WS_HOST = "ws://127.0.0.1:8000/ws"
     var session : URLSessionWebSocketTask?
     static var shared = Webcoket()
     
+    private var anyCancellable : AnyCancellable? = nil
+//    var userData : UserDataModel? {
+//        didSet {
+//            print("???")
+//            self.userData?.objectWillChange.send()
+//            anyCancellable = userData?.objectWillChange.sink(receiveValue: { _ in
+//                self.userData?.objectWillChange.send()
+//            })
+//        }
+//    }
+    
     private init(){}
+    
+
     func connect(){
         guard let url = URL(string: WS_HOST) else {
             return
@@ -45,6 +60,7 @@ final class Webcoket {
         
     }
     
+  
     func onReceive(result : Result<URLSessionWebSocketTask.Message, Error>) -> Void {
         self.session?.receive(completionHandler: self.onReceive(result:))
         switch result {
@@ -66,7 +82,7 @@ final class Webcoket {
                 print("received a data")
                 do {
                     let msg = try JSONDecoder().decode(WSMessage.self, from: data)
-                    print(msg)
+//                    print(msg)
                     
                     if let type = msg.type {
                         switch type {
@@ -85,8 +101,27 @@ final class Webcoket {
                             break
                         case 4:
                             //GROUP/PEER/OTHER MESSAGE
-                            print("receive a normal message from server")
+                            DispatchQueue.main.async {
+                                if let index = UserDataModel.shared.findOneRoomWithIndex(uuid: UUID(uuidString: msg.fromUUID!)!){
+                                    print("testing")
+                                    let sentTime = Date.now
+                                    UserDataModel.shared.rooms[index].unread_message += 1
+                                    UserDataModel.shared.rooms[index].last_message = msg.content!
+                                    UserDataModel.shared.rooms[index].last_sent_time = sentTime
+                                    
+                                   let msg = UserDataModel.shared.addRoomMessage(roomIndex: index, sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!, content: msg.content!, content_type: Int16(msg.contentType!), sent_at:sentTime)
+                                    
+                                    if UserDataModel.shared.currentRoom == index {
+                                        UserDataModel.shared.currentRoomMessage.append(msg)
+                                    }
+                                    UserDataModel.shared.manager.save()
+                                    UserDataModel.shared.fetchUserRoom()
+                                }
+                            }
+                            
+                           
                             break
+  
                         default:
                             print("UNKNOW TYPE")
                         }

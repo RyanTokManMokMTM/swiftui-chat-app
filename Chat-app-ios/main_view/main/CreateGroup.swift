@@ -139,6 +139,7 @@ struct CreateGroup : View {
     @Binding var isShowAddContent : Bool
     @EnvironmentObject private var groupVM : GroupViewModel
     @EnvironmentObject private var userModel : UserViewModel
+    @EnvironmentObject private var UDM : UserDataModel
     @State private var groupName : String = "New Group"
   
     var body: some View {
@@ -182,15 +183,14 @@ struct CreateGroup : View {
         let resp = await ChatAppService.shared.CreateGroup(req: req)
         switch resp{
         case .success(let data):
-            DispatchQueue.main.async {
-                if let room = PersistenceController.shared.CreateUserActiveRoom(id: data.group_uuid, name: self.groupName, avatar: "/defaultGroup.jpg", user_id: Int16(self.userModel.profile!.id), message_type: 2) {
-                    
-                    withAnimation{
-                        self.isShowAddContent = false
-                    }
-                    NavigationState.shared.navigationRoomPath.append(room)
+            if let room = UDM.addRoom(id: data.group_uuid, name: self.groupName, avatar: "/defaultGroup.jpg", message_type: 2) {
+                
+                withAnimation{
+                    self.isShowAddContent = false
                 }
+                NavigationState.shared.navigationRoomPath.append(room)
             }
+            
         case .failure(let err):
             BenHubState.shared.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
         }

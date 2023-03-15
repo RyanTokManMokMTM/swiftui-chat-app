@@ -2,7 +2,7 @@
 //  ActiveRooms+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 13/3/2023.
+//  Created by Jackson.tmm on 14/3/2023.
 //
 //
 
@@ -16,14 +16,32 @@ extension ActiveRooms {
         return NSFetchRequest<ActiveRooms>(entityName: "ActiveRooms")
     }
 
-    @NSManaged public var id: UUID?
-    @NSManaged public var name: String?
     @NSManaged public var avatar: String?
-    @NSManaged public var message_type: Int16
-    @NSManaged public var last_sent_time: Date?
+    @NSManaged public var id: UUID?
     @NSManaged public var last_message: String?
-    @NSManaged public var user_id: Int16
+    @NSManaged public var last_sent_time: Date?
+    @NSManaged public var message_type: Int16
+    @NSManaged public var name: String?
     @NSManaged public var unread_message: Int16
+    @NSManaged public var messages: NSSet?
+    @NSManaged public var user: UserDatas?
+
+}
+
+// MARK: Generated accessors for messages
+extension ActiveRooms {
+
+    @objc(addMessagesObject:)
+    @NSManaged public func addToMessages(_ value: RoomMessages)
+
+    @objc(removeMessagesObject:)
+    @NSManaged public func removeFromMessages(_ value: RoomMessages)
+
+    @objc(addMessages:)
+    @NSManaged public func addToMessages(_ values: NSSet)
+
+    @objc(removeMessages:)
+    @NSManaged public func removeFromMessages(_ values: NSSet)
 
 }
 
@@ -35,4 +53,5 @@ extension ActiveRooms : Identifiable {
     var IsUnreal : Bool {
         return self.unread_message > 0
     }
+
 }
