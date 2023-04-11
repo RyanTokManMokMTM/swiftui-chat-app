@@ -33,9 +33,13 @@ protocol APIService {
     func GetGroupMembers(req : GetGroupMemberReq) async -> Result<GetGroupMembersResp,Error>
     func UploadGroupAvatar(imgData : Data,req : UploadGroupAvatarReq) async -> Result<UploadGroupAvatarResp,Error>
     func UpdateGroupInfo(req : UpdateGroupInfoReq) async -> Result<UpdateGroupInfoResp,Error>
+    func GetUserGroups() async -> Result<GetUserGroups,Error>
     
     func GetMessages(req : GetMessageReq) async -> Result<GetMessageResp,Error>
     func DeleteMessage(req : DeleteMessageReq) async -> Result<DeleteFriendResp,Error>
+    
+    func UploadImage(req : UploadImageReq) async -> Result<UploadImageResp,Error>
+    func UploadFile(req : UploadFileReq) async -> Result<UploadFileResp,Error>
 }
 
 enum APIError : Error, CustomNSError{
@@ -86,12 +90,13 @@ enum APIEndPoint : String,CaseIterable {
     case GetGroupMembers
     case UploadGroupAvatar
     case UpdateGroupInfo
+    case GetUserGroups
     
     case GetMessages
     case DeleteMessage
     
-    
-    
+    case UploadImage
+    case UploadFile
     var rawValue: String {
         switch self {
         case .HealthCheck : return  "/ping"
@@ -114,10 +119,14 @@ enum APIEndPoint : String,CaseIterable {
         case .GetGroupMembers : return "/group/members/"
         case .UploadGroupAvatar: return "/group/avatar/:grou_id"
         case .UpdateGroupInfo: return "/group/update"
+        case .GetUserGroups: return "/group"
             
             
         case .GetMessages : return "/message"
         case .DeleteMessage : return "/message"
+            
+        case .UploadImage : return "/file/image/upload"
+        case .UploadFile : return "/file/document/upload"
         }
     }
 }

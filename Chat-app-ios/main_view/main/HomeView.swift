@@ -21,11 +21,10 @@ let tags : [MenuTag] = [
 
 
 struct HomeView: View {
+    @EnvironmentObject private var storyModel : StoryViewModel
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
     @Environment(\.colorScheme) var colorScheme
-    
-    
 
     @State private var index = 0
     @State private var search = ""
@@ -43,6 +42,7 @@ struct HomeView: View {
                 Message(isActive: $isActive)
                     .environmentObject(userModel)
                     .environmentObject(UDM)
+                    .environmentObject(storyModel)
                     .tabItem{
                         VStack{
                             Image(systemName: "message.fill")

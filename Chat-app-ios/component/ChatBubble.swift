@@ -27,25 +27,34 @@ struct TextBubbleShape: Shape {
                         p.addCurve(to: CGPoint(x: width, y: height - 20),
                                    control1: CGPoint(x: width - 8, y: height),
                                    control2: CGPoint(x: width, y: height - 8))
+            
                         p.addLine(to: CGPoint(x: width, y: 20))
                         p.addCurve(to: CGPoint(x: width - 20, y: 0),
                                    control1: CGPoint(x: width, y: 8),
                                    control2: CGPoint(x: width - 8, y: 0))
+//
                         p.addLine(to: CGPoint(x: 21, y: 0))
                         p.addCurve(to: CGPoint(x: 4, y: 20),
                                    control1: CGPoint(x: 12, y: 0),
                                    control2: CGPoint(x: 4, y: 8))
+//
                         p.addLine(to: CGPoint(x: 4, y: height - 11))
-                        p.addCurve(to: CGPoint(x: 0, y: height),
-                                   control1: CGPoint(x: 4, y: height - 1),
-                                   control2: CGPoint(x: 0, y: height))
-                        p.addLine(to: CGPoint(x: -0.05, y: height - 0.01))
-                        p.addCurve(to: CGPoint(x: 11.0, y: height - 4.0),
-                                   control1: CGPoint(x: 4.0, y: height + 0.5),
-                                   control2: CGPoint(x: 8, y: height - 1))
-                        p.addCurve(to: CGPoint(x: 25, y: height),
-                                   control1: CGPoint(x: 16, y: height),
-                                   control2: CGPoint(x: 20, y: height))
+                        p.addCurve(to: CGPoint(x: width, y: height - 20),
+                                   control1: CGPoint(x: width - 8, y: height),
+                                   control2: CGPoint(x: width, y: height - 8))
+//                        p.addCurve(to: CGPoint(x: width, y: height - 20),
+//                                   control1: CGPoint(x: width - 8, y: height),
+//                                   control2: CGPoint(x: width, y: height - 8))
+//                        p.addCurve(to: CGPoint(x: 0, y: height),
+//                                   control1: CGPoint(x: 4, y: height - 1),
+//                                   control2: CGPoint(x: 0, y: height))
+//                        p.addLine(to: CGPoint(x: -0.05, y: height - 0.01))
+//                        p.addCurve(to: CGPoint(x: 11.0, y: height - 4.0),
+//                                   control1: CGPoint(x: 4.0, y: height + 0.5),
+//                                   control2: CGPoint(x: 8, y: height - 1))
+////                        p.addCurve(to: CGPoint(x: 25, y: height),
+////                                   control1: CGPoint(x: 16, y: height),
+////                                   control2: CGPoint(x: 20, y: height))
                         
         }
     }
@@ -90,11 +99,15 @@ struct ChatBubble<Content> : View where Content : View {
     let direction : TextBubbleShape.Direction
     let content :()->Content
     let contentType : Int
-    init(direction : TextBubbleShape.Direction,userAvatarURL : URL,contentType : Int,@ViewBuilder content : @escaping ()->Content){
+    let messageType : Int
+    let userName : String
+    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,@ViewBuilder content : @escaping ()->Content){
         self.direction = direction
         self.content = content
         self.userAvatarURL = userAvatarURL
         self.contentType = contentType
+        self.messageType = messageType
+        self.userName = userName
     }
     
     var body: some View {
@@ -102,10 +115,11 @@ struct ChatBubble<Content> : View where Content : View {
             if direction == .sender {
                 Spacer()
             }
-            HStack(alignment:.bottom){
+            HStack(alignment:.top){
                 if direction == .receiver {
+                    
                     AsyncImage(url: userAvatarURL, content: { img in
-                       img
+                        img
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width:35,height: 35)
@@ -116,13 +130,25 @@ struct ChatBubble<Content> : View where Content : View {
                             .frame(width:35,height: 35)
                     })
                     
+                    
+                    
                 }
-                if contentType == 1 {
-                    content()
-                        .clipShape(TextBubbleShape(direction: direction))
-                }else {
-                    content()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                VStack(alignment:.leading,spacing:5){
+                    if messageType == 2 && direction == .receiver {
+                        
+                        Text(self.userName)
+                            .font(.footnote)
+                            .bold()
+                    }
+                    if contentType == 1 {
+                        content()
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+//                            .clipShape(TextBubbleShape(direction: direction))
+                    }else {
+                        content()
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
                 }
                 
                 

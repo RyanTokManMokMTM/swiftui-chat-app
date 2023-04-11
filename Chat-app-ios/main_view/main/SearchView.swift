@@ -26,12 +26,8 @@ struct SearchView: View {
             }else {
                 List(self.$searchModel.searchResponse,id:\.user_info.id){ $data in
                     NavigationLink(destination: UserContentView(profile: data.user_info, isFriend: $data.is_friend)
-                        .toolbar{
-                            ToolbarItem(placement: .principal){
-                                Text("Content")
-                                    .bold()
-                            }
-                        }){
+                        .accentColor(.white))
+                       {
                             UserRow(data: data.user_info, isFriend: data.is_friend)
                     }
                     

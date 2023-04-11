@@ -147,6 +147,7 @@ struct SignInView: View {
                
                 BenHubState.shared.AlertMessage(sysImg: "checkmark", message: "login successed!")
                 Webcoket.shared.connect() //TODO: connect to ws server
+                Webcoket.shared.userModel = userViewModel
 //                Webcoket.shared.userData = UDM
                 break
             case .failure(let err):

@@ -12,98 +12,143 @@ struct UserContentView: View {
     @Binding var isFriend : Bool
     var body: some View {
         VStack{
+            Spacer()
             Info()
-                .padding()
-        }
-        .background(AsyncImage(url: self.profile.CoverURL, content: { img in
-            img
-                .resizable()
-                .frame(width:UIScreen.main.bounds.width,height:UIScreen.main.bounds.height)
+                .padding(.horizontal,10)
+                .offset(y:-25)
+                .background(Color("card").clipShape(CustomConer(coners: .topRight)))
                 .edgesIgnoringSafeArea(.all)
+        }
+        .edgesIgnoringSafeArea(.all)
+        .background(
+            AsyncImage(url: self.profile.CoverURL, content: { img in
+            img
+//                .resizable()
+                .aspectRatio(contentMode: .fill)
+              
+            
+            
         }, placeholder: {
             ProgressView()
-                .frame(width:UIScreen.main.bounds.width,height:UIScreen.main.bounds.height)
-        }).overlay{
-            BlurView(style: .regular).edgesIgnoringSafeArea(.all)
-        })
-      
+                .frame(width:80,height:80)
+        }))
+        
     }
     
     @ViewBuilder
     private func Info() -> some View {
-        VStack{
-            AsyncImage(url: self.profile.AvatarURL, content: { img in
-                img
-                    .resizable()
-                    .frame(width:120,height:120)
-                    .clipShape(Circle())
+        VStack(alignment:.leading,spacing: 10){
+            HStack{
+                AsyncImage(url: self.profile.AvatarURL, content: { img in
+                    img
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width:80,height:80)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white, lineWidth: 5))
+                    
+                    
+                }, placeholder: {
+                    ProgressView()
+                        .frame(width:80,height:80)
+                })
                 
-            }, placeholder: {
-                ProgressView()
-                    .frame(width:120,height:120)
-            })
-            
-            VStack(spacing: 5){
-                Text(self.profile.name)
-                    .bold()
-                    .font(.title3)
-                
-                Text(self.profile.email)
-                    .font(.body)
-                    .foregroundColor(.gray)
-            }
-            
-            HStack(spacing:20){
-                contentButton(sysImg: self.isFriend ? "message.fill" : "person.fill.badge.plus", btuName: self.isFriend ? "Chat" : "Add"){
-                    if isFriend{
-                        print("Chat")
-                    }else {
-                        Task.init{
-                            await addFriend()
+                VStack(alignment:.leading,spacing: 5){
+                    HStack{
+                        Text(self.profile.name)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        
+                        if self.isFriend{
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
                         }
                     }
-                }
-                contentButton(sysImg: "xmark.circle", btuName: self.isFriend ? "Delete":"Block"){
                     
-                    if isFriend {
-                        Task.init{
+                    Text(self.profile.email)
+                        .font(.system(size: 13))
+                        .foregroundColor(.gray)
+                        .bold()
+                }
+                .padding(.top,20)
+                .padding(.vertical)
+                
+                Spacer()
+            }
+            
+            Text("About Me")
+                .font(.headline)
+                .bold()
+                .padding(.top)
+                .foregroundColor(.white)
+            
+            Text("Hi,i am jacksontmm. If you want to contact with me, please add me here!")
+                .multilineTextAlignment(.leading)
+                .lineLimit(3)
+                .font(.body)
+                .bold()
+                .padding(.vertical)
+                .foregroundColor(.gray)
+            
+            
+            if self.isFriend {
+                    Button(action: {
+                        
+                    }){
+                        HStack{
+                            Spacer()
+                            Text("Chat")
+                                .foregroundColor(.white)
+                                .bold()
+                            Spacer()
+                        }
+                        .padding()
+                        .background(.green)
+                        .cornerRadius(10)
+                    }
+                
+                    Button(action: {
+                        Task{
                             await deleteFriend()
                         }
-                    }else {
-                        print("Block")
+                    }){
+                        HStack{
+                            Spacer()
+                            Text("Delete Friend")
+                                .foregroundColor(.white)
+                                .bold()
+                            Spacer()
+                        }
+                        .padding()
+                        .background(.red)
+                        .cornerRadius(10)
                     }
-                   
+            }else {
+                Button(action: {
+                    Task{
+                        await addFriend()
+                    }
+                }){
+                    HStack{
+                        Spacer()
+                        Text("Add Me")
+                            .foregroundColor(.white)
+                            .bold()
+                        Spacer()
+                    }
+                    .padding()
+                    .background(.blue)
+                    .cornerRadius(10)
                 }
-//                contentButton(sysImg: "exclamationmark.bubble",btuName: "Report"){
-//                    print("test")
-//                }
-            }
-            .padding(.vertical)
-            .padding(.top)
             
-//            Spacer()
-        }
-    }
-    
-    @ViewBuilder
-    private func contentButton(sysImg : String,btuName : String, action : @escaping ()->Void) -> some View {
-        Button(action:action){
-            VStack{
-                Image(systemName: sysImg)
-                    .imageScale(.large)
-                
-                Text(btuName)
-                    .font(.caption)
             }
-            .frame(width: 70,height: 70)
-            .background(BlurView(style: .systemMaterialLight).clipShape(Circle()))
-            .padding(5)
-          
+        
         }
-        .buttonStyle(.plain)
+        
     }
     
     
+
     private func addFriend() async{
         let req = AddFriendReq(user_id: self.profile.id)
         let resp = await ChatAppService.shared.AddFriend(req: req)
@@ -120,6 +165,7 @@ struct UserContentView: View {
             break
         }
     }
+    
     private func deleteFriend() async{
         let req = DeleteFriendReq(user_id: self.profile.id)
         let resp = await ChatAppService.shared.DeleteFriend(req: req)
@@ -141,6 +187,6 @@ struct UserContentView: View {
 
 struct UserContentView_Previews: PreviewProvider {
     static var previews: some View {
-        UserContentView(profile: UserProfile(id: 1, uuid: UUID().uuidString, name: "Jacksontmm", email: "Admin@admin.com", avatar: "/default.jpg", cover: "/cover.jpg"), isFriend: .constant(true))
+        UserContentView(profile: UserProfile(id: 1, uuid: UUID().uuidString, name: "Jacksontmm", email: "Admin@admin.com", avatar: "/default.jpg", cover: "/cover.jpg"), isFriend: .constant(false))
     }
 }

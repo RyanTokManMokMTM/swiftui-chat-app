@@ -51,6 +51,25 @@ extension Date{
         
     }
     
+    func hourBetween(dataStyle : DateFormatter.Style = .short) -> String {
+        //self = current class date
+        
+        let diffComponents = Calendar.current.dateComponents([.hour,.minute,.second], from: self, to: Date.now)
+        let hours = diffComponents.hour ?? 0
+        let mins = diffComponents.minute ?? 0
+        let secs = diffComponents.second ?? 0
+        
+        if hours == 0 && mins == 0 {
+            return "\(secs) sec ago"
+        }else if hours == 0 {
+            return "\(mins) mins ago"
+        }else if hours < 24{
+            return "\(hours) hours ago"
+        } else {
+            return "1d ago"
+        }
+    }
+    
     func daysBetween(date : Date) -> Int{
         let calender = Calendar.current
         let date1 = calender.startOfDay(for: self)

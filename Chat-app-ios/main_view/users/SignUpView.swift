@@ -31,7 +31,7 @@ struct SignUpView: View {
                     }
                     
                 }
-                .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+//                .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
                 .padding(.horizontal)
                 
                 VStack{

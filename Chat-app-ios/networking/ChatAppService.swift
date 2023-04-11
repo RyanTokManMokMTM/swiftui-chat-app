@@ -307,6 +307,18 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
+    func GetUserGroups() async -> Result<GetUserGroups, Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetUserGroups.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
     func GetMessages(req : GetMessageReq) async -> Result<GetMessageResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.GetMessages.rawValue) else {
             return .failure(APIError.badUrl)
@@ -345,6 +357,44 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
+    func UploadImage(req : UploadImageReq) async -> Result<UploadImageResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.UploadImage.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+           let body = try self.Encoder.encode(req)
+            request.httpBody = body
+        } catch (let err){
+            print(err.localizedDescription)
+            return .failure(APIError.badEncoding)
+        }
+        
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func UploadFile(req : UploadFileReq) async -> Result<UploadFileResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.UploadFile.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+           let body = try self.Encoder.encode(req)
+            request.httpBody = body
+        } catch (let err){
+            print(err.localizedDescription)
+            return .failure(APIError.badEncoding)
+        }
+        
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
     private func AsyncFetchAndDecode<ResponseType : Decodable>(request : URLRequest) async -> Result<ResponseType,Error>{
         
         do {
@@ -368,9 +418,6 @@ class ChatAppService : APIService {
         }
       
     }
-    
-    
-
     
     private func AsyncPostAndDecode<ResponseType : Decodable>(request : URLRequest) async -> Result<ResponseType,Error> {
         

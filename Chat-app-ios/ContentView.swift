@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
+    @StateObject var storyModel = StoryViewModel()
     @StateObject var hub = BenHubState.shared
     @StateObject var path = NavigationState.shared
     @StateObject var userModel = UserViewModel()
@@ -24,6 +25,7 @@ struct ContentView: View {
                 HomeView(isShowMenu: $isShowMenu,menuTab: $menuIndex)
                     .environmentObject(userModel)
                     .environmentObject(UDM)
+                    .environmentObject(storyModel)
     
             }
             .accentColor(.green)
@@ -49,11 +51,11 @@ struct ContentView: View {
                             }
                             .buttonStyle(.plain)
                             
-                            menuRow(tagIndex:2,sysImg: "person.fill.badge.plus", rowName: "Requests", selected: $menuIndex){
-                                withAnimation{
-                                    self.menuIndex = 2
-                                }
-                            }
+//                            menuRow(tagIndex:2,sysImg: "person.fill.badge.plus", rowName: "Requests", selected: $menuIndex){
+//                                withAnimation{
+//                                    self.menuIndex = 2
+//                                }
+//                            }
                             
                             
                         }
@@ -61,7 +63,7 @@ struct ContentView: View {
                     .environmentObject(userModel)
                     .zIndex(2)
 //                    .navigationTitle("")
-                }
+                }.accentColor(.black)
             }
             
             if self.loginSate {
@@ -72,9 +74,6 @@ struct ContentView: View {
                     .background(.white)
                     .zIndex(1)
             }
-            
-            
-
         }
         .wait(isLoading: $hub.isWaiting){
             BenHubLoadingView(message: hub.message)
@@ -85,6 +84,10 @@ struct ContentView: View {
         .sheet(isPresented: $isShowProfile){
             ProfileView(isShowSetting: $isShowProfile)
                 .environmentObject(userModel)
+        }
+        .overlay{
+            StoryView()
+                .environmentObject(storyModel)
         }
     }
 }

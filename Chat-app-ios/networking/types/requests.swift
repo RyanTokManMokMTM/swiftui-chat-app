@@ -163,6 +163,22 @@ struct UploadGroupAvatarResp : Decodable {
     let code : UInt
 }
 
+struct GetUserGroups : Decodable{
+    let code : UInt
+    let groups : [GroupInfo]
+}
+
+struct GroupInfo : Decodable,Identifiable{
+    let id : UInt
+    let uuid : String
+    let name : String
+    let avatar : String
+    
+    var AvatarURL : URL {
+        return URL(string: RESOURCES_HOST + self.avatar)!
+    }
+}
+
 struct GetMessageReq : Encodable {
     let id : UInt
     let message_type : UInt
@@ -191,3 +207,25 @@ struct DeleteMessageReq : Encodable{
 struct DeleteMessageResp : Decodable {
     let code : UInt
 }
+
+
+struct UploadImageReq : Encodable {
+    let image_type : String
+    let data : String
+}
+
+struct UploadImageResp : Decodable {
+    let code : UInt
+    let path : String
+}
+
+struct UploadFileReq : Encodable {
+    let file_name : String
+    let data : String
+}
+
+struct UploadFileResp : Decodable {
+    let code : UInt
+    let path : String
+}
+

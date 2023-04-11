@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct Message: View {
+    @EnvironmentObject private var storyModel : StoryViewModel
     @EnvironmentObject private var userModel : UserViewModel
     @StateObject private var messageModel = MessageViewModel()
     @EnvironmentObject private var UDM : UserDataModel
 
-    
     @Binding var isActive : Bool
     @State private var isChat = false
 
@@ -22,12 +22,12 @@ struct Message: View {
             ScrollView(.horizontal,showsIndicators: false){
                 HStack(spacing: 12){
 
-                    AddActiveItme(url: URL(string: "https://i.ibb.co/MP6cDM1/9c7edaa9edbf5d777ead3820b69373f4.jpg")!)
+                    AddActiveItme()
                     
-                    ForEach(dummyActiveStory, id: \.id) { data in
-                        UserAvatarItem(avatarURL: data.AvatarURL, isRead: data.isRead)
+                    ForEach($storyModel.stories, id: \.id) { data in
+                        StoryProfileView(story: data)
+                            .environmentObject(storyModel)
                             .padding(.vertical,5)
-
                     }
                 }
                 .padding(.horizontal)
@@ -55,26 +55,33 @@ struct Message: View {
         }
         .listStyle(.plain)
         .navigationDestination(for: ActiveRooms.self){data in
-            ChattingView(chatUserData: data,messages: $UDM.currentRoomMessage)
-                .environmentObject(userModel)
-                .onAppear{
-                    self.UDM.currentRoom = self.UDM.findOneRoomWithIndex(uuid: data.id!)!
-                    self.UDM.fetchCurrentRoomMessage()
-                }
-                .onDisappear{
-                    self.UDM.currentRoom = -1
-                    self.UDM.currentRoomMessage.removeAll()
-                }
+            if let index = UDM.findOneRoomWithIndex(uuid: data.id!){
+                ChattingView(chatUserData: data,messages: $UDM.currentRoomMessage)
+                    .environmentObject(userModel)
+                    .environmentObject(UDM)
+                    .onAppear{
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08){
+                            self.UDM.currentRoom = index
+                            self.UDM.fetchCurrentRoomMessage()
+                            
+                            data.unread_message = 0
+                            self.UDM.manager.save()
+                        }
+                    }
+                    .onDisappear{
+                        self.UDM.currentRoom = -1
+                        self.UDM.currentRoomMessage.removeAll()
+                    }
+            }
+           
         }
-        
-        
     }
     
 
     @ViewBuilder
-    private func AddActiveItme(url : URL) -> some View {
+    private func AddActiveItme() -> some View {
         VStack{
-            AsyncImage(url: url, content: { img in
+            AsyncImage(url: self.userModel.profile?.AvatarURL ?? URL(string: ""), content: { img in
                img
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -100,14 +107,55 @@ struct Message: View {
         }
         
     }
+    
 
 }
 
-struct Message_Previews: PreviewProvider {
-    static var previews: some View {
-        Message(isActive: .constant(false))
+
+struct StoryProfileView : View {
+    @EnvironmentObject private var storyModel : StoryViewModel
+    @Binding var story : StoryBuddle
+    var body : some View {
+        VStack{
+            AsyncImage(url: story.profileAvatarURL, content: { img in
+                img
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width:65,height: 65)
+                    .clipShape(Circle())
+                
+            }, placeholder: {
+                ProgressView()
+                    .frame(width:65,height: 65)
+            })
+        }
+        .frame(width: 80,height: 80)
+        .clipShape(Circle())
+        .overlay{
+            //            if isActive {
+            if !story.isSeen {
+                Circle()
+                    .strokeBorder(LinearGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]), startPoint: .bottom, endPoint: .top),lineWidth: 3)
+            }else {
+                Circle()
+                    .strokeBorder(Color(uiColor: .systemGray4),lineWidth: 3)
+            }
+        }
+        .onTapGesture {
+            withAnimation{
+                self.story.isSeen = true
+                self.storyModel.isShowStory = true
+                self.storyModel.currentStory = self.story.id
+            }
+        }
     }
 }
+
+//struct Message_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Message(isActive: .constant(false))
+//    }
+//}
 
 struct ContentInfo : Identifiable{
     let id : Int
