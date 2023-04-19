@@ -229,3 +229,48 @@ struct UploadFileResp : Decodable {
     let path : String
 }
 
+//MARK: STORIES
+struct CreateStoryResp : Decodable {
+    let code : UInt
+    let story_id : uint
+}
+
+struct GetUserStoriesResp : Decodable {
+    let code : UInt
+    let story_ids : [UInt]
+}
+
+struct GetStoryInfoReq {
+    let story_id : UInt
+}
+struct GetStoryInfoResp : Decodable {
+    let code : UInt
+    let story_id : UInt
+    let media_url : String
+    let create_at : UInt
+}
+
+struct DeleteStoryReq : Encodable {
+    let story_id : UInt
+}
+struct DeleteStoryResp : Decodable {
+    let code : UInt
+}
+
+struct GetActiveStoryResp : Decodable {
+    let code : UInt
+    let active_stories : [FriendStory]
+}
+
+struct FriendStory : Decodable,Identifiable{
+    let id : UInt
+    let uuid : String
+    let name : String
+    let avatar : String
+    var is_seen : Bool
+    let stories_ids : [UInt]
+    
+    var AvatarURL : URL {
+        return URL(string: RESOURCES_HOST + self.avatar)!
+    }
+}

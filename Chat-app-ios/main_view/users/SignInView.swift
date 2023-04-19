@@ -21,6 +21,10 @@ struct SignInView: View {
     @Binding var isLogin : Bool
     @EnvironmentObject private var userViewModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
+    @EnvironmentObject private var userStory : UserStoryViewModel
+    @EnvironmentObject private var storyModel : StoryViewModel
+
+    
     var body: some View {
         ZStack{
             VStack{
@@ -78,6 +82,8 @@ struct SignInView: View {
                    
                     Task.init{
                         await self.sendSignInRequest()
+                        //TODO: Update Token
+                    
                     }
                 }){
                     Group{
@@ -149,6 +155,10 @@ struct SignInView: View {
                 Webcoket.shared.connect() //TODO: connect to ws server
                 Webcoket.shared.userModel = userViewModel
 //                Webcoket.shared.userData = UDM
+                Task{
+                    await self.userStory.GetUserStories()
+                    await self.storyModel.GetActiveStory()
+                }
                 break
             case .failure(let err):
                 BenHubState.shared.isWaiting = false

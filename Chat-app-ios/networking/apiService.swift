@@ -40,6 +40,12 @@ protocol APIService {
     
     func UploadImage(req : UploadImageReq) async -> Result<UploadImageResp,Error>
     func UploadFile(req : UploadFileReq) async -> Result<UploadFileResp,Error>
+     
+    func CreateStory(mediaData : Data) async -> Result<CreateStoryResp,Error>
+    func DeleteStory(req : DeleteStoryReq) async  -> Result<DeleteStoryResp,Error>
+    func GetUserStories() async  -> Result<GetUserStoriesResp,Error>
+    func GetActiveStories() async  -> Result<GetActiveStoryResp,Error>
+    func GetStoryInfo(storyID : UInt) async  -> Result<GetStoryInfoResp,Error>
 }
 
 enum APIError : Error, CustomNSError{
@@ -97,6 +103,13 @@ enum APIEndPoint : String,CaseIterable {
     
     case UploadImage
     case UploadFile
+    
+    case AddStory
+    case DeleteStory
+    case GetUserStories
+    case GetActiveStories
+    case GetStoryInfo
+    
     var rawValue: String {
         switch self {
         case .HealthCheck : return  "/ping"
@@ -127,6 +140,12 @@ enum APIEndPoint : String,CaseIterable {
             
         case .UploadImage : return "/file/image/upload"
         case .UploadFile : return "/file/document/upload"
+            
+        case .AddStory: return "/story"
+        case .DeleteStory: return "/story"
+        case .GetUserStories: return "/stories"
+        case .GetActiveStories: return "/stories/active"
+        case .GetStoryInfo: return "/story/"
         }
     }
 }

@@ -66,7 +66,7 @@ class UserDataModel : ObservableObject {
         return activeRoom
     }
     
-    func addRoomMessage(roomIndex: Int,sender_uuid : String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String? = nil,fileSize : Int64 = 0) -> RoomMessages {
+    func addRoomMessage(roomIndex: Int,sender_uuid : String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String? = nil,fileSize : Int64 = 0,storyAvailabeTime : Int32 = 0) -> RoomMessages {
         let newMessage = RoomMessages(context: self.manager.context)
         newMessage.id = UUID()
         newMessage.content = content
@@ -79,13 +79,14 @@ class UserDataModel : ObservableObject {
         newMessage.tempData = tempData
         newMessage.file_name = fileName
         newMessage.file_size = fileSize
+        newMessage.story_available_time = storyAvailabeTime
         self.rooms[roomIndex].addToMessages(newMessage)
         self.manager.save()
         
         return newMessage
     }
     
-    func addRoomMessage(sender_uuid : String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,sent_at : Date,fileURL : String = "",fileName: String? = nil,fileSize : Int64 = 0) -> RoomMessages {
+    func addRoomMessage(sender_uuid : String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,sent_at : Date,fileURL : String = "",fileName: String? = nil,fileSize : Int64 = 0,storyAvailabeTime : Int32 = 0) -> RoomMessages {
         let newMessage = RoomMessages(context: self.manager.context)
         newMessage.id = UUID()
         newMessage.content = content
@@ -96,6 +97,7 @@ class UserDataModel : ObservableObject {
         newMessage.sender_name = sender_name
         newMessage.file_name = fileName
         newMessage.file_size = fileSize
+        newMessage.story_available_time = storyAvailabeTime
         self.manager.save()
         
         return newMessage

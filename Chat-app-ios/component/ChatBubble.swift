@@ -101,13 +101,15 @@ struct ChatBubble<Content> : View where Content : View {
     let contentType : Int
     let messageType : Int
     let userName : String
-    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,@ViewBuilder content : @escaping ()->Content){
+    let isSame : Bool
+    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,isSame : Bool = false,@ViewBuilder content : @escaping ()->Content){
         self.direction = direction
         self.content = content
         self.userAvatarURL = userAvatarURL
         self.contentType = contentType
         self.messageType = messageType
         self.userName = userName
+        self.isSame = isSame
     }
     
     var body: some View {
@@ -117,21 +119,21 @@ struct ChatBubble<Content> : View where Content : View {
             }
             HStack(alignment:.top){
                 if direction == .receiver {
-                    
-                    AsyncImage(url: userAvatarURL, content: { img in
-                        img
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width:35,height: 35)
-                            .clipShape(Circle())
-                        
-                    }, placeholder: {
-                        ProgressView()
-                            .frame(width:35,height: 35)
-                    })
-                    
-                    
-                    
+                    if self.isSame {
+                        Color.clear.frame(width:35,height: 35)
+                    } else {
+                        AsyncImage(url: userAvatarURL, content: { img in
+                            img
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width:35,height: 35)
+                                .clipShape(Circle())
+                            
+                        }, placeholder: {
+                            ProgressView()
+                                .frame(width:35,height: 35)
+                        })
+                    }
                 }
                 
                 VStack(alignment:.leading,spacing:5){
@@ -158,7 +160,7 @@ struct ChatBubble<Content> : View where Content : View {
             }
         }
         .padding((direction == .receiver) ? .leading : .trailing,20)
-        .padding([.top,.bottom],5)
+        .padding([.top,.bottom],self.contentType == 6 ? 0 : 5)
         .padding((direction == .sender) ? .leading : .trailing,70)
     }
 }

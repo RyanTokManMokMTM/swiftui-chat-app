@@ -25,7 +25,8 @@ struct ChattingView: View {
     @State private var messageIndex : Int = 0
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedData : Data? = nil
-    
+    @State private var isShowImage : Bool = false
+    @State private var showImageURL : String = ""
     @State private var showPicker = false
     var body: some View {
         VStack{
@@ -33,104 +34,187 @@ struct ChattingView: View {
                 ScrollView(.vertical){
                     VStack{
                         ForEach(messages.indices,id :\.self) { index in
-                            ChatBubble(direction: messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender_name!, userAvatarURL: messages[index].AvatarURL, contentType: Int(messages[index].content_type)){
-                                
-                                if messages[index].content_type == 1 {
-                                    Text(messages[index].content ?? "")
-                                        .font(.system(size:15))
-                                        .padding(10)
-                                        .foregroundColor(Color.white)
-                                        .background(Color.green)
-                                }else if messages[index].content_type == 2{
-                                    ZStack{
-                                        if messages[index].tempData != nil {
-                                            Image(uiImage: UIImage(data: self.messages[index].tempData!)!)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .overlay{
-                                                    ZStack{
-                                                        Color.black.opacity(0.75)
-                                                        HStack{
-                                                            Text("Uploading...")
-                                                                .foregroundColor(.white)
-                                                        }
-                                                       
-                                                    }
-                                                }
-                                        }else {
-                                            AsyncImage(url: messages[index].FileURL, content: {img in
-                                                img
+                            VStack(spacing:0){
+                                ChatBubble(direction: messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender_name!, userAvatarURL: messages[index].AvatarURL, contentType: Int(messages[index].content_type)){
+                                    
+                                    if messages[index].content_type == 1 {
+                                        Text(messages[index].content ?? "")
+                                            .font(.system(size:15))
+                                            .padding(10)
+                                            .foregroundColor(Color.white)
+                                            .background(Color.green)
+                                    }else if messages[index].content_type == 2{
+                                        ZStack{
+                                            if messages[index].tempData != nil {
+                                                Image(uiImage: UIImage(data: self.messages[index].tempData!)!)
                                                     .resizable()
                                                     .aspectRatio(contentMode: .fill)
-                                            }, placeholder: {
-                                                ProgressView()
-                                                    .frame(width: 40,height: 40)
-
-                                            })
-                                        }
-                                    }
-                                    .transition(.slide)
-                                }else if messages[index].content_type == 3{
-                                    ZStack{
-                                        if messages[index].tempData != nil {
-                                            Text("file sending")
-                                        }else {
-                                            Button(action:{
-                                                print(messages[index].url_path)
-                                            }){
-                                                HStack(alignment:.top,spacing:12){
-                                                    HStack{
-                                                        Image(systemName: "doc")
-                                                            .imageScale(.large)
-                                                            .foregroundColor(.white)
-                                                    }
-                                                    .padding()
-                                                    .cornerRadius(10)
                                                     .overlay{
-                                                        RoundedRectangle(cornerRadius: 10)
-                                                            .stroke(Color(uiColor: UIColor.systemGray6), lineWidth: 1)
+                                                        ZStack{
+                                                            Color.black.opacity(0.75)
+                                                            HStack{
+                                                                Text("Uploading...")
+                                                                    .foregroundColor(.white)
+                                                            }
+                                                            
+                                                        }
                                                     }
+                                            }else {
+                                                AsyncImage(url: messages[index].FileURL, content: {img in
+                                                    img
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .onTapGesture{
+                                                            self.showImageURL = messages[index].FileURL.absoluteString
+                                                            withAnimation{
+                                                                self.isShowImage = true
+                                                            }
+                                                        }
+                                                }, placeholder: {
+                                                    ProgressView()
+                                                        .frame(width: 40,height: 40)
                                                     
-                                                    
+                                                })
+                                            }
+                                        }
+                                        .transition(.slide)
+                                    }else if messages[index].content_type == 3{
+                                        ZStack{
+                                            if messages[index].tempData != nil {
+                                                Text("file sending")
+                                            }else {
+                                                Button(action:{
+                                                    //                                                print(messages[index].url_path)
+                                                }){
+                                                    HStack(alignment:.top,spacing:12){
+                                                        HStack{
+                                                            Image(systemName: "doc")
+                                                                .imageScale(.large)
+                                                                .foregroundColor(.white)
+                                                        }
+                                                        .padding()
+                                                        .cornerRadius(10)
+                                                        .overlay{
+                                                            RoundedRectangle(cornerRadius: 10)
+                                                                .stroke(Color(uiColor: UIColor.systemGray6), lineWidth: 1)
+                                                        }
                                                         
-                                                    VStack(alignment: .leading,spacing: 5){
-                                                        Text(messages[index].file_name ?? "" )
-                                                            .bold()
-                                                            .font(.headline)
-                                                            .multilineTextAlignment(.leading)
                                                         
-                                                        Text("size : \(String(format: "%.2f", messages[index].FileSizeInMB)) MB")
-                                                            .font(.system(size:14))
+                                                        
+                                                        VStack(alignment: .leading,spacing: 5){
+                                                            Text(messages[index].file_name ?? "" )
+                                                                .bold()
+                                                                .font(.headline)
+                                                                .multilineTextAlignment(.leading)
+                                                            
+                                                            Text("size : \(String(format: "%.2f", messages[index].FileSizeInMB)) MB")
+                                                                .font(.system(size:14))
+                                                            
+                                                        }
                                                         
                                                     }
-                                                        
+                                                    .padding(10)
+                                                    .foregroundColor(Color.white)
+                                                    .background(.green)
                                                 }
-                                                .padding(10)
-                                                .foregroundColor(Color.white)
-                                                .background(.green)
+                                                
+                                            }
+                                        }
+                                        .transition(.identity)
+                                    }
+                                    else if messages[index].content_type == 6 {
+                                        VStack(alignment:messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid  ? .leading : .trailing,spacing:0){
+                                            
+                                            
+                                            Text("Reply to a story")
+                                                .font(.footnote)
+                                                .foregroundColor(.gray)
+                                            
+                                            
+                                            if messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid {
+                                                
+                                                HStack {
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .fill(Color(uiColor:UIColor.systemGray2))
+                                                        .frame(width:5,height:100)
+                                                        .padding(.vertical)
+                                                    AsyncImage(url: messages[index].FileURL, content: { img in
+                                                        img
+                                                            .resizable()
+                                                            .frame(maxWidth:60,maxHeight:95)
+                                                            .aspectRatio(contentMode: .fill)
+                                                            .cornerRadius(10)
+                                                        
+                                                    }, placeholder: {
+                                                        ProgressView()
+                                                            .frame(width: 30,height: 30)
+                                                        
+                                                    })
+                                                }
+                                                
+                                                
+                                            }else {
+                                                HStack{
+                                                    
+                                                    if messages[index].isStoryAvailable {
+                                                        AsyncImage(url: messages[index].FileURL, content: {img in
+                                                            img
+                                                                .resizable()
+                                                                .frame(maxWidth:60,maxHeight:95)
+                                                                .aspectRatio(contentMode: .fill)
+                                                                .cornerRadius(10)
+                                                                .frame(height:40)
+                                                        }, placeholder: {
+                                                            ProgressView()
+                                                                .frame(width: 30,height: 30)
+                                                            
+                                                        })
+                                                    }else {
+                                                        Text("Story unavaiable.")
+                                                            .font(.subheadline)
+                                                            .foregroundColor(.gray)
+                                                    }
+                                                    
+                                                    
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .fill(Color(uiColor:UIColor.systemGray2))
+                                                        .frame(width:5,height:messages[index].isStoryAvailable ? 100 : 20)
+                                                        .padding(.vertical)
+                                                }
+                                                
                                             }
                                             
                                         }
+                                        
+                                        
                                     }
-                                    .transition(.identity)
                                 }
                                 
-                            }
-                            .id(index)
+                                if  messages[index].content_type == 6 {
+                                    ChatBubble(direction: messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender_name!, userAvatarURL: messages[index].AvatarURL, contentType: 1,isSame:true){
+                                        Text(messages[index].content ?? "")
+                                            .font(.system(size:15))
+                                            .padding(10)
+                                            .foregroundColor(Color.white)
+                                            .background(Color.green)
+                                    }
+                                }
+                            }.id(index)
+                            
                         }
                         .onAppear(){
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                                print(messages.count)
+                                //                                print(messages.count)
                                 withAnimation{
                                     scroll.scrollTo(messages.count - 1)
                                 }
-                               
+                                
                             }
-                         
+                            
                         }
-                       
+                        
                         .onChange(of: messages.count){ _ in
-//                            print(index)
+                            //                            print(index)
                             withAnimation{
                                 scroll.scrollTo(messages.count - 1)
                             }
@@ -138,9 +222,6 @@ struct ChattingView: View {
                         }
                     }
                 }
-                
-
-                
             }
             
             InputField()
@@ -191,7 +272,7 @@ struct ChattingView: View {
                     
                     let fileFormat = data.fileExtension
                     let base64Str = fileBase64Encoding(data: data,format: fileFormat)
-//                    print(fileFormat)
+                    //                    print(fileFormat)
                     Task.init{
                         await self.sendImage(data: base64Str, imageType: fileFormat)
                     }
@@ -208,15 +289,18 @@ struct ChattingView: View {
                     Task.init{
                         await self.sendFile(data: fileData.base64EncodedString(), fileName: fileName, fileSize: fileSize)
                     }
-//
-//
+                    //
+                    //
                 } catch(let err){
                     print("conver file to data failed \(err.localizedDescription)")
                 }
-             
+                
             case .failure(let failure):
                 print(failure.localizedDescription)
             }
+        }
+        .fullScreenCover(isPresented: $isShowImage){
+            ShowImageView(imageURL: self.showImageURL, isShowImage: $isShowImage)
         }
     }
     
@@ -281,7 +365,7 @@ struct ChattingView: View {
          
          */
         
-        let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil)
+        let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
         Webcoket.shared.onSend(msg: msg)
         Webcoket.shared.handleMessage(event:.send,msg: msg)
         self.text.removeAll()
@@ -310,7 +394,7 @@ struct ChattingView: View {
             }
             
             
-            let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil)
+            let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
             Webcoket.shared.onSend(msg: msg)
         case .failure(let err):
             print(err.localizedDescription)
@@ -341,7 +425,7 @@ struct ChattingView: View {
             }
             
             
-            let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: fileName,fileSize: Int16(fileSize))
+            let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: fileName,fileSize: Int16(fileSize),storyAvailableTime: nil)
             Webcoket.shared.onSend(msg: msg)
         case .failure(let err):
             print(err.localizedDescription)

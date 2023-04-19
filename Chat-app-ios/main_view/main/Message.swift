@@ -10,12 +10,14 @@ import SwiftUI
 struct Message: View {
     @EnvironmentObject private var storyModel : StoryViewModel
     @EnvironmentObject private var userModel : UserViewModel
+    @EnvironmentObject private var userStory : UserStoryViewModel
     @StateObject private var messageModel = MessageViewModel()
     @EnvironmentObject private var UDM : UserDataModel
 
     @Binding var isActive : Bool
+    @Binding var isAddStory : Bool
     @State private var isChat = false
-
+    @State private var isShowStory = false
     var body: some View {
         
         List{
@@ -24,7 +26,7 @@ struct Message: View {
 
                     AddActiveItme()
                     
-                    ForEach($storyModel.stories, id: \.id) { data in
+                    ForEach($storyModel.activeStories, id: \.id) { data in
                         StoryProfileView(story: data)
                             .environmentObject(storyModel)
                             .padding(.vertical,5)
@@ -80,13 +82,15 @@ struct Message: View {
 
     @ViewBuilder
     private func AddActiveItme() -> some View {
+        
+        //TODO: if current user is not post any Story -> add button
+        //TODO: else current user posted any -> show user post
         VStack{
             AsyncImage(url: self.userModel.profile?.AvatarURL ?? URL(string: ""), content: { img in
                img
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width:75,height: 75)
-                
+                    .frame(width: userStory.userStories.isEmpty ? 75 : 65,height: userStory.userStories.isEmpty ? 75 : 65)
                     .clipShape(Circle())
                    
                     
@@ -99,13 +103,32 @@ struct Message: View {
         .frame(width: 80,height: 80)
         .clipShape(Circle())
         .overlay(alignment:.bottomTrailing){
-            Image(systemName: "plus.circle.fill")
-                .imageScale(.large)
-                .foregroundColor(.blue)
-                .background(
-                    Color.white.clipShape(Circle()))
+            if userStory.userStories.isEmpty {
+                Image(systemName: "plus.circle.fill")
+                    .imageScale(.large)
+                    .foregroundColor(.blue)
+                    .background(
+                        Color.white.clipShape(Circle()))
+            }else {
+                if !userStory.isSeen {
+                    Circle()
+                        .strokeBorder(LinearGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]), startPoint: .bottom, endPoint: .top),lineWidth: 3)
+                }else {
+                    Circle()
+                        .strokeBorder(Color(uiColor: .systemGray4),lineWidth: 3)
+                }
+            }
         }
-        
+        .onTapGesture {
+            if userStory.userStories.isEmpty {
+                self.isAddStory = true
+            }else {
+                DispatchQueue.main.async {
+                    userStory.isShowStory = true
+                }
+            }
+        }
+ 
     }
     
 
@@ -114,10 +137,10 @@ struct Message: View {
 
 struct StoryProfileView : View {
     @EnvironmentObject private var storyModel : StoryViewModel
-    @Binding var story : StoryBuddle
+    @Binding var story : FriendStory
     var body : some View {
         VStack{
-            AsyncImage(url: story.profileAvatarURL, content: { img in
+            AsyncImage(url: story.AvatarURL, content: { img in
                 img
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -133,7 +156,7 @@ struct StoryProfileView : View {
         .clipShape(Circle())
         .overlay{
             //            if isActive {
-            if !story.isSeen {
+            if !story.is_seen {
                 Circle()
                     .strokeBorder(LinearGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]), startPoint: .bottom, endPoint: .top),lineWidth: 3)
             }else {
@@ -143,7 +166,7 @@ struct StoryProfileView : View {
         }
         .onTapGesture {
             withAnimation{
-                self.story.isSeen = true
+                self.story.is_seen = true
                 self.storyModel.isShowStory = true
                 self.storyModel.currentStory = self.story.id
             }

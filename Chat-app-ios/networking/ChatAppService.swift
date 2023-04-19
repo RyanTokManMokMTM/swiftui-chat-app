@@ -395,6 +395,85 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
+    func CreateStory(mediaData : Data) async -> Result<CreateStoryResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.AddStory.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        let boundary = UUID().uuidString
+        let httpBody = NSMutableData()
+        
+        httpBody.append(convertFileData(fieldName: "story_media", fileName: "\(UUID().uuidString).\(mediaData.fileExtension)"  , mimeType: "image/\(mediaData.fileExtension)", fileData: mediaData, using: boundary))
+        httpBody.appendString("--\(boundary)--")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        request.httpBody = httpBody as Data
+        
+        //Image Here
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func DeleteStory(req : DeleteStoryReq) async  -> Result<DeleteStoryResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.DeleteStory.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        
+        do {
+           let body = try self.Encoder.encode(req)
+            request.httpBody = body
+        } catch (let err){
+            print(err.localizedDescription)
+            return .failure(APIError.badEncoding)
+        }
+        
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func GetUserStories() async  -> Result<GetUserStoriesResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetUserStories.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+       
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func GetActiveStories() async  -> Result<GetActiveStoryResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetActiveStories.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func GetStoryInfo(storyID : UInt) async  -> Result<GetStoryInfoResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStoryInfo.rawValue + storyID.description) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
     private func AsyncFetchAndDecode<ResponseType : Decodable>(request : URLRequest) async -> Result<ResponseType,Error>{
         
         do {

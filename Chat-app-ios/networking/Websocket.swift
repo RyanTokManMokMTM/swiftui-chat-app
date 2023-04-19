@@ -30,9 +30,10 @@ struct WSMessage : Codable {
     let fileSize : Int16?
 //    let fileType : String?
 //    let file : [UInt8]?
+    let storyAvailableTime : Int32?
+    
 
 }
-
 
 final class Webcoket {
     let WS_HOST = "ws://127.0.0.1:8000/ws"
@@ -71,7 +72,7 @@ final class Webcoket {
         
     }
     
-  
+    
     func onReceive(result : Result<URLSessionWebSocketTask.Message, Error>) -> Void {
         self.session?.receive(completionHandler: self.onReceive(result:))
         switch result {
@@ -91,7 +92,7 @@ final class Webcoket {
                 
             case .data(let data):
                 print("received a data")
-//                print(data)
+                print(data)
                 do {
                     let msg = try JSONDecoder().decode(WSMessage.self, from: data)
                     print(msg)
@@ -151,12 +152,12 @@ final class Webcoket {
     
     func sendPong(){
         print("send pong message to server")
-        let msg = WSMessage(avatar: nil, fromUserName: nil, fromUUID: nil, toUUID: nil, content: "pong", contentType: nil, type: 2, messageType: nil,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil)
+        let msg = WSMessage(avatar: nil, fromUserName: nil, fromUUID: nil, toUUID: nil, content: "pong", contentType: nil, type: 2, messageType: nil,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil, storyAvailableTime: nil)
         onSend(msg: msg)
     }
     
     func handleMessage(event : MessageEvent,msg : WSMessage){
-        print(msg)
+        
         DispatchQueue.main.async { [self] in
             print("receving a message / sending a message....")
             var roomID : UUID
@@ -181,7 +182,7 @@ final class Webcoket {
                 UserDataModel.shared.rooms[index].last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
                 UserDataModel.shared.rooms[index].last_sent_time = sentTime
                 
-                let msg = UserDataModel.shared.addRoomMessage(roomIndex: index, sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "")
+                let msg = UserDataModel.shared.addRoomMessage(roomIndex: index, sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
                 
                 if UserDataModel.shared.currentRoom == index {
                     UserDataModel.shared.currentRoomMessage.append(msg)
@@ -201,7 +202,7 @@ final class Webcoket {
                     room.last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
                     room.last_sent_time = sentTime
                     
-                    let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "")
+                    let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
                     
                     room.addToMessages(msg)
                     
@@ -216,7 +217,11 @@ final class Webcoket {
         
     }
     
+    @MainActor
     private func fileConentMessage(fromUUID : String,contentType : Int16) -> String {
+        if contentType == 6 {
+            return "Reply to a story"
+        }
         return self.userModel!.profile!.uuid == fromUUID ? "[Sent a \(contentType == 2 ? "image" : "file")]" : "[Received a \(contentType == 2 ? "image" : "file")]"
     }
 }

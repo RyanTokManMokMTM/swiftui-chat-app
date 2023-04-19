@@ -2,7 +2,7 @@
 //  ActiveRooms+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 9/4/2023.
+//  Created by Jackson.tmm on 18/4/2023.
 //
 //
 
@@ -55,3 +55,4 @@ extension ActiveRooms : Identifiable {
     }
 
 }
+

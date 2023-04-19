@@ -12,6 +12,7 @@ struct SideMenu<Content:View>: View {
     @EnvironmentObject private var userVM : UserViewModel
     @Binding var isShow : Bool
     @Binding var isShowProfile : Bool
+    @Binding var isAddStory : Bool
     @State private var offset = 0.0
     @State private var isAnimated = false
     @State private var isEditProfile = false
@@ -123,6 +124,21 @@ struct SideMenu<Content:View>: View {
                 .bold()
             
             Spacer()
+            
+            
+            
+            Button(action: {
+                withAnimation{
+//                    self.isShowProfile.toggle()
+                    withAnimation{
+                        self.isAddStory = true
+                    }
+                }
+            }, label: {
+                Image(systemName: "plus.circle")
+                    .imageScale(.large)
+            })
+            .buttonStyle(.plain)
             
             Button(action: {
                 withAnimation{

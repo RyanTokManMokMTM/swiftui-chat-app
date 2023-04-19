@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct MenuTag : Identifiable {
     let id : Int
@@ -24,6 +25,7 @@ struct HomeView: View {
     @EnvironmentObject private var storyModel : StoryViewModel
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
+    @EnvironmentObject private var userStory : UserStoryViewModel
     @Environment(\.colorScheme) var colorScheme
 
     @State private var index = 0
@@ -32,17 +34,18 @@ struct HomeView: View {
     @State private var isActive = true
     @Binding var isShowMenu : Bool
     @Binding var menuTab : Int
-    
+    @Binding var isAddStory : Bool
+    @State private var selectedItem : PhotosPickerItem? = nil
     
     @State private var isShowProfile : Bool = false
     var body: some View {
         ZStack{
- 
             TabView(selection:$index){
-                Message(isActive: $isActive)
+                Message(isActive: $isActive,isAddStory:$isAddStory)
                     .environmentObject(userModel)
                     .environmentObject(UDM)
                     .environmentObject(storyModel)
+                    .environmentObject(userStory)
                     .tabItem{
                         VStack{
                             Image(systemName: "message.fill")
@@ -125,7 +128,24 @@ struct HomeView: View {
             AddContent(isAddContent: $isShowSheet)
                 .environmentObject(UDM)
         }
-
+        .fullScreenCover(isPresented: $isAddStory){
+            StoryPhototView(isAddStory: $isAddStory)
+                .environmentObject(userModel)
+                .environmentObject(userStory)
+        }
+        .fullScreenCover(isPresented: $storyModel.isShowStory){
+            StoryOtherView()
+                .environmentObject(storyModel)
+                .onDisappear{
+                    self.storyModel.currentStory = 0
+                }
+        }
+        .fullScreenCover(isPresented: $userStory.isShowStory){
+            StoryUserView()
+                .environmentObject(userModel)
+                .environmentObject(userStory)
+        }
+        
       
 //        .accentColor(.green)
         
@@ -133,9 +153,9 @@ struct HomeView: View {
     
 
 }
-
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView(isShowMenu: .constant(false), menuTab: .constant(0))
-    }
-}
+//
+//struct HomeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        HomeView(isShowMenu: .constant(false), menuTab: .constant(0))
+//    }
+//}

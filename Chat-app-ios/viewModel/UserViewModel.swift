@@ -6,6 +6,8 @@
 //
 
 import Foundation
+
+@MainActor
 class UserViewModel : ObservableObject {
     @Published var profile : UserProfile?
     @Published var friendsList : [UserProfile] = [UserProfile]()
@@ -29,6 +31,8 @@ class UserViewModel : ObservableObject {
             }
         }
     }
+    
+
 }
 
 struct UserProfile : Identifiable ,Decodable {
