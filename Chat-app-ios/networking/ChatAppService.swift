@@ -66,14 +66,49 @@ class ChatAppService : APIService {
     }
     
     func GetUserInfo(req : GetUserInfoReq) async -> Result<GetUserInfoResp,Error> {
-        guard let url = URL(string: HTTP_HOST + APIEndPoint.UserProfile.rawValue + req.user_id.description) else {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetUserInfo.rawValue) else {
             return .failure(APIError.badUrl)
         }
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        if req.user_id != nil{
+            components.queryItems = [
+                URLQueryItem(name: "id", value: req.user_id!.description)
+            ]
+        }else {
+            components.queryItems = [
+                URLQueryItem(name: "uuid", value: req.uuid!)
+            ]
+        }
 
+        var request = URLRequest(url: URL(string : components.string ?? "")!)
+        request.httpMethod = "GET"
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
+    func GetUserProfileInfo(req : GetUserProfileReq) async -> Result<GetUserProfileResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.UserProfile.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        if req.user_id != nil{
+            components.queryItems = [
+                URLQueryItem(name: "id", value: req.user_id!.description)
+            ]
+        }else {
+            components.queryItems = [
+                URLQueryItem(name: "uuid", value: req.uuid!)
+            ]
+        }
+      
+//        print(components.string)
+        var request = URLRequest(url: URL(string : components.string ?? "")!)
+        request.httpMethod = "GET"
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         return await self.AsyncFetchAndDecode(request: request)
     }
@@ -84,9 +119,34 @@ class ChatAppService : APIService {
         }
         
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = "PATCH"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        do {
+            let body = try self.Encoder.encode(req)
+            request.httpBody = body
+        }catch {
+            return .failure(APIError.badEncoding)
+        }
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func UpdateStatusMessage(req : UpdateStatusReq) async -> Result<UpdateStatusResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.UpdateStatus.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        
+        do {
+            let body = try self.Encoder.encode(req)
+            request.httpBody = body
+        }catch {
+            return .failure(APIError.badEncoding)
+        }
         return await self.AsyncPostAndDecode(request: request)
     }
     
@@ -103,6 +163,30 @@ class ChatAppService : APIService {
         let httpBody = NSMutableData()
         
         httpBody.append(convertFileData(fieldName: "avatar", fileName: "\(UUID().uuidString).\(imgData.fileExtension)"  , mimeType: "image/\(imgData.fileExtension)", fileData: imgData, using: boundary))
+        httpBody.appendString("--\(boundary)--")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        request.httpBody = httpBody as Data
+//        request.addValue("content-type", forHTTPHeaderField: "application/json")
+
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func UploadUserCover(imgData : Data) async -> Result<UploadCoverResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.UploadCover.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        //TODO: Add File here....
+        //TODO: multipart/form-data
+        
+        let boundary = UUID().uuidString
+        let httpBody = NSMutableData()
+        
+        httpBody.append(convertFileData(fieldName: "cover", fileName: "\(UUID().uuidString).\(imgData.fileExtension)"  , mimeType: "image/\(imgData.fileExtension)", fileData: imgData, using: boundary))
         httpBody.appendString("--\(boundary)--")
         
         var request = URLRequest(url: url)
@@ -268,6 +352,29 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
+    func SearchGroup(query : String) async -> Result<SearchGroupResp,Error> {
+        guard let url = URL(string : HTTP_HOST + APIEndPoint.SearchGroup.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        
+        var component = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        component.queryItems = [
+            URLQueryItem(name: "query", value: query)
+        ]
+        
+        guard let queryURL = component.url else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: queryURL)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
     func UploadGroupAvatar(imgData : Data,req : UploadGroupAvatarReq) async -> Result<UploadGroupAvatarResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.UploadGroupAvatar.rawValue + req.group_id.description) else {
             return .failure(APIError.badUrl)
@@ -318,6 +425,20 @@ class ChatAppService : APIService {
         
         return await self.AsyncFetchAndDecode(request: request)
     }
+    
+    func GetGroupInfoByUUID(uuid : String) async -> Result<GetGroupInfoByUUIDResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetGroupInfoByUUID.rawValue + uuid) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
     
     func GetMessages(req : GetMessageReq) async -> Result<GetMessageResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.GetMessages.rawValue) else {

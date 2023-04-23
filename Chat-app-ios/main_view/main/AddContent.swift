@@ -33,7 +33,7 @@ struct AddContent: View {
                     }
                     
                     //Joined by gourp ID???
-                    NavigationLink(destination: SelectGroupMembers(friends: $friends,isAddContent: $isAddContent)
+                    NavigationLink(destination: GroupSearchView()
                         .environmentObject(userModel))
                     {
                         Label("Join a group", systemImage: "person.badge.plus")

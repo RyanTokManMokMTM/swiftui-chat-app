@@ -40,49 +40,49 @@ struct HomeView: View {
     @State private var isShowProfile : Bool = false
     var body: some View {
         ZStack{
-            TabView(selection:$index){
+//            TabView(selection:$index){
                 Message(isActive: $isActive,isAddStory:$isAddStory)
                     .environmentObject(userModel)
                     .environmentObject(UDM)
                     .environmentObject(storyModel)
                     .environmentObject(userStory)
-                    .tabItem{
-                        VStack{
-                            Image(systemName: "message.fill")
-                            Text("Messages")
-                        }
-                    }
-                    .tag(0)
-                    .badge(99)
+//                    .tabItem{
+//                        VStack{
+//                            Image(systemName: "message.fill")
+//                            Text("Messages")
+//                        }
+//                    }
+//                    .tag(0)
+//                    .badge(99)
+                
+//
+//                CallView()
+//                    .tabItem{
+//                        VStack{
+//                            Image(systemName: "phone.fill")
+//                            Text("Calls")
+//                        }
+//
+//                    }
+//                    .tag(1)
+//                    .environmentObject(userModel)
+//
+//                //            NavigationStack{
+//                FriendContent()
+//                    .tabItem{
+//                        VStack{
+//                            Image(systemName: "person.2")
+//                            Text("Friends")
+//                        }
+//
+//                    }
+//                    .tag(2)
+//                    .badge(5)
+//                    .environmentObject(userModel)
+//
                 
                 
-                CallView()
-                    .tabItem{
-                        VStack{
-                            Image(systemName: "phone.fill")
-                            Text("Calls")
-                        }
-                        
-                    }
-                    .tag(1)
-                    .environmentObject(userModel)
-                
-                //            NavigationStack{
-                FriendContent()
-                    .tabItem{
-                        VStack{
-                            Image(systemName: "person.2")
-                            Text("Friends")
-                        }
-                        
-                    }
-                    .tag(2)
-                    .badge(5)
-                    .environmentObject(userModel)
-                
-                
-                
-            }
+//            }
             .navigationTitle("99+")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar{
@@ -122,7 +122,7 @@ struct HomeView: View {
                 }
                 
             }
-            .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
+//            .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
         }
         .sheet(isPresented: $isShowSheet){
             AddContent(isAddContent: $isShowSheet)

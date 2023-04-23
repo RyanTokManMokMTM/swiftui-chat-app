@@ -59,21 +59,21 @@ struct SignInView: View {
     //                .padding(.horizontal)
                     
                     
-                    HStack(spacing:2){
-                        Image(systemName: isCheck ? "checkmark.circle.fill":  "circle")
-                            .foregroundColor(isCheck ? .blue : .gray)
-                            .bold()
-                            .onTapGesture {
-                                DispatchQueue.main.async {
-                                    self.isCheck = !self.isCheck
-                                }
-                            }
-                        Text("Read and agree our service policy.")
-                            .foregroundColor(.gray)
-                            .font(.subheadline)
-                            .padding(5)
-
-                    }
+//                    HStack(spacing:2){
+//                        Image(systemName: isCheck ? "checkmark.circle.fill":  "circle")
+//                            .foregroundColor(isCheck ? .blue : .gray)
+//                            .bold()
+//                            .onTapGesture {
+//                                DispatchQueue.main.async {
+//                                    self.isCheck = !self.isCheck
+//                                }
+//                            }
+//                        Text("Read and agree our service policy.")
+//                            .foregroundColor(.gray)
+//                            .font(.subheadline)
+//                            .padding(5)
+//
+//                    }
                     
                 }
                 .padding(.horizontal)

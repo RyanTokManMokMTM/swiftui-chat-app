@@ -87,22 +87,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FA666ACC-A22E-4FA5-A74E-4E1B7885D7C4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Chat-app-ios/networking/Websocket.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
-            landmarkName = "userModel"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "C260CA51-3528-48DE-83F3-5ABA0C31BB7C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -110,10 +94,106 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
-            landmarkName = "handleMessage(event:msg:)"
+            startingLineNumber = "197"
+            endingLineNumber = "197"
+            landmarkName = "handleMessage(event:msg:isReplyComment:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "475F95FB-F4A5-40B6-B8EF-2CBD5EC7437E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/ChattingView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "390"
+            endingLineNumber = "390"
+            landmarkName = "ChattingView"
+            landmarkType = "14">
+            <Locations>
+               <Location
+                  uuid = "475F95FB-F4A5-40B6-B8EF-2CBD5EC7437E - 14b557ca7c21ea74"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "default argument 0 of Chat_app_ios.ChattingView.sendMessage(contentType: Swift.Int16) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Chat-app-ios/Chat-app-ios/main_view/main/ChattingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "391"
+                  endingLineNumber = "391"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  uuid = "475F95FB-F4A5-40B6-B8EF-2CBD5EC7437E - b1328801dd1a0ae3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.ChattingView.sendMessage(contentType: Swift.Int16) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Chat-app-ios/Chat-app-ios/main_view/main/ChattingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "403"
+                  endingLineNumber = "403"
+                  offsetFromSymbolStart = "336">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "932DFD84-5D8F-4529-9C1C-19FE01CD6EAA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/ChattingView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "391"
+            endingLineNumber = "391"
+            landmarkName = "sendMessage(contentType:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "932DFD84-5D8F-4529-9C1C-19FE01CD6EAA - 14b557ca7c21ea74"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "default argument 0 of Chat_app_ios.ChattingView.sendMessage(contentType: Swift.Int16) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Chat-app-ios/Chat-app-ios/main_view/main/ChattingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "391"
+                  endingLineNumber = "391"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  uuid = "932DFD84-5D8F-4529-9C1C-19FE01CD6EAA - b1328801dd1a0ae3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.ChattingView.sendMessage(contentType: Swift.Int16) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Chat-app-ios/Chat-app-ios/main_view/main/ChattingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "403"
+                  endingLineNumber = "403"
+                  offsetFromSymbolStart = "336">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

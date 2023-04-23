@@ -182,11 +182,12 @@ struct UserContentView: View {
             break
         }
     }
+    
     private func blockFriend(){}
 }
 
-struct UserContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserContentView(profile: UserProfile(id: 1, uuid: UUID().uuidString, name: "Jacksontmm", email: "Admin@admin.com", avatar: "/default.jpg", cover: "/cover.jpg"), isFriend: .constant(false))
-    }
-}
+//struct UserContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        UserContentView(profile: UserProfile(id: 1, uuid: UUID().uuidString, name: "Jacksontmm", email: "Admin@admin.com", avatar: "/default.jpg", cover: "/cover.jpg"), isFriend: .constant(false))
+//    }
+//}

@@ -131,7 +131,9 @@ struct OtherStoryCardView: View {
                                 .padding(.horizontal,5)
                                 .focused($isFocus)
                                 .onSubmit {
-                                    replyStory()
+                                    Task {
+                                        await replyStory()
+                                    }
                                 }
                                 
                         }
@@ -208,7 +210,7 @@ struct OtherStoryCardView: View {
         }
     }
     
-    private func replyStory(){
+    private func replyStory() async{
         if comment.isEmpty {
             return
         }
@@ -216,8 +218,9 @@ struct OtherStoryCardView: View {
         let sendMsg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.friendInfo.uuid, content: self.comment, contentType: 6, type: 4, messageType: 1, urlPath: self.story!.media_url, groupName: nil, groupAvatar: nil, fileName: nil, fileSize: nil, storyAvailableTime: Int32(self.story!.create_at))
       
         Webcoket.shared.onSend(msg: sendMsg)
-        Webcoket.shared.handleMessage(event:.send,msg: sendMsg)
+        Webcoket.shared.handleMessage(event:.send,msg: sendMsg,isReplyComment: true)
         self.comment.removeAll()
+        
     }
     
     private func getStoryInfo(storyID : UInt) async {

@@ -18,8 +18,11 @@ protocol APIService {
     func UserSignIn(req : SignInReq) async -> Result<SignInResp,Error>
     func UserSignUp(req : SignUpReq) async -> Result<SignUpResp,Error>
     func GetUserInfo(req : GetUserInfoReq) async -> Result<GetUserInfoResp,Error>
+    func GetUserProfileInfo(req : GetUserProfileReq) async -> Result<GetUserProfileResp,Error>
     func UpdateUserInfo(req : UpdateUserInfoReq) async -> Result<UpdateUserInfoResp,Error>
+    func UpdateStatusMessage(req : UpdateStatusReq) async -> Result<UpdateStatusResp,Error>
     func UploadUserAvatar(imgData : Data) async -> Result<UploadAvatarResp,Error>
+    func UploadUserCover(imgData : Data) async -> Result<UploadCoverResp,Error>
     func SearchUser(email : String) async -> Result<SearchUserResp,Error>
     
     func AddFriend(req : AddFriendReq) async -> Result<AddFriendResp,Error>
@@ -34,6 +37,8 @@ protocol APIService {
     func UploadGroupAvatar(imgData : Data,req : UploadGroupAvatarReq) async -> Result<UploadGroupAvatarResp,Error>
     func UpdateGroupInfo(req : UpdateGroupInfoReq) async -> Result<UpdateGroupInfoResp,Error>
     func GetUserGroups() async -> Result<GetUserGroups,Error>
+    func SearchGroup(query : String) async -> Result<SearchGroupResp,Error>
+    func GetGroupInfoByUUID(uuid : String) async -> Result<GetGroupInfoByUUIDResp,Error>
     
     func GetMessages(req : GetMessageReq) async -> Result<GetMessageResp,Error>
     func DeleteMessage(req : DeleteMessageReq) async -> Result<DeleteFriendResp,Error>
@@ -81,8 +86,11 @@ enum APIEndPoint : String,CaseIterable {
     case UserSignIn
     case UserSignUp
     case UserProfile
+    case GetUserInfo
     case UpdateUserProfile
+    case UpdateStatus
     case UploadAvatar
+    case UploadCover
     case SearchUser
     
     case AddFriend
@@ -97,6 +105,8 @@ enum APIEndPoint : String,CaseIterable {
     case UploadGroupAvatar
     case UpdateGroupInfo
     case GetUserGroups
+    case SearchGroup
+    case GetGroupInfoByUUID
     
     case GetMessages
     case DeleteMessage
@@ -116,11 +126,13 @@ enum APIEndPoint : String,CaseIterable {
         case .UserSignUp : return  "/user/signup"
         case .UserSignIn : return "/user/signin"
         case .UserProfile : return "/user/profile"
-        case .UpdateUserProfile : return "/user/profile/"
+        case .UpdateStatus : return "/user/status"
+        case .UpdateUserProfile : return "/user/info/"
         case .UploadAvatar : return "/user/avatar"
+        case .UploadCover : return "/user/cover"
         case .SearchUser : return "/user/search"
-            
-            
+        case .GetUserInfo : return "/user/info"
+        
         case .AddFriend : return "/user/friend"
         case .DeleteFriend : return "/user/friend"
         case .GetFriendList : return "/user/friends"
@@ -133,6 +145,8 @@ enum APIEndPoint : String,CaseIterable {
         case .UploadGroupAvatar: return "/group/avatar/:grou_id"
         case .UpdateGroupInfo: return "/group/update"
         case .GetUserGroups: return "/group"
+        case .SearchGroup : return "/group/search"
+        case .GetGroupInfoByUUID : return "/group/info/uuid/"
             
             
         case .GetMessages : return "/message"

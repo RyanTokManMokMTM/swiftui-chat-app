@@ -28,6 +28,24 @@ extension Date{
         
     }
     
+    func currentDateString(dataStyle : DateFormatter.Style = .full) -> String {
+        //self = current class date
+        let formatter = DateFormatter()
+        formatter.dateStyle = dataStyle
+//        let dayBetween = daysBetween(date: Date())
+        
+//        if dayBetween == 0{
+//            return "今天"
+//        } else if dayBetween == 1 {
+//            return "昨天"
+//        }else if dayBetween < 5 {
+//            let weekDay = Calendar.current.component(.weekday, from: self) - 1
+//            return formatter.weekdaySymbols[weekDay]
+//        }
+        return formatter.string(from: self)
+        
+    }
+    
     func sendTimeString(dataStyle : DateFormatter.Style = .short) -> String {
         //self = current class date
         let formatter = DateFormatter()

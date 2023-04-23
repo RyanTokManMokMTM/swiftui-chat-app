@@ -35,17 +35,19 @@ struct WSMessage : Codable {
 
 }
 
-final class Webcoket {
+class Webcoket : ObservableObject {
     let WS_HOST = "ws://127.0.0.1:8000/ws"
     var session : URLSessionWebSocketTask?
     static var shared = Webcoket()
     
     private var anyCancellable : AnyCancellable? = nil
+      
     var userModel : UserViewModel? {
         didSet {
-            self.userModel?.objectWillChange.send()
+            self.objectWillChange.send()
             anyCancellable = userModel?.objectWillChange.sink(receiveValue: { _ in
-                self.userModel?.objectWillChange.send()
+//                print("sending???")
+                self.objectWillChange.send()
             })
         }
     }
@@ -54,6 +56,10 @@ final class Webcoket {
     
 
     func connect(){
+        if self.session != nil {
+            return
+        }
+        
         guard let url = URL(string: WS_HOST) else {
             return
         }
@@ -72,6 +78,11 @@ final class Webcoket {
         
     }
     
+    func disconnect(){
+        DispatchQueue.main.async {
+            self.session?.cancel()
+        }
+    }
     
     func onReceive(result : Result<URLSessionWebSocketTask.Message, Error>) -> Void {
         self.session?.receive(completionHandler: self.onReceive(result:))
@@ -156,10 +167,10 @@ final class Webcoket {
         onSend(msg: msg)
     }
     
-    func handleMessage(event : MessageEvent,msg : WSMessage){
+    func handleMessage(event : MessageEvent,msg : WSMessage ,isReplyComment : Bool = false){
         
         DispatchQueue.main.async { [self] in
-            print("receving a message / sending a message....")
+//            print("receving a message / sending a message....")
             var roomID : UUID
             
             switch event{
@@ -175,7 +186,7 @@ final class Webcoket {
                     break
                 }
             }
-            
+    
             let sentTime = Date.now
             if let index = UserDataModel.shared.findOneRoomWithIndex(uuid: roomID){
 //                UserDataModel.shared.rooms[index].unread_message += 1
@@ -187,41 +198,71 @@ final class Webcoket {
                 if UserDataModel.shared.currentRoom == index {
                     UserDataModel.shared.currentRoomMessage.append(msg)
                 }else {
-                    UserDataModel.shared.rooms[index].unread_message += 1
+                    UserDataModel.shared.rooms[index].unread_message += event == .send ? 0 : 1
                 }
                 
                 UserDataModel.shared.manager.save()
                 UserDataModel.shared.fetchUserRoom()
             } else {
                 //TODO: what to do if the room is not exist in current client
-              
-                let roomName = msg.messageType == 1 ? msg.fromUserName! : msg.groupName!
-                let roomAvatar = msg.messageType == 1 ? msg.avatar! : msg.groupAvatar!
-                if let room = UserDataModel.shared.addRoom(id: msg.fromUUID!, name: roomName, avatar: roomAvatar, message_type: msg.messageType!) {
-                    room.unread_message = 1
-                    room.last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
-                    room.last_sent_time = sentTime
+                if isReplyComment {
+//                    print("reply message but not room record")
+                    Task {
+                        let req = GetUserInfoReq(user_id : nil,uuid: msg.toUUID)
+                        let resp = await ChatAppService.shared.GetUserInfo(req: req)
+                        switch resp {
+                        case .success(let data):
+                            let roomName = data.name
+                            let roomAvatar = data.avatar
+                            if let room = UserDataModel.shared.addRoom(id: data.uuid, name: roomName, avatar: roomAvatar, message_type: msg.messageType!) {
+                                room.unread_message = event == .send ? 0 : 1
+                                room.last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
+                                room.last_sent_time = sentTime
+                                
+                                let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
+                                
+                                room.addToMessages(msg)
+                                
+                                UserDataModel.shared.manager.save()
+                                UserDataModel.shared.fetchUserRoom()
+                                print("message saved.")
+                            }
+                        case .failure(let err):
+                            print(err.localizedDescription)
+                        }
+                        
+                        
+                    }
+                }else {
+                    let roomName = msg.messageType == 1 ? msg.fromUserName! : msg.groupName!
+                    let roomAvatar = msg.messageType == 1 ? msg.avatar! : msg.groupAvatar!
+                    if let room = UserDataModel.shared.addRoom(id: msg.fromUUID!, name: roomName, avatar: roomAvatar, message_type: msg.messageType!) {
+                        room.unread_message = event == .send ? 0 : 1
+                        room.last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
+                        room.last_sent_time = sentTime
+                        
+                        let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
+                        
+                        room.addToMessages(msg)
+                        
+                        UserDataModel.shared.manager.save()
+                        UserDataModel.shared.fetchUserRoom()
+                        print("message saved.")
+                    }
                     
-                    let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
-                    
-                    room.addToMessages(msg)
-                    
-                    UserDataModel.shared.manager.save()
-                    UserDataModel.shared.fetchUserRoom()
-                    print("message saved.")
                 }
-                
+
             }
            
         }
         
     }
-    
+
     @MainActor
     private func fileConentMessage(fromUUID : String,contentType : Int16) -> String {
         if contentType == 6 {
             return "Reply to a story"
         }
-        return self.userModel!.profile!.uuid == fromUUID ? "[Sent a \(contentType == 2 ? "image" : "file")]" : "[Received a \(contentType == 2 ? "image" : "file")]"
+        return self.userModel!.profile!.uuid == fromUUID ? "Sent a \(contentType == 2 ? "image" : "file")" : "Received a \(contentType == 2 ? "image" : "file")"
     }
 }

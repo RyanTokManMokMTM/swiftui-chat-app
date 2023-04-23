@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct ContentView: View {
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
     @StateObject var storyModel = StoryViewModel()
@@ -20,6 +19,7 @@ struct ContentView: View {
     @State private var isShowProfile = false
     @State private var isSearch = false
     @State private var isAddStory : Bool = false
+    @Namespace var namespace
     var body: some View {
         
         ZStack{
@@ -34,25 +34,35 @@ struct ContentView: View {
             }
             .accentColor(.green)
             .zIndex(1)
+            .fullScreenCover(isPresented: $isShowProfile){
+                ProfileView(isShowSetting: $isShowProfile,loginState: $loginSate)
+                    .environmentObject(userModel)
+            }
+            .fullScreenCover(isPresented: $isAddStory){
+                StoryPhototView(isAddStory: $isAddStory)
+                    .environmentObject(userModel)
+                    .environmentObject(userStory)
+            }
             
             
             if isShowMenu {
                 NavigationStack(path:$path.navigationRoomPath){
-                    SideMenu(isShow: $isShowMenu, isShowProfile: $isShowProfile,isAddStory: $isAddStory){
+                    SideMenu(isShow: $isShowMenu, isShowProfile: $isShowProfile,isAddStory: $isAddStory,menuIndex: $menuIndex){
                         ScrollView(.vertical,showsIndicators: false){
-                            menuRow(tagIndex:0,sysImg: "message.fill", rowName: "Chats", selected: $menuIndex){
+                            menuRow(tagIndex:0,sysImg: "message.fill", rowName: "Chats", selected: $menuIndex, namespace: namespace){
                                 withAnimation{
                                     self.menuIndex = 0
                                 }
                             }
                             
                             NavigationLink(destination: SearchView(),isActive: $isSearch){
-                                menuRow(tagIndex:1,sysImg: "magnifyingglass", rowName: "Find Friends", selected: $menuIndex){
+                                menuRow(tagIndex:1,sysImg: "magnifyingglass", rowName: "Find Friends", selected: $menuIndex,namespace: namespace){
                                     withAnimation{
                                         self.menuIndex = 1
                                         self.isSearch = true
                                     }
                                 }
+                             
                                 
                             }
                             .buttonStyle(.plain)
@@ -61,7 +71,6 @@ struct ContentView: View {
                         }
                     }
                     .environmentObject(userModel)
-                    .zIndex(2)
                     //                    .navigationTitle("")
                 }.accentColor(.black)
                     .zIndex(2)
@@ -75,7 +84,7 @@ struct ContentView: View {
                     .environmentObject(userStory)
                     .transition(.move(edge: .bottom))
                     .background(.white)
-                    .zIndex(1)
+                    .zIndex(3)
             }
         }
         .wait(isLoading: $hub.isWaiting){
@@ -84,15 +93,15 @@ struct ContentView: View {
         .alert(isAlert: $hub.isPresented){
             BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
         }
-        .sheet(isPresented: $isShowProfile){
-            ProfileView(isShowSetting: $isShowProfile)
-                .environmentObject(userModel)
+        .onChange(of: loginSate){ state in
+            if state == true{
+//                print("log out")
+                DispatchQueue.main.async {
+                    self.isShowMenu = false
+                }
+            }
         }
-        .fullScreenCover(isPresented: $isAddStory){
-            StoryPhototView(isAddStory: $isAddStory)
-                .environmentObject(userModel)
-                .environmentObject(userStory)
-        }
+
 
     }
 }
@@ -102,4 +111,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
- 

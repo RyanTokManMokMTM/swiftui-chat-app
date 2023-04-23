@@ -12,6 +12,7 @@ struct menuRow: View {
     let sysImg : String
     let rowName : String
     @Binding var selected :Int
+    var namespace : Namespace.ID
     let action : () -> ()
     var body: some View {
 //        Button(action: action){
@@ -27,7 +28,7 @@ struct menuRow: View {
                 Spacer()
             }
             .padding(.horizontal,30)
-            .background( RoundedRectangle(cornerRadius: 13).fill(self.tagIndex == self.selected ? Color(uiColor: UIColor.systemGray6) : .clear).frame(width: UIScreen.main.bounds.width / 1.2 - 30,height: 60))
+            .background(backgroupView())
             .frame(height:55)
             .onTapGesture {
                 action()
@@ -37,12 +38,16 @@ struct menuRow: View {
   
      
     }
-}
-
-struct menuRow_Previews: PreviewProvider {
-    static var previews: some View {
-        menuRow(tagIndex:0,sysImg: "magnifyingglass", rowName: "Find Friend", selected: .constant(0)){
-            print("....")
+    
+    @ViewBuilder
+    private func backgroupView() -> some View {
+        if self.tagIndex == self.selected {
+            RoundedRectangle(cornerRadius: 13).fill(Color(uiColor: UIColor.systemGray6)).frame(width: UIScreen.main.bounds.width / 1.2 - 30,height: 60)
+                .matchedGeometryEffect(id: "menu", in: namespace,isSource: true)
+        }else {
+            RoundedRectangle(cornerRadius: 13).fill(Color.clear).frame(width: UIScreen.main.bounds.width / 1.2 - 30,height: 60)
+                .matchedGeometryEffect(id: "menu", in: namespace,isSource: false)
         }
     }
 }
+

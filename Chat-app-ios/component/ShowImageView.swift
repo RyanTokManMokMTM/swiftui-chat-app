@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ShowImageView: View {
     var imageURL : String
+    private let imageSaver = ImageSaver()
     @Binding var isShowImage : Bool
     var body: some View {
         VStack {
@@ -20,6 +21,15 @@ struct ShowImageView: View {
                         
                         Button {
                             print("save image")
+                            let render = ImageRenderer(content: img)
+                            if let uiImage = render.uiImage {
+                                Task {
+                                    await imageSaver.writeImageToAlbum(image: uiImage)
+                                    print("done")
+                                }
+      
+                            }
+                            
                         } label: {
                             Label("Save Image", systemImage: "square.and.arrow.down")
                         }
@@ -33,25 +43,36 @@ struct ShowImageView: View {
         .frame(width: UIScreen.main.bounds.width,height:UIScreen.main.bounds.height)
         .background(Color.black.edgesIgnoringSafeArea(.all))
         .overlay(alignment:.topLeading){
-            Button(action:{
-                withAnimation{
-                    self.isShowImage = false
+            VStack{
+                Button(action:{
+                    withAnimation{
+                        self.isShowImage = false
+                    }
+                }){
+                    Image(systemName: "xmark")
+                        .imageScale(.medium)
+                        .foregroundColor(.white)
+                        .padding(5)
+                        .background(BlurView().cornerRadius(25))
                 }
-            }){
-                Image(systemName: "xmark")
-                    .imageScale(.large)
-                    .padding(5)
-                    .foregroundColor(.white)
             }
-            .padding(20)
+            .padding(.horizontal)
+            .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+
         }
+        
         
 
     }
 }
 
-//struct ShowImageView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ShowImageView(imageURL: RESOURCES_HOST + "/970AC031-09A4-4DE3-A405-8EC1814D69F5.jpeg",isShowImage: .constant(false))
-//    }
-//}
+
+class ImageSaver : NSObject {
+    func writeImageToAlbum(image : UIImage) async{
+       await UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveCompleted),nil)
+    }
+    
+    @objc func saveCompleted(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        print("Save finished!")
+    }
+}

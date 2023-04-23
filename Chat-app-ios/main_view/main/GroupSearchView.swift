@@ -1,22 +1,22 @@
 //
-//  SearchView.swift
+//  GroupSearch.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 8/3/2023.
+//  Created by Jackson.tmm on 21/4/2023.
 //
 
 import SwiftUI
 
-struct SearchView: View {
+struct GroupSearchView: View {
     @State private var searchKeyWord : String = ""
-    @StateObject private var searchModel = SearchUserViewModel()
+    @StateObject private var searchModel = SearchGroupViewModel()
     var body: some View {
         VStack{
-            Text("Find Friends")
+            Text("Find a group")
                 .bold()
                 .font(.headline)
             
-            CustomSearchBar(searchKeyWord: $searchKeyWord,placeHoder: "UserName"){
+            CustomSearchBar(searchKeyWord: $searchKeyWord,placeHoder: "Group Name"){
                 Task.init{
                     await self.searchModel.GetSearchResult(keyword: self.searchKeyWord)
                 }
@@ -24,14 +24,12 @@ struct SearchView: View {
             if self.searchModel.searchResponse.isEmpty {
                 Text("No Result.")
             }else {
-                List(self.$searchModel.searchResponse,id:\.user_info.id){ $data in
-                    NavigationLink(destination: SearchUserProfileView(result: $data)
+                List(self.$searchModel.searchResponse,id:\.id){ data in
+                    NavigationLink(destination: GroupProfileView(info: data)
                         .accentColor(.white))
                        {
-                            UserRow(data: data.user_info, isFriend: data.is_friend)
+                           GroupRow(data: data.wrappedValue)
                     }
-                    
-                   
                 }
                 .listStyle(.plain)
             }
@@ -40,7 +38,7 @@ struct SearchView: View {
     }
     
     @ViewBuilder
-    private func UserRow(data : UserProfile,isFriend : Bool) -> some View {
+    private func GroupRow(data : FullGroupInfo) -> some View {
         HStack(alignment:.center,spacing:12){
             AsyncImage(url: data.AvatarURL, content: { img in
                img
@@ -60,17 +58,12 @@ struct SearchView: View {
                     Text(data.name)
                         .bold()
                         .font(.system(size:20))
-                    
-                    if isFriend{
-                        Image(systemName: "checkmark.circle.fill")
-                            .imageScale(.medium)
-                            .foregroundColor(.green)
-                    }
+                        .lineLimit(1)
                 }
                 
                 
 //                HStack{
-                Text("email : \(data.email)")
+                Text("members : \(data.members)")
                         .bold()
                         .font(.system(size:14))
                         .foregroundColor(.gray)
@@ -82,8 +75,8 @@ struct SearchView: View {
     }
 }
 
-struct SearchView_Previews: PreviewProvider {
+struct GroupSearchView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchView()
+        GroupSearchView()
     }
 }

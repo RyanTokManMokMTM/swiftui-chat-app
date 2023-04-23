@@ -56,6 +56,11 @@ struct Message: View {
  
         }
         .listStyle(.plain)
+        .refreshable {
+            Task {
+                await self.storyModel.GetActiveStory()
+            }
+        }
         .navigationDestination(for: ActiveRooms.self){data in
             if let index = UDM.findOneRoomWithIndex(uuid: data.id!){
                 ChattingView(chatUserData: data,messages: $UDM.currentRoomMessage)
@@ -131,7 +136,7 @@ struct Message: View {
  
     }
     
-
+    
 }
 
 

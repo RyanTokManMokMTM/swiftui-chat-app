@@ -28,6 +28,9 @@ struct ChattingView: View {
     @State private var isShowImage : Bool = false
     @State private var showImageURL : String = ""
     @State private var showPicker = false
+    
+    @State private var isShowInfo : Bool = false
+    
     var body: some View {
         VStack{
             ScrollViewReader { scroll in
@@ -228,15 +231,40 @@ struct ChattingView: View {
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarLeading){
-                HStack(){
-                    Text(self.chatUserData.name ?? "UNKNOW CHAT")
-                        .bold()
-                        .font(.system(size: 15))
-                        .foregroundColor(.black)
-                    
-                    Spacer()
+                if self.chatUserData.message_type == 1 {
+                    NavigationLink(destination: OtherUserProfileView(uuid: self.chatUserData.id!.uuidString, isShowDetail: $isShowInfo)){
+                        HStack(){
+                            Text(self.chatUserData.name ?? "UNKNOW CHAT")
+                                .bold()
+                                .font(.system(size: 15))
+                                .foregroundColor(.black)
+//                                .onTapGesture{
+//                                    withAnimation{
+//                                        self.isShowInfo = true
+//                                    }
+//                                }
+                            Spacer()
+                        }
+                        .padding(.horizontal,5)
+                    }
+                }else {
+                    NavigationLink(destination: OtherGroupProfileView(uuid: self.chatUserData.id!.uuidString, isShowDetail: $isShowInfo)){
+                        HStack(){
+                            Text(self.chatUserData.name ?? "UNKNOW CHAT")
+                                .bold()
+                                .font(.system(size: 15))
+                                .foregroundColor(.black)
+//                                .onTapGesture{
+//                                    withAnimation{
+//                                        self.isShowInfo = true
+//                                    }
+//                                }
+                            Spacer()
+                        }
+                        .padding(.horizontal,5)
+                    }
                 }
-                .padding(.horizontal,5)
+               
             }
             
             ToolbarItem(placement: .navigationBarTrailing){
@@ -346,6 +374,13 @@ struct ChattingView: View {
         }
         .padding()
         .background(.thickMaterial)
+//        .fullScreenCover(isPresented: $isShowInfo){
+//            if chatUserData.message_type == 1 {
+//                OtherUserProfileView(uuid: self.chatUserData.id!.uuidString,isShowDetail: $isShowInfo)
+//            }else {
+//                OtherGroupProfileView(uuid: self.chatUserData.id!.uuidString,isShowDetail: $isShowInfo)
+//            }
+//        }
     }
     
     private func fileBase64Encoding(data : Data,format : String) -> String {

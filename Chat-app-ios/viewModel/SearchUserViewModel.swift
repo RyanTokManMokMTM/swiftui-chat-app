@@ -7,13 +7,10 @@
 
 import Foundation
 
-class SearchViewModel : ObservableObject {
+class SearchUserViewModel : ObservableObject {
     @Published var searchResponse : [SearchUserResult] = [SearchUserResult]()
     
     init() {
-//        searchResponse.append(UserProfile(id: 1, uuid: "admin2", name: "test", email: "test@admin.com", avatar: "/default.jpg"))
-//        searchResponse.append(UserProfile(id: 2, uuid: "admin1", name: "test", email: "test@admin.com", avatar: "/default.jpg"))
-//        searchResponse.append(UserProfile(id: 3, uuid: "admin3", name: "test", email: "test@admin.com", avatar: "/default.jpg"))
     }
     
     func GetSearchResult(keyword : String) async{
@@ -27,6 +24,35 @@ class SearchViewModel : ObservableObject {
             if data.code == 200 {
                 DispatchQueue.main.async {
                     self.searchResponse = data.results!
+                }
+
+            }
+        case .failure(let err):
+            print(err.localizedDescription)
+        }
+        
+//        ChatAppService.shared
+    }
+}
+
+class SearchGroupViewModel : ObservableObject {
+    @Published var searchResponse : [FullGroupInfo] = [FullGroupInfo]()
+    
+    init() {
+    }
+    
+    func GetSearchResult(keyword : String) async{
+        if keyword.isEmpty {
+            return
+        }
+    
+        let resp = await ChatAppService.shared.SearchGroup(query: keyword)
+        
+        switch resp {
+        case .success(let data):
+            if data.code == 200 {
+                DispatchQueue.main.async {
+                    self.searchResponse = data.results
                 }
 
             }

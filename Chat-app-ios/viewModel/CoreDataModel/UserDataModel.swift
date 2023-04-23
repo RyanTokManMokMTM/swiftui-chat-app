@@ -98,6 +98,7 @@ class UserDataModel : ObservableObject {
         newMessage.file_name = fileName
         newMessage.file_size = fileSize
         newMessage.story_available_time = storyAvailabeTime
+        newMessage.url_path = fileURL
         self.manager.save()
         
         return newMessage

@@ -16,7 +16,7 @@ struct SideMenu<Content:View>: View {
     @State private var offset = 0.0
     @State private var isAnimated = false
     @State private var isEditProfile = false
-    
+    @Binding var menuIndex : Int
     var content : () -> Content
     var body : some View {
         VStack{
@@ -36,6 +36,18 @@ struct SideMenu<Content:View>: View {
                 }
             }
         })
+        .onChange(of: self.menuIndex){ _ in
+            if self.menuIndex == 0 {
+                withAnimation{
+                    self.isAnimated = false
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
+                    withAnimation{
+                        self.isShow.toggle()
+                    }
+                }
+            }
+        }
         .onAppear(){
             withAnimation{
                 self.isAnimated = true

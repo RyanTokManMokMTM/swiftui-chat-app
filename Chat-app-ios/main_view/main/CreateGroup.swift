@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct SelectGroupMembers: View {
     @EnvironmentObject private var userModel : UserViewModel
@@ -82,7 +83,9 @@ struct SelectGroupMembers: View {
         VStack{
             AsyncImage(url: data.AvatarURL, content: { img in
                 img
-                    .resizable()                 .frame(width:50,height:50)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width:50,height:50)
                     .clipShape(Circle())
                     .overlay(alignment:.topTrailing){
                         Image(systemName: "xmark")
@@ -120,6 +123,7 @@ struct SelectGroupMembers: View {
             AsyncImage(url: data.AvatarURL, content: { img in
                 img
                     .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(width:50,height:50)
                     .clipShape(Circle())
             }, placeholder: {
@@ -140,8 +144,9 @@ struct CreateGroup : View {
     @EnvironmentObject private var groupVM : GroupViewModel
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
-    @State private var groupName : String = "New Group"
-  
+    @State private var groupName : String = "New Group Name"
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var selectedData : Data? = nil
     var body: some View {
         VStack(spacing:15){
 
@@ -171,6 +176,20 @@ struct CreateGroup : View {
                 }
             }
         }
+        .onChange(of: self.selectedItem){ newItem in
+            Task {
+                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    self.selectedData = data
+                }
+            }
+        }
+       
+        
+    }
+    
+    private func fileBase64Encoding(data : Data,format : String) -> String {
+        let base64 = data.base64EncodedString()
+        return "data:image/\(format);base64,\(base64)"
     }
     
     private func CreateGroup() async{
@@ -179,11 +198,21 @@ struct CreateGroup : View {
             return
         }
         
-        let req = CreateGroupReq(group_name: self.groupName)
+        var members : [UInt] = []
+        var avatarBase64 : String = ""
+        self.groupVM.members.forEach{members.append($0.id)}
+        
+        if self.selectedData != nil {
+            //MARK: encoding image to base64
+            avatarBase64 = fileBase64Encoding(data: self.selectedData!, format: "jpg")
+        }
+        
+        
+        let req = CreateGroupReq(group_name: self.groupName,members: members,avatar: avatarBase64)
         let resp = await ChatAppService.shared.CreateGroup(req: req)
         switch resp{
         case .success(let data):
-            if let room = UDM.addRoom(id: data.group_uuid, name: self.groupName, avatar: "/defaultGroup.jpg", message_type: 2) {
+            if let room = UDM.addRoom(id: data.group_uuid, name: self.groupName, avatar: data.grou_avatar, message_type: 2) {
                 
                 withAnimation{
                     self.isShowAddContent = false
@@ -196,26 +225,44 @@ struct CreateGroup : View {
         }
     }
     
-    
-    
     @ViewBuilder
     private func GroupHeader() -> some View {
         HStack{
-            Image("defaultGroupImg")
+            imageView()
                 .resizable()
+                .aspectRatio(contentMode: .fill)
                 .frame(width:100,height:100)
                 .clipShape(Circle())
                 .overlay(alignment:.bottomTrailing){
-                    Image(systemName: "camera.circle.fill")
-                        .imageScale(.large)
+                    PhotosPicker(selection: $selectedItem, matching: .any(of: [.images]),photoLibrary: .shared()){
+                        VStack{
+                            Image(systemName: "camera.fill")
+                                .imageScale(.small)
+                                .foregroundColor(.black)
+                                .padding(5)
+                        }
+                        .clipShape(Circle())
+                        .background(Color.white.clipShape(Circle()))
                         .offset(x:-5,y:-5)
+                            
+                    }
+                  
                 }
+ 
             
             TextEditor(text: $groupName)
                 .frame(height:80)
                 .font(.headline)
         }
         .padding(.horizontal)
+    }
+    
+    private func imageView() -> Image {
+        if self.selectedData == nil {
+            return Image("defaultGroupImg")
+        }else {
+            return Image(uiImage: UIImage(data: self.selectedData!)!)
+        }
     }
     
     @ViewBuilder
@@ -245,6 +292,7 @@ struct CreateGroup : View {
             AsyncImage(url: data.AvatarURL, content: { img in
                 img
                     .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(width:60,height:60)
                     .clipShape(Circle())
             }, placeholder: {

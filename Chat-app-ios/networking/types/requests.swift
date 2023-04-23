@@ -38,7 +38,8 @@ struct SignInResp : Decodable {
 
 
 struct GetUserInfoReq {
-    let user_id : UInt
+    let user_id : UInt?
+    let uuid : String?
 }
 
 struct GetUserInfoResp : Decodable{
@@ -50,17 +51,39 @@ struct GetUserInfoResp : Decodable{
     let cover : String
 }
 
+struct GetUserProfileReq {
+    let user_id : UInt?
+    let uuid : String?
+}
+
+struct GetUserProfileResp : Decodable{
+    let code : UInt
+    let user_info : UserProfile
+    var is_friend : Bool
+}
+
 struct UpdateUserInfoReq : Encodable {
     let name : String
 }
 
 struct UpdateUserInfoResp : Decodable {
     let code : UInt
+}
+
+struct UpdateStatusReq : Encodable {
+    let status : String
+}
+
+struct UpdateStatusResp : Decodable {
+    let code : UInt
+}
+
+struct UploadAvatarResp : Decodable {
+    let code : UInt
     let path : String
 }
 
-
-struct UploadAvatarResp : Decodable {
+struct UploadCoverResp : Decodable {
     let code : UInt
     let path : String
 }
@@ -97,11 +120,14 @@ struct GetFriendListResp : Decodable {
 
 struct CreateGroupReq : Encodable {
     let group_name : String
+    let members : [UInt]
+    let avatar : String
 }
 
 struct CreateGroupResp : Decodable {
     let code : UInt
     let group_uuid : String
+    let grou_avatar : String
 }
 
 struct JoinGroupReq {
@@ -137,13 +163,45 @@ struct GetGroupMembersResp : Decodable {
     let member_list : [GroupMemberInfo]
 }
 
-struct GroupMemberInfo : Decodable {
+struct SearchGroupResp : Decodable {
+    let code : UInt
+    let results : [FullGroupInfo]
+}
+
+struct GetGroupInfoByUUIDResp : Decodable{
+    let code : UInt
+    let result : FullGroupInfo
+}
+
+struct GroupMemberInfo : Decodable ,Identifiable{
     let id : UInt
     let uuid : String
     let name : String
-    let email : String
+//    let email : String
     let avatar : String
     let is_group_lead : Bool
+    
+    var AvatarURL : URL {
+        return URL(string:RESOURCES_HOST + self.avatar)!
+    }
+}
+
+struct FullGroupInfo : Decodable {
+    let id : UInt
+    let uuid : String
+    let name : String
+    let avatar : String
+    let members : UInt
+    let created_at : UInt
+    var is_joined : Bool
+    
+    var AvatarURL : URL {
+        return URL(string:RESOURCES_HOST + self.avatar)!
+    }
+    
+    var CreatedAt : Date {
+        return Date(timeIntervalSince1970: TimeInterval(self.created_at))
+    }
 }
 
 struct UpdateGroupInfoReq : Encodable {
@@ -173,9 +231,14 @@ struct GroupInfo : Decodable,Identifiable{
     let uuid : String
     let name : String
     let avatar : String
+    let created_at : UInt
     
     var AvatarURL : URL {
         return URL(string: RESOURCES_HOST + self.avatar)!
+    }
+    
+    var CreatedAt : Date {
+        return Date(timeIntervalSince1970: TimeInterval(self.created_at))
     }
 }
 

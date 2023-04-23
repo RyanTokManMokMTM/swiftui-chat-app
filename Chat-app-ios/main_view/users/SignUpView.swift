@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SignUpView: View {
+    @StateObject private var hub = BenHubState.shared
     @State private var email : String = ""
     @State private var password : String = ""
     @State private var comfirmPassword : String = ""
@@ -31,7 +32,7 @@ struct SignUpView: View {
                     }
                     
                 }
-//                .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+                .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
                 .padding(.horizontal)
                 
                 VStack{
@@ -82,21 +83,21 @@ struct SignUpView: View {
         //                .padding(.horizontal)
                         
                         
-                        HStack(spacing:2){
-                            Image(systemName: isCheck ? "checkmark.circle.fill":  "circle")
-                                .foregroundColor(isCheck ? .blue : .gray)
-                                .bold()
-                                .onTapGesture {
-                                    DispatchQueue.main.async {
-                                        self.isCheck = !self.isCheck
-                                    }
-                                }
-                            Text("Read and agree our service policy.")
-                                .foregroundColor(.gray)
-                                .font(.subheadline)
-                                .padding(5)
-
-                        }
+//                        HStack(spacing:2){
+//                            Image(systemName: isCheck ? "checkmark.circle.fill":  "circle")
+//                                .foregroundColor(isCheck ? .blue : .gray)
+//                                .bold()
+//                                .onTapGesture {
+//                                    DispatchQueue.main.async {
+//                                        self.isCheck = !self.isCheck
+//                                    }
+//                                }
+//                            Text("Read and agree our service policy.")
+//                                .foregroundColor(.gray)
+//                                .font(.subheadline)
+//                                .padding(5)
+//
+//                        }
                         
                     }
                     .padding(.horizontal)
@@ -130,27 +131,32 @@ struct SignUpView: View {
 //            Spacer()
         
         }
-        
-//        .background()
-//        .padding(.top,UIScreen.main.bounds.height / 10)
+        .wait(isLoading: $hub.isWaiting){
+            BenHubLoadingView(message: hub.message)
+        }
+        .alert(isAlert: $hub.isPresented){
+            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+        }
+
     }
     
     private func isAllowToLogin() -> Bool {
         return !self.email.isEmpty && !self.password.isEmpty && !self.userName.isEmpty && !self.comfirmPassword.isEmpty
     }
     
+    @MainActor
     private func sendSignUpRequest() async {
+        hub.SetWait(message: "Registering your account...")
         let req = SignUpReq(email: self.email, name: self.userName, password: self.password)
         let resp = await ChatAppService.shared.UserSignUp(req: req)
+        
+        hub.isWaiting = false
         switch resp {
-        case .success(let data):
-//            withAnimation{
-//                self.isSignUp = false
-//            }
-            print(data)
+        case .success(_):
+            hub.AlertMessage(sysImg: "checkmark", message: "succeed.")
             break
         case .failure(let err):
-            print(err)
+            hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
             break
         }
     }
