@@ -189,8 +189,8 @@ struct GroupMemberInfo : Decodable ,Identifiable{
 struct FullGroupInfo : Decodable {
     let id : UInt
     let uuid : String
-    let name : String
-    let avatar : String
+    var name : String
+    var avatar : String
     let members : UInt
     let created_at : UInt
     var is_joined : Bool
@@ -220,6 +220,7 @@ struct UploadGroupAvatarReq {
 
 struct UploadGroupAvatarResp : Decodable {
     let code : UInt
+    let path : String
 }
 
 struct GetUserGroups : Decodable{

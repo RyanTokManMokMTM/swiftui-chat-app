@@ -142,7 +142,7 @@ enum APIEndPoint : String,CaseIterable {
         case .LeaveGroup : return "/group/leave/"
         case .DeleteGroup : return "/group"
         case .GetGroupMembers : return "/group/members/"
-        case .UploadGroupAvatar: return "/group/avatar/:grou_id"
+        case .UploadGroupAvatar: return "/group/avatar/"
         case .UpdateGroupInfo: return "/group/update"
         case .GetUserGroups: return "/group"
         case .SearchGroup : return "/group/search"

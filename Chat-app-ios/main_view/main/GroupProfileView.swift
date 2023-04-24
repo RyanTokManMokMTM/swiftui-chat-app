@@ -270,8 +270,10 @@ struct OtherGroupProfileView: View {
         .listStyle(.plain)
         .onAppear{
             Task {
-                await self.getGroupInfo()
-//                await self.getGroupMembers()
+                if self.info == nil {
+                    await self.getGroupInfo()
+                }
+
             }
         }
         .toolbar{
@@ -282,8 +284,11 @@ struct OtherGroupProfileView: View {
             
             if info != nil && info!.is_owner{
                 ToolbarItem(placement: .navigationBarTrailing){
-                    Text("Edit")
-                        .bold()
+                    NavigationLink(destination: GroupProfileEditView(info: $info, groupName: self.info?.name ?? "")){
+                        Text("Edit")
+                            .bold()
+                    }
+                    
                 }
             }
             
