@@ -70,8 +70,27 @@ struct SearchUserProfileView: View {
                 .edgesIgnoringSafeArea(.all)
 
         )
+        .onAppear{
+            //TODO: Update sender info
+            if let sender = UserDataModel.shared.findOneSender(uuid: UUID(uuidString: result.user_info.uuid)!) {
+                sender.avatar = result.user_info.avatar
+                sender.name = result.user_info.name
+                UserDataModel.shared.manager.save()
+            }
+            
+            //TODO: Update Active Room Info
+            if let room = UserDataModel.shared.findOneRoom(uuid: UUID(uuidString: result.user_info.uuid)!) {
+                room.avatar = result.user_info.avatar
+                room.name = result.user_info.name
+                UserDataModel.shared.manager.save()
+            }
+        }
+        
      
     }
+    
+    
+    
     
     @ViewBuilder
     private func buttonView() -> some View {
@@ -348,8 +367,21 @@ struct OtherUserProfileView: View {
         let resp = await ChatAppService.shared.GetUserProfileInfo(req: req)
         switch resp {
         case .success(let data):
-            print(data)
             self.result = OtherUserInfo(user_info: data.user_info, is_friend: data.is_friend)
+            //TODO: Update sender info
+            if let sender = UserDataModel.shared.findOneSender(uuid: UUID(uuidString: data.user_info.uuid)!) {
+                sender.avatar =  data.user_info.avatar
+                sender.name =  data.user_info.name
+                UserDataModel.shared.manager.save()
+            }
+            
+            //TODO: Update Active Room Info
+            if let room = UserDataModel.shared.findOneRoom(uuid: UUID(uuidString: data.user_info.uuid)!) {
+                room.avatar = data.user_info.avatar
+                room.name = data.user_info.name
+                UserDataModel.shared.manager.save()
+            }
+            
         case .failure(let err):
             print(err.localizedDescription)
         }

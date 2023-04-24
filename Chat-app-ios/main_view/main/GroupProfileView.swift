@@ -79,12 +79,20 @@ struct GroupProfileView: View {
             Task {
                 await self.getGroupMembers()
             }
+            //TODO: Update Active Room Info
+            if let room = UserDataModel.shared.findOneRoom(uuid: UUID(uuidString: info.uuid)!) {
+                room.avatar = info.avatar
+                room.name = info.name
+                UserDataModel.shared.manager.save()
+            }
         }
         .toolbar{
             ToolbarItem(placement: .principal){
                 Text("Group Info")
                     .bold()
             }
+            
+        
         }
         
     }
@@ -196,11 +204,10 @@ struct OtherGroupProfileView: View {
     @Binding var isShowDetail: Bool
     @State private var info : FullGroupInfo? = nil
     @State private var members : [GroupMemberInfo] = []
-
     var body: some View {
         List{
             GroupHeader()
-            
+          
             Section("Members : \(info?.members ?? 0)"){
                 ScrollView(.horizontal,showsIndicators: false){
                     HStack{
@@ -272,18 +279,32 @@ struct OtherGroupProfileView: View {
                 Text("Group Info")
                     .bold()
             }
+            
+            if info != nil && info!.is_owner{
+                ToolbarItem(placement: .navigationBarTrailing){
+                    Text("Edit")
+                        .bold()
+                }
+            }
+            
         }
         
     }
     
     @MainActor
     private func getGroupInfo() async {
+        print(self.uuid)
         let resp = await ChatAppService.shared.GetGroupInfoByUUID(uuid: self.uuid)
         switch resp {
         case .success(let data):
             self.info = data.result
             Task {
                 await self.getGroupMembers(id : data.result.id)
+            }
+            if let room = UserDataModel.shared.findOneRoom(uuid: UUID(uuidString: data.result.uuid)!) {
+                room.avatar = data.result.avatar
+                room.name = data.result.name
+                UserDataModel.shared.manager.save()
             }
         case .failure(let err):
             print(err.localizedDescription)

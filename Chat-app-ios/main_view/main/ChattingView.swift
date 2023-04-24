@@ -38,8 +38,9 @@ struct ChattingView: View {
                     VStack{
                         ForEach(messages.indices,id :\.self) { index in
                             VStack(spacing:0){
-                                ChatBubble(direction: messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender_name!, userAvatarURL: messages[index].AvatarURL, contentType: Int(messages[index].content_type)){
-                                    
+
+                                ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: Int(messages[index].content_type)){
+
                                     if messages[index].content_type == 1 {
                                         Text(messages[index].content ?? "")
                                             .font(.system(size:15))
@@ -59,7 +60,7 @@ struct ChattingView: View {
                                                                 Text("Uploading...")
                                                                     .foregroundColor(.white)
                                                             }
-                                                            
+
                                                         }
                                                     }
                                             }else {
@@ -76,7 +77,7 @@ struct ChattingView: View {
                                                 }, placeholder: {
                                                     ProgressView()
                                                         .frame(width: 40,height: 40)
-                                                    
+
                                                 })
                                             }
                                         }
@@ -101,41 +102,41 @@ struct ChattingView: View {
                                                             RoundedRectangle(cornerRadius: 10)
                                                                 .stroke(Color(uiColor: UIColor.systemGray6), lineWidth: 1)
                                                         }
-                                                        
-                                                        
-                                                        
+
+
+
                                                         VStack(alignment: .leading,spacing: 5){
                                                             Text(messages[index].file_name ?? "" )
                                                                 .bold()
                                                                 .font(.headline)
                                                                 .multilineTextAlignment(.leading)
-                                                            
+
                                                             Text("size : \(String(format: "%.2f", messages[index].FileSizeInMB)) MB")
                                                                 .font(.system(size:14))
-                                                            
+
                                                         }
-                                                        
+
                                                     }
                                                     .padding(10)
                                                     .foregroundColor(Color.white)
                                                     .background(.green)
                                                 }
-                                                
+
                                             }
                                         }
                                         .transition(.identity)
                                     }
                                     else if messages[index].content_type == 6 {
-                                        VStack(alignment:messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid  ? .leading : .trailing,spacing:0){
-                                            
-                                            
+                                        VStack(alignment:messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid  ? .leading : .trailing,spacing:0){
+
+
                                             Text("Reply to a story")
                                                 .font(.footnote)
                                                 .foregroundColor(.gray)
-                                            
-                                            
-                                            if messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid {
-                                                
+
+
+                                            if messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid {
+
                                                 HStack {
                                                     RoundedRectangle(cornerRadius: 20)
                                                         .fill(Color(uiColor:UIColor.systemGray2))
@@ -147,18 +148,18 @@ struct ChattingView: View {
                                                             .frame(maxWidth:60,maxHeight:95)
                                                             .aspectRatio(contentMode: .fill)
                                                             .cornerRadius(10)
-                                                        
+
                                                     }, placeholder: {
                                                         ProgressView()
                                                             .frame(width: 30,height: 30)
-                                                        
+
                                                     })
                                                 }
-                                                
-                                                
+
+
                                             }else {
                                                 HStack{
-                                                    
+
                                                     if messages[index].isStoryAvailable {
                                                         AsyncImage(url: messages[index].FileURL, content: {img in
                                                             img
@@ -170,31 +171,31 @@ struct ChattingView: View {
                                                         }, placeholder: {
                                                             ProgressView()
                                                                 .frame(width: 30,height: 30)
-                                                            
+
                                                         })
                                                     }else {
                                                         Text("Story unavaiable.")
                                                             .font(.subheadline)
                                                             .foregroundColor(.gray)
                                                     }
-                                                    
-                                                    
+
+
                                                     RoundedRectangle(cornerRadius: 20)
                                                         .fill(Color(uiColor:UIColor.systemGray2))
                                                         .frame(width:5,height:messages[index].isStoryAvailable ? 100 : 20)
                                                         .padding(.vertical)
                                                 }
-                                                
+
                                             }
-                                            
+
                                         }
-                                        
-                                        
+
+
                                     }
                                 }
-                                
+//
                                 if  messages[index].content_type == 6 {
-                                    ChatBubble(direction: messages[index].sender_uuid!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender_name!, userAvatarURL: messages[index].AvatarURL, contentType: 1,isSame:true){
+                                    ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: 1,isSame:true){
                                         Text(messages[index].content ?? "")
                                             .font(.system(size:15))
                                             .padding(10)

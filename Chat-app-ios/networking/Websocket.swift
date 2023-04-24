@@ -194,7 +194,7 @@ class Webcoket : ObservableObject {
                 UserDataModel.shared.rooms[index].last_sent_time = sentTime
                 
                 let msg = UserDataModel.shared.addRoomMessage(roomIndex: index, sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
-                
+//                print(msg.sender)
                 if UserDataModel.shared.currentRoom == index {
                     UserDataModel.shared.currentRoomMessage.append(msg)
                 }else {

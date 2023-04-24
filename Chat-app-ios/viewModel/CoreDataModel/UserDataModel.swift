@@ -15,7 +15,7 @@ class UserDataModel : ObservableObject {
     let manager = PersistenceController.shared
     @Published var currentRoom : Int = -1
     @Published var info : UserDatas?
-    @Published var rooms : [ActiveRooms] = [] //we
+    @Published var rooms : [ActiveRooms] = [] 
     @Published var currentRoomMessage : [RoomMessages] = []
     private init(){}
 
@@ -67,38 +67,77 @@ class UserDataModel : ObservableObject {
     }
     
     func addRoomMessage(roomIndex: Int,sender_uuid : String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String? = nil,fileSize : Int64 = 0,storyAvailabeTime : Int32 = 0) -> RoomMessages {
+        
+        //TODO: Check Sender Info exist?
+        var sender = findOneSender(uuid: UUID(uuidString: sender_uuid)!)
+        if sender == nil {
+//            print("user not found")
+            sender = createOneSenderInfo(uuid: sender_uuid, avatar: sender_avatar, name: sender_name)
+        }
+
+        
         let newMessage = RoomMessages(context: self.manager.context)
         newMessage.id = UUID()
         newMessage.content = content
-        newMessage.sender_avatar = sender_avatar
-        newMessage.sender_uuid = UUID(uuidString: sender_uuid)!
+//        newMessage.sender_avatar = sender_avatar
+//        newMessage.sender_uuid = UUID(uuidString: sender_uuid)!
         newMessage.sent_at = sent_at
         newMessage.content_type = content_type
-        newMessage.sender_name = sender_name
+//        newMessage.sender_name = sender_name
         newMessage.url_path = fileURL
         newMessage.tempData = tempData
         newMessage.file_name = fileName
         newMessage.file_size = fileSize
         newMessage.story_available_time = storyAvailabeTime
+        newMessage.sender = sender!
         self.rooms[roomIndex].addToMessages(newMessage)
         self.manager.save()
         
         return newMessage
     }
     
+    func createOneSenderInfo(uuid : String,avatar : String,name : String) -> SenderInfo{
+        let senderUUID = UUID(uuidString: uuid)!
+        let senderInfo = SenderInfo(context: self.manager.context)
+        senderInfo.id = senderUUID
+        senderInfo.avatar = avatar
+        senderInfo.name = name
+        self.manager.save()
+
+        return senderInfo
+    }
+    
+    func findOneSender(uuid : UUID) -> SenderInfo?{
+        let request : NSFetchRequest<SenderInfo> = SenderInfo.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@", "id", uuid as CVarArg)
+        request.fetchLimit = 1
+        guard let sender = try? self.manager.context.fetch(request) else {
+            return nil
+        }
+        return sender.first
+    }
+    
     func addRoomMessage(sender_uuid : String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,sent_at : Date,fileURL : String = "",fileName: String? = nil,fileSize : Int64 = 0,storyAvailabeTime : Int32 = 0) -> RoomMessages {
+        
+        var sender = findOneSender(uuid: UUID(uuidString: sender_uuid)!)
+        if sender == nil {
+//            print("user not found")
+            sender = createOneSenderInfo(uuid: sender_uuid, avatar: sender_avatar, name: sender_name)
+        }
+
         let newMessage = RoomMessages(context: self.manager.context)
         newMessage.id = UUID()
         newMessage.content = content
-        newMessage.sender_avatar = sender_avatar
-        newMessage.sender_uuid = UUID(uuidString: sender_uuid)!
+//        newMessage.sender_avatar = sender_avatar
+//        newMessage.sender_uuid = UUID(uuidString: sender_uuid)!
         newMessage.sent_at = sent_at
         newMessage.content_type = content_type
-        newMessage.sender_name = sender_name
+//        newMessage.sender_name = sender_name
         newMessage.file_name = fileName
         newMessage.file_size = fileSize
         newMessage.story_available_time = storyAvailabeTime
         newMessage.url_path = fileURL
+        newMessage.sender = sender
         self.manager.save()
         
         return newMessage
@@ -121,7 +160,7 @@ class UserDataModel : ObservableObject {
         if let rooms  = self.info?.rooms?.allObjects as? [ActiveRooms] {
             DispatchQueue.main.async {
                 self.rooms = rooms
-                print("fetched.")
+//                print("fetched.")
             }
            
         }
@@ -133,6 +172,7 @@ class UserDataModel : ObservableObject {
         }
         
         if let msg = self.rooms[self.currentRoom].messages?.allObjects as? [RoomMessages] {
+  
             DispatchQueue.main.async {
 //                withAnimation{
                     self.currentRoomMessage = msg.sorted(by: { $0.sent_at! < $1.sent_at! })
@@ -140,6 +180,7 @@ class UserDataModel : ObservableObject {
                 
             }
         }
+       
     }
     
     

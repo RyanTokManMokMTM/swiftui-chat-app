@@ -110,8 +110,8 @@
             filePath = "Chat-app-ios/main_view/main/ChattingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "390"
-            endingLineNumber = "390"
+            startingLineNumber = "391"
+            endingLineNumber = "391"
             landmarkName = "ChattingView"
             landmarkType = "14">
             <Locations>
@@ -158,8 +158,8 @@
             filePath = "Chat-app-ios/main_view/main/ChattingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "391"
-            endingLineNumber = "391"
+            startingLineNumber = "392"
+            endingLineNumber = "392"
             landmarkName = "sendMessage(contentType:)"
             landmarkType = "7">
             <Locations>

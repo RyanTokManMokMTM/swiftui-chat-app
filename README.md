@@ -7,7 +7,7 @@ This app is built for IOS only. The main purpose of building this app  is testin
 
 
 #### App Prototype:
-![app](./screen/app.png)
+![app](./screen/full-app.png)
 
 #### Demo:
 Coming soon

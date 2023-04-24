@@ -2,7 +2,7 @@
 //  RoomMessages+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 18/4/2023.
+//  Created by Jackson.tmm on 24/4/2023.
 //
 //
 
@@ -21,21 +21,19 @@ extension RoomMessages {
     @NSManaged public var file_name: String?
     @NSManaged public var file_size: Int64
     @NSManaged public var id: UUID?
-    @NSManaged public var sender_avatar: String?
-    @NSManaged public var sender_name: String?
-    @NSManaged public var sender_uuid: UUID?
     @NSManaged public var sent_at: Date?
+    @NSManaged public var story_available_time: Int32
     @NSManaged public var tempData: Data?
     @NSManaged public var url_path: String?
-    @NSManaged public var story_available_time: Int32
     @NSManaged public var room: ActiveRooms?
+    @NSManaged public var sender: SenderInfo?
 
 }
 
 extension RoomMessages : Identifiable {
-    var AvatarURL : URL {
-         return URL(string: RESOURCES_HOST + self.sender_avatar!)!
-     }
+//    var AvatarURL : URL {
+//         return URL(string: RESOURCES_HOST + self.sender_avatar!)!
+//     }
      
      var FileURL : URL{
          return URL(string: RESOURCES_HOST + self.url_path!)!

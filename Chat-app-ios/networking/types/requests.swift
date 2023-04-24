@@ -194,6 +194,7 @@ struct FullGroupInfo : Decodable {
     let members : UInt
     let created_at : UInt
     var is_joined : Bool
+    let is_owner : Bool
     
     var AvatarURL : URL {
         return URL(string:RESOURCES_HOST + self.avatar)!

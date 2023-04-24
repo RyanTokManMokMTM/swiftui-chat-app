@@ -40,7 +40,7 @@ struct SignInView: View {
                 
                 VStack(alignment:.leading,spacing:15){
                     HStack{
-                        TextField("ID/Email", text: $email)
+                        TextField("Email", text: $email)
                             .padding()
                     }
                     .padding(.vertical,5)

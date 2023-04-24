@@ -17,14 +17,18 @@
         <attribute name="file_name" optional="YES" attributeType="String"/>
         <attribute name="file_size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="sender_avatar" optional="YES" attributeType="String"/>
-        <attribute name="sender_name" optional="YES" attributeType="String"/>
-        <attribute name="sender_uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="sent_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="story_available_time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tempData" optional="YES" attributeType="Binary"/>
         <attribute name="url_path" optional="YES" attributeType="String"/>
         <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActiveRooms" inverseName="messages" inverseEntity="ActiveRooms"/>
+        <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SenderInfo" inverseName="roomMessage" inverseEntity="SenderInfo"/>
+    </entity>
+    <entity name="SenderInfo" representedClassName="SenderInfo" syncable="YES">
+        <attribute name="avatar" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="roomMessage" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RoomMessages" inverseName="sender" inverseEntity="RoomMessages"/>
     </entity>
     <entity name="UserDatas" representedClassName="UserDatas" syncable="YES">
         <attribute name="avatar" optional="YES" attributeType="String"/>

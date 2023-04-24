@@ -19,8 +19,11 @@
 		201CB7B329BEEAFE0036D181 /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CB7B229BEEAFE0036D181 /* NavigationState.swift */; };
 		2022AFA729C99F4B00C47383 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2022AFA629C99F4B00C47383 /* URL.swift */; };
 		2030090429EFC2E8007E3AED /* ShowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2030090329EFC2E8007E3AED /* ShowImageView.swift */; };
-		2040D43229EE7EB1006C93BE /* RoomMessages+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2040D43029EE7EB1006C93BE /* RoomMessages+CoreDataClass.swift */; };
-		2040D43329EE7EB1006C93BE /* RoomMessages+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2040D43129EE7EB1006C93BE /* RoomMessages+CoreDataProperties.swift */; };
+		2035126629F6567900139AD3 /* RoomMessages+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126229F6567900139AD3 /* RoomMessages+CoreDataClass.swift */; };
+		2035126729F6567900139AD3 /* RoomMessages+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126329F6567900139AD3 /* RoomMessages+CoreDataProperties.swift */; };
+		2035126A29F6637C00139AD3 /* SenderInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126829F6637B00139AD3 /* SenderInfo+CoreDataClass.swift */; };
+		2035126B29F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126929F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift */; };
+		2035126D29F6827900139AD3 /* GroupProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126C29F6827900139AD3 /* GroupProfileEditView.swift */; };
 		2043305029F3ADD3004305C0 /* ListGourpMemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2043304F29F3ADD3004305C0 /* ListGourpMemberView.swift */; };
 		204B945529B708D4009C251B /* BenHubState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204B945429B708D4009C251B /* BenHubState.swift */; };
 		204B945729B708E2009C251B /* BenHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204B945629B708E2009C251B /* BenHubView.swift */; };
@@ -92,8 +95,11 @@
 		201CB7B229BEEAFE0036D181 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
 		2022AFA629C99F4B00C47383 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		2030090329EFC2E8007E3AED /* ShowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowImageView.swift; sourceTree = "<group>"; };
-		2040D43029EE7EB1006C93BE /* RoomMessages+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomMessages+CoreDataClass.swift"; sourceTree = "<group>"; };
-		2040D43129EE7EB1006C93BE /* RoomMessages+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomMessages+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		2035126229F6567900139AD3 /* RoomMessages+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomMessages+CoreDataClass.swift"; sourceTree = "<group>"; };
+		2035126329F6567900139AD3 /* RoomMessages+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomMessages+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		2035126829F6637B00139AD3 /* SenderInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SenderInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		2035126929F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SenderInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		2035126C29F6827900139AD3 /* GroupProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupProfileEditView.swift; sourceTree = "<group>"; };
 		2043304F29F3ADD3004305C0 /* ListGourpMemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGourpMemberView.swift; sourceTree = "<group>"; };
 		204B945429B708D4009C251B /* BenHubState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenHubState.swift; sourceTree = "<group>"; };
 		204B945629B708E2009C251B /* BenHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenHubView.swift; sourceTree = "<group>"; };
@@ -200,6 +206,7 @@
 				206D250D29F41D59008E3727 /* EditView.swift */,
 				208F5DCC29F4E8A600549483 /* StatusMessageEditView.swift */,
 				20A1B4EF29F5252C0088FD6A /* OtherUserProfileView.swift */,
+				2035126C29F6827900139AD3 /* GroupProfileEditView.swift */,
 			);
 			path = main;
 			sourceTree = "<group>";
@@ -235,8 +242,10 @@
 		2091E9B3299CECE400EB9A7C = {
 			isa = PBXGroup;
 			children = (
-				2040D43029EE7EB1006C93BE /* RoomMessages+CoreDataClass.swift */,
-				2040D43129EE7EB1006C93BE /* RoomMessages+CoreDataProperties.swift */,
+				2035126829F6637B00139AD3 /* SenderInfo+CoreDataClass.swift */,
+				2035126929F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift */,
+				2035126229F6567900139AD3 /* RoomMessages+CoreDataClass.swift */,
+				2035126329F6567900139AD3 /* RoomMessages+CoreDataProperties.swift */,
 				20C81B9329EE73E20051F9E6 /* ActiveRooms+CoreDataClass.swift */,
 				20C81B9429EE73E20051F9E6 /* ActiveRooms+CoreDataProperties.swift */,
 				20A8894C29C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift */,
@@ -475,6 +484,7 @@
 				2070384D29E6726A00727FDB /* StoryPostView.swift in Sources */,
 				200B79A429BDA78F00F1DB70 /* CreateGroup.swift in Sources */,
 				2076908D29B62F6700ACD532 /* CustomConer.swift in Sources */,
+				2035126729F6567900139AD3 /* RoomMessages+CoreDataProperties.swift in Sources */,
 				2073D67529A26CFA00AA29D9 /* Date.swift in Sources */,
 				20A8AA4429B4BD4E00B0243E /* Error.swift in Sources */,
 				201CB7AD29BED1D20036D181 /* Model.xcdatamodeld in Sources */,
@@ -483,15 +493,16 @@
 				20164E3D29BAE51700F61813 /* CustomSearchBar.swift in Sources */,
 				2073D66B29A250EF00AA29D9 /* HomeView.swift in Sources */,
 				2043305029F3ADD3004305C0 /* ListGourpMemberView.swift in Sources */,
+				2035126D29F6827900139AD3 /* GroupProfileEditView.swift in Sources */,
 				20A8AA4029B49CF500B0243E /* Util.swift in Sources */,
 				2091E9C2299CECE400EB9A7C /* ContentView.swift in Sources */,
 				2085012929BCB17D00C3E4DD /* AddContent.swift in Sources */,
 				20962D7C29BB2B5400143AAF /* MessageViewModel.swift in Sources */,
 				209F7AC129BC42DC003701E8 /* PersistenceController.swift in Sources */,
 				2065B37B29B8A885004B6F2D /* SearchView.swift in Sources */,
-				2040D43229EE7EB1006C93BE /* RoomMessages+CoreDataClass.swift in Sources */,
 				204B945529B708D4009C251B /* BenHubState.swift in Sources */,
 				20CE5D2B29A354D6001371A7 /* CallView.swift in Sources */,
+				2035126A29F6637C00139AD3 /* SenderInfo+CoreDataClass.swift in Sources */,
 				2030090429EFC2E8007E3AED /* ShowImageView.swift in Sources */,
 				20CE5D2729A3541C001371A7 /* CallRow.swift in Sources */,
 				20164E3B29BADCDA00F61813 /* SearchUserViewModel.swift in Sources */,
@@ -502,7 +513,6 @@
 				201140F629A49F7200015AD8 /* ChatBubble.swift in Sources */,
 				2076908929B5FCF100ACD532 /* SideMenu.swift in Sources */,
 				2073D67229A2539900AA29D9 /* ContentRow.swift in Sources */,
-				2040D43329EE7EB1006C93BE /* RoomMessages+CoreDataProperties.swift in Sources */,
 				20A1B4F029F5252C0088FD6A /* OtherUserProfileView.swift in Sources */,
 				20A8894B29C02EF200B5BED2 /* UserDataModel.swift in Sources */,
 				200B79A629BDAFEF00F1DB70 /* GroupViewModel.swift in Sources */,
@@ -515,6 +525,7 @@
 				20A8895229C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift in Sources */,
 				2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */,
 				208FE8A829E42BBE00D8A820 /* StoryOtherView.swift in Sources */,
+				2035126B29F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift in Sources */,
 				2073D66F29A252B800AA29D9 /* Message.swift in Sources */,
 				20A8AA4229B4B60700B0243E /* requests.swift in Sources */,
 				204B945729B708E2009C251B /* BenHubView.swift in Sources */,
@@ -523,6 +534,7 @@
 				201140F029A48C9800015AD8 /* UserAvatarItem.swift in Sources */,
 				20C81B9629EE73E20051F9E6 /* ActiveRooms+CoreDataProperties.swift in Sources */,
 				20DB4DC929F2756500FF4C8B /* GroupSearchView.swift in Sources */,
+				2035126629F6567900139AD3 /* RoomMessages+CoreDataClass.swift in Sources */,
 				2091E9DD299FD10600EB9A7C /* SignUpView.swift in Sources */,
 				20F47B2D29C598D2003D5CD0 /* DocumentPicker.swift in Sources */,
 				200665BD29E699CC00A7C9E5 /* StoryPhototView.swift in Sources */,
