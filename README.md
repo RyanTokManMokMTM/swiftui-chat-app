@@ -11,3 +11,4 @@ This app is built for IOS only. The main purpose of building this app  is testin
 
 #### Demo:
 Coming soon
+<video src="./screen/demo.mp4" controls="controls" width="500" height="300"></video> 
