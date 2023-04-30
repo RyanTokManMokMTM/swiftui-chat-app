@@ -31,12 +31,10 @@ extension RoomMessages {
 }
 
 extension RoomMessages : Identifiable {
-//    var AvatarURL : URL {
-//         return URL(string: RESOURCES_HOST + self.sender_avatar!)!
-//     }
-     
      var FileURL : URL{
-         return URL(string: RESOURCES_HOST + self.url_path!)!
+         let url = self.url_path!
+         let encodedURL = url.addingPercentEncoding(withAllowedCharacters:.urlPathAllowed) ?? ""
+         return URL(string: RESOURCES_HOST+encodedURL)!
      }
      
      var FileSizeInMB : Double {
@@ -50,4 +48,5 @@ extension RoomMessages : Identifiable {
         let distance = Date.now.distance(to: Date(timeIntervalSince1970: TimeInterval(self.story_available_time)))
         return abs(distance) <= 86400
     }
+
 }

@@ -3,10 +3,15 @@
 //  Chat-app-ios
 //
 //  Created by Jackson.tmm on 15/2/2023.
-//
 
 import SwiftUI
+
+class SearchState : ObservableObject {
+    @Published var isChatFromProfile : Bool = false
+    @Published var chatUser : UserProfile? = nil
+}
 struct ContentView: View {
+    @StateObject var state = SearchState()
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
     @StateObject var storyModel = StoryViewModel()
     @StateObject var hub = BenHubState.shared
@@ -46,8 +51,8 @@ struct ContentView: View {
             
             
             if isShowMenu {
-                NavigationStack(path:$path.navigationRoomPath){
-                    SideMenu(isShow: $isShowMenu, isShowProfile: $isShowProfile,isAddStory: $isAddStory,menuIndex: $menuIndex){
+                NavigationStack(){
+                    SideMenu(isShow: $isShowMenu, isShowProfile: $isShowProfile,isAddStory: $isAddStory,menuIndex: $menuIndex,isSearching: $isSearch){
                         ScrollView(.vertical,showsIndicators: false){
                             menuRow(tagIndex:0,sysImg: "message.fill", rowName: "Chats", selected: $menuIndex, namespace: namespace){
                                 withAnimation{
@@ -55,7 +60,7 @@ struct ContentView: View {
                                 }
                             }
                             
-                            NavigationLink(destination: SearchView(),isActive: $isSearch){
+                            NavigationLink(destination: SearchView().environmentObject(state),isActive: $isSearch){
                                 menuRow(tagIndex:1,sysImg: "magnifyingglass", rowName: "Find Friends", selected: $menuIndex,namespace: namespace){
                                     withAnimation{
                                         self.menuIndex = 1
@@ -63,6 +68,34 @@ struct ContentView: View {
                                     }
                                 }
                              
+                                
+                            }
+                            .onReceive(self.state.$isChatFromProfile) { toRoot in
+                                if toRoot  {
+                                    self.state.isChatFromProfile = false
+                                    var room : ActiveRooms
+                                    
+                                    guard let profile = self.state.chatUser else {
+                                        return
+                                    }
+                                    
+                                    if let userRoom = UserDataModel.shared.findOneRoom(uuid: profile.UserUUID){
+                                        room = userRoom
+                                    }else {
+                                        if let newRoom = UserDataModel.shared.addRoom(id: profile.uuid, name: profile.name, avatar: profile.avatar, message_type: 1) {
+                                            room = newRoom
+                                        }else {
+                                            print("failed to create a new room")
+                                            return
+                                        }
+                                        
+                                    }
+                                    self.isSearch = false
+                                    self.isShowMenu = false
+                                    self.menuIndex = 0
+                                    NavigationState.shared.navigationRoomPath.append(room)
+                                  
+                                }
                                 
                             }
                             .buttonStyle(.plain)

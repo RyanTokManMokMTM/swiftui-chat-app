@@ -44,25 +44,29 @@ protocol APIService {
     func DeleteMessage(req : DeleteMessageReq) async -> Result<DeleteFriendResp,Error>
     
     func UploadImage(req : UploadImageReq) async -> Result<UploadImageResp,Error>
-    func UploadFile(req : UploadFileReq) async -> Result<UploadFileResp,Error>
+    func UploadFile(req : UploadFileReq,fileExt : String) async -> Result<UploadFileResp,Error>
      
     func CreateStory(mediaData : Data) async -> Result<CreateStoryResp,Error>
     func DeleteStory(req : DeleteStoryReq) async  -> Result<DeleteStoryResp,Error>
     func GetUserStories() async  -> Result<GetUserStoriesResp,Error>
     func GetActiveStories() async  -> Result<GetActiveStoryResp,Error>
     func GetStoryInfo(storyID : UInt) async  -> Result<GetStoryInfoResp,Error>
+    
+    func DownloadTask(fileURL : URL) async -> Result<URL,Error>
 }
 
 enum APIError : Error, CustomNSError{
     case badUrl
     case badResponse
     case badEncoding
+    case badParameter
     
     case apiError
     case invalidEndpoint
     case invalidResponse
     case noData
     case serializationError
+    
     
     var localizedDescription : String {
         switch self {
@@ -74,6 +78,7 @@ enum APIError : Error, CustomNSError{
         case .badUrl: return "Invalid URL"
         case .badResponse: return "Get a bad response"
         case .badEncoding: return "Failed to encode data"
+        case .badParameter : return "Invalid Parameter"
         }
     }
     var errorUserInfo: [String : Any] {
@@ -153,7 +158,8 @@ enum APIEndPoint : String,CaseIterable {
         case .DeleteMessage : return "/message"
             
         case .UploadImage : return "/file/image/upload"
-        case .UploadFile : return "/file/document/upload"
+//        case .UploadFile : return "/file/document/upload"
+        case .UploadFile : return "/file/upload"
             
         case .AddStory: return "/story"
         case .DeleteStory: return "/story"
@@ -163,3 +169,24 @@ enum APIEndPoint : String,CaseIterable {
         }
     }
 }
+
+enum UploadFileType : String,CaseIterable{
+    case text
+    case image
+    case audio
+    case video
+    case binary
+    
+    var rawValue: String {
+        switch self {
+        case .text : return "text" //reable text
+        case .image : return "image" // any image
+        case .audio : return "audio" // any audio
+        case .video : return "video" // any video
+        case .binary : return "application" //other
+        }
+    }
+}
+
+
+

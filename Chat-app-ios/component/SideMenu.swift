@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SideMenu<Content:View>: View {
-    //    struct SideMenu : View {
+
     @EnvironmentObject private var userVM : UserViewModel
     @Binding var isShow : Bool
     @Binding var isShowProfile : Bool
@@ -17,6 +17,7 @@ struct SideMenu<Content:View>: View {
     @State private var isAnimated = false
     @State private var isEditProfile = false
     @Binding var menuIndex : Int
+    @Binding var isSearching : Bool
     var content : () -> Content
     var body : some View {
         VStack{
@@ -27,23 +28,25 @@ struct SideMenu<Content:View>: View {
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height,alignment:.leading)
         .edgesIgnoringSafeArea(.all)
         .background(Color.black.opacity(0.5).edgesIgnoringSafeArea(.all).onTapGesture {
+           
             withAnimation{
                 self.isAnimated = false
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
                 withAnimation{
-                    self.isShow.toggle()
+                    self.isShow = false
+                    self.menuIndex = 0
                 }
             }
         })
         .onChange(of: self.menuIndex){ _ in
-            if self.menuIndex == 0 {
+            if !isSearching && self.menuIndex == 0 {
                 withAnimation{
                     self.isAnimated = false
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
                     withAnimation{
-                        self.isShow.toggle()
+                        self.isShow = false
                     }
                 }
             }
@@ -53,6 +56,7 @@ struct SideMenu<Content:View>: View {
                 self.isAnimated = true
             }
         }
+        
     }
     
     @ViewBuilder

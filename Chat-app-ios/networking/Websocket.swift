@@ -13,6 +13,28 @@ enum MessageEvent {
     case receive
 }
 
+enum ContentType : Int,CaseIterable {
+    case text
+    case img
+    case file
+    case audio
+    case video
+    case story
+    case sys
+    
+    var rawValue: Int {
+        switch self{
+        case .text : return 1
+        case .img : return 2
+        case .file : return 3
+        case .audio : return 4
+        case .video : return 5
+        case .story : return 6
+        case .sys : return 7
+        }
+    }
+}
+
 struct WSMessage : Codable {
     let avatar : String?
     let fromUserName : String?
@@ -27,7 +49,7 @@ struct WSMessage : Codable {
     let groupName : String?
     let groupAvatar : String?
     let fileName : String?
-    let fileSize : Int16?
+    let fileSize : Int64?
 //    let fileType : String?
 //    let file : [UInt8]?
     let storyAvailableTime : Int32?
@@ -57,6 +79,7 @@ class Webcoket : ObservableObject {
 
     func connect(){
         if self.session != nil {
+            print("connection is not nil!")
             return
         }
         
@@ -81,6 +104,7 @@ class Webcoket : ObservableObject {
     func disconnect(){
         DispatchQueue.main.async {
             self.session?.cancel()
+            self.session = nil
         }
     }
     
@@ -186,14 +210,18 @@ class Webcoket : ObservableObject {
                     break
                 }
             }
-    
+            
+//            print(msg)
+            print(roomID)
             let sentTime = Date.now
             if let index = UserDataModel.shared.findOneRoomWithIndex(uuid: roomID){
 //                UserDataModel.shared.rooms[index].unread_message += 1
-                UserDataModel.shared.rooms[index].last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
-                UserDataModel.shared.rooms[index].last_sent_time = sentTime
+                if msg.contentType! != ContentType.sys.rawValue {
+                    UserDataModel.shared.rooms[index].last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
+                    UserDataModel.shared.rooms[index].last_sent_time = sentTime
+                }
                 
-                let msg = UserDataModel.shared.addRoomMessage(roomIndex: index, sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
+                let msg = UserDataModel.shared.addRoomMessage(roomIndex: index, sender_uuid: msg.fromUUID!,receiver_uuid: msg.toUUID!, sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type: msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),storyAvailabeTime: msg.storyAvailableTime ?? 0,event: event)
 //                print(msg.sender)
                 if UserDataModel.shared.currentRoom == index {
                     UserDataModel.shared.currentRoomMessage.append(msg)
@@ -219,7 +247,7 @@ class Webcoket : ObservableObject {
                                 room.last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
                                 room.last_sent_time = sentTime
                                 
-                                let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
+                                let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!,receiver_uuid:msg.toUUID! ,sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type : msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),storyAvailabeTime: msg.storyAvailableTime ?? 0,event: event)
                                 
                                 room.addToMessages(msg)
                                 
@@ -241,8 +269,8 @@ class Webcoket : ObservableObject {
                         room.last_message = msg.contentType == 1 ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
                         room.last_sent_time = sentTime
                         
-                        let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!, sender_avatar: msg.avatar!,sender_name: msg.fromUserName!,content: msg.content ?? "",content_type: Int16(msg.contentType!), sent_at:sentTime,fileURL: msg.urlPath ?? "",storyAvailabeTime: msg.storyAvailableTime ?? 0)
-                        
+                        let msg = UserDataModel.shared.addRoomMessage(sender_uuid: msg.fromUUID!,receiver_uuid:msg.toUUID! ,sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type : msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),storyAvailabeTime: msg.storyAvailableTime ?? 0,event: event)
+
                         room.addToMessages(msg)
                         
                         UserDataModel.shared.manager.save()
@@ -260,9 +288,20 @@ class Webcoket : ObservableObject {
 
     @MainActor
     private func fileConentMessage(fromUUID : String,contentType : Int16) -> String {
-        if contentType == 6 {
+        if contentType ==  ContentType.img.rawValue{
+           return self.userModel!.profile!.uuid == fromUUID ? "Sent a image." : "Received a image."
+        }else if contentType ==  ContentType.file.rawValue {
+            return self.userModel!.profile!.uuid == fromUUID ? "Sent a file." : "Received a file."
+        }else if contentType ==  ContentType.audio.rawValue {
+            return self.userModel!.profile!.uuid == fromUUID ? "Sent a audio" : "Received a audio."
+        }else if contentType ==  ContentType.video.rawValue {
+            return self.userModel!.profile!.uuid == fromUUID ? "Sent a video" : "Received a video."
+        }else if contentType ==  ContentType.story.rawValue{
             return "Reply to a story"
+        } else if contentType == ContentType.sys.rawValue {
+            return ""
+        } else {
+            return ""
         }
-        return self.userModel!.profile!.uuid == fromUUID ? "Sent a \(contentType == 2 ? "image" : "file")" : "Received a \(contentType == 2 ? "image" : "file")"
     }
 }

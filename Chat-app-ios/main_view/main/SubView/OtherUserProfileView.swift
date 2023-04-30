@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchUserProfileView: View {
     @Binding var result : SearchUserResult
     @StateObject private var hub = BenHubState.shared
+    @EnvironmentObject private var state : SearchState
     var body: some View {
         VStack{
             VStack{
@@ -115,6 +116,10 @@ struct SearchUserProfileView: View {
                 Spacer()
                 
                 Button(action: {
+                    withAnimation{
+                        self.state.isChatFromProfile = true
+                        self.state.chatUser = self.result.user_info
+                    }
                     
                 }){
                     VStack(spacing:8){

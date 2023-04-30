@@ -2,7 +2,7 @@
 //  ActiveRooms+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 18/4/2023.
+//  Created by Jackson.tmm on 26/4/2023.
 //
 //
 
@@ -23,6 +23,7 @@ extension ActiveRooms {
     @NSManaged public var message_type: Int16
     @NSManaged public var name: String?
     @NSManaged public var unread_message: Int16
+    @NSManaged public var createdAt: Date?
     @NSManaged public var messages: NSSet?
     @NSManaged public var user: UserDatas?
 
@@ -47,7 +48,7 @@ extension ActiveRooms {
 
 extension ActiveRooms : Identifiable {
     var AvatarURL : URL {
-        URL(string: RESOURCES_HOST + self.avatar!)!
+        URL(string: RESOURCES_HOST + (self.avatar ?? ""))!
     }
     
     var IsUnreal : Bool {
@@ -55,4 +56,3 @@ extension ActiveRooms : Identifiable {
     }
 
 }
-

@@ -43,7 +43,10 @@ struct Message: View {
                         ContentRow(data: data)
                             .swipeActions{
                                 Button(role: .destructive) {
-                                    print("Deleting conversation")
+                                    //remove the room and message
+                                    if UserDataModel.shared.removeAllRoomMessage(room: data.wrappedValue){
+                                        UserDataModel.shared.removeActiveRoom(room: data.wrappedValue)
+                                    }
                                 } label: {
                                     Label("Delete", systemImage: "trash.fill")
                                 }

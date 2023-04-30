@@ -44,6 +44,7 @@ struct SelectGroupMembers: View {
                         DispatchQueue.main.async {
                             withAnimation{
                                 self.groupVM.UpdateGroupMember(info: data)
+                                print(data.id)
                             }
                         }
                     }){
@@ -201,6 +202,7 @@ struct CreateGroup : View {
         var members : [UInt] = []
         var avatarBase64 : String = ""
         self.groupVM.members.forEach{members.append($0.id)}
+        print(members)
         
         if self.selectedData != nil {
             //MARK: encoding image to base64

@@ -83,7 +83,7 @@ struct HomeView: View {
                 
                 
 //            }
-            .navigationTitle("99+")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar{
                 ToolbarItem(placement: .principal){

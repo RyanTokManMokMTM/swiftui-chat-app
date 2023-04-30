@@ -164,6 +164,7 @@ struct ProfileView: View {
                             self.loginState = true
                         }
                         Webcoket.shared.disconnect()
+                       
                         UserDefaults.standard.removeObject(forKey: "token")
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1){

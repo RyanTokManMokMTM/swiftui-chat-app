@@ -43,8 +43,8 @@ struct UserProfileEditView: View {
                     }
                 }
             }
-            .photosPicker(isPresented: $isShowAvatarPhoto, selection: $selectedAvatar, photoLibrary: .shared())
-            .photosPicker(isPresented: $isShowCoverPhoto, selection: $selectedCover, photoLibrary: .shared())
+            .photosPicker(isPresented: $isShowAvatarPhoto,selection: $selectedAvatar,matching: .images, photoLibrary: .shared())
+            .photosPicker(isPresented: $isShowCoverPhoto, selection: $selectedCover, matching: .images,photoLibrary: .shared())
             .onChange(of: self.selectedAvatar){ newItem in
                 Task {
                     if let data = try? await newItem?.loadTransferable(type: Data.self) {

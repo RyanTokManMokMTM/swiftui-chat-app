@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchView: View {
     @State private var searchKeyWord : String = ""
     @StateObject private var searchModel = SearchUserViewModel()
+    @EnvironmentObject private var state : SearchState
     var body: some View {
         VStack{
             Text("Find Friends")
@@ -26,6 +27,7 @@ struct SearchView: View {
             }else {
                 List(self.$searchModel.searchResponse,id:\.user_info.id){ $data in
                     NavigationLink(destination: SearchUserProfileView(result: $data)
+                        .environmentObject(state)
                         .accentColor(.white))
                        {
                             UserRow(data: data.user_info, isFriend: data.is_friend)
@@ -81,9 +83,9 @@ struct SearchView: View {
         }
     }
 }
-
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchView()
-    }
-}
+//
+//struct SearchView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SearchView()
+//    }
+//}

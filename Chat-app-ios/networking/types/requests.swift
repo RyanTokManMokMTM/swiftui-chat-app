@@ -284,9 +284,10 @@ struct UploadImageResp : Decodable {
     let path : String
 }
 
-struct UploadFileReq : Encodable {
+struct UploadFileReq{
+    let data : Data
     let file_name : String
-    let data : String
+//    let data : String
 }
 
 struct UploadFileResp : Decodable {

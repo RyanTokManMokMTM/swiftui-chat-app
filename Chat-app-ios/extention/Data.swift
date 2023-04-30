@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
+
 public extension Data {
     var fileExtension: String {
         var values = [UInt8](repeating:0, count:1)
         self.copyBytes(to: &values, count: 1)
-
+       
         let ext: String
         switch (values[0]) {
         case 0xFF:
@@ -21,6 +23,12 @@ public extension Data {
             ext = "gif"
         case 0x49, 0x4D :
             ext = "tiff"
+        case 0x00:
+            return "mp4"
+        case 0x6D:
+            return "mov"
+        case 0x30:
+            return "wav"
         default:
             ext = "png"
         }

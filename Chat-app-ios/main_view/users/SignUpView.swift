@@ -154,6 +154,11 @@ struct SignUpView: View {
         switch resp {
         case .success(_):
             hub.AlertMessage(sysImg: "checkmark", message: "succeed.")
+            self.email.removeAll()
+            self.password.removeAll()
+            self.comfirmPassword.removeAll()
+            self.userName.removeAll()
+            self.isSignUp = false
             break
         case .failure(let err):
             hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)

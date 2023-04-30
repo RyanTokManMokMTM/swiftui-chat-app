@@ -12,7 +12,7 @@ class PersistenceController : ObservableObject{
     static let shared = PersistenceController()
     let container: NSPersistentContainer
     let context :  NSManagedObjectContext
-  
+    
 //    @Published var rooms : [ActiveRooms] = []
     private init() {
         container = NSPersistentContainer(name: "Model")
@@ -24,6 +24,7 @@ class PersistenceController : ObservableObject{
         }
         
         self.context = container.viewContext
+        self.context.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
     }
 //
 //    func FetchUserActiveRooms(userID : Int16) {

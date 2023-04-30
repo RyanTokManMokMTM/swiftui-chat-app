@@ -151,7 +151,7 @@ struct SignInView: View {
                     UDM.addUserData(id: Int16(data.user_info.id), uuid: data.user_info.uuid, email: data.user_info.email, name: data.user_info.name, avatar: data.user_info.avatar)
                 }
                
-                BenHubState.shared.AlertMessage(sysImg: "checkmark", message: "login successed!")
+                BenHubState.shared.AlertMessage(sysImg: "checkmark", message: "login succeed!")
                 Webcoket.shared.connect() //TODO: connect to ws server
                 Webcoket.shared.userModel = userViewModel
 //                Webcoket.shared.userData = UDM

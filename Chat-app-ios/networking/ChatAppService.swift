@@ -497,21 +497,28 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
-    func UploadFile(req : UploadFileReq) async -> Result<UploadFileResp,Error> {
+    func UploadFile(req : UploadFileReq,fileExt : String) async -> Result<UploadFileResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.UploadFile.rawValue) else {
             return .failure(APIError.badUrl)
         }
         
+        let boundary = UUID().uuidString
+        let httpBody = NSMutableData()
+        
+        let mimeType = getMintype(fileType: fileExt)
+        if mimeType.isEmpty {
+            return .failure(APIError.badParameter)
+        }
+        
+        httpBody.append(convertFileData(fieldName: "file", fileName: req.file_name  , mimeType: mimeType, fileData: req.data, using: boundary))
+        httpBody.appendString("--\(boundary)--")
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        do {
-           let body = try self.Encoder.encode(req)
-            request.httpBody = body
-        } catch (let err){
-            print(err.localizedDescription)
-            return .failure(APIError.badEncoding)
-        }
+        request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+//        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        request.httpBody = httpBody as Data
+        
         
         return await self.AsyncPostAndDecode(request: request)
     }
@@ -595,6 +602,24 @@ class ChatAppService : APIService {
         return await self.AsyncFetchAndDecode(request: request)
     }
     
+    
+    func DownloadTask(fileURL : URL) async -> Result<URL,Error>{
+        return await AsyncDownload(url: fileURL)
+    }
+    
+    private func AsyncDownload(url : URL) async -> Result<URL,Error> {
+        do {
+            let (file,response) = try await self.Client.download(from: url)
+            guard let statusCode = response as? HTTPURLResponse,200..<300 ~= statusCode.statusCode else{
+                return .failure(APIError.badResponse)
+            }
+            return .success(file)
+        } catch {
+           
+            return .failure(error)
+        }
+    }
+    
     private func AsyncFetchAndDecode<ResponseType : Decodable>(request : URLRequest) async -> Result<ResponseType,Error>{
         
         do {
@@ -641,8 +666,44 @@ class ChatAppService : APIService {
         }
     }
     
+
+    
     private func getUserToken() -> String {
         return UserDefaults.standard.string(forKey: "token") ?? ""
+    }
+    
+    private func getMintype(fileType : String) -> String {
+        switch fileType {
+        case "doc":return "application/msword"
+        case "docx":return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        case "xls":return "application/vnd.ms-excel"
+        case "xlsx":return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        case "ppt":return "application/vnd.ms-powerpoint"
+        case "pptx" : return "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        case "pdf" : return "application/pdf"
+        case "rtf" : return "application/rtf"
+            
+        case "gif": return "image/gif"
+        case "jpeg" : return "image/jpeg"
+        case "png" : return "image/png"
+        case "tiff" : return "image/tiff"
+        case "bmp" : return "image/bmp"
+            
+        case "txt":return "text/plain"
+            
+        case "mp3":return "audio/mpeg"
+        case "wav":return "audio/x-wav"
+        case "m4a":return "audio/x-m4a"
+            
+        case "mp4":return "video/mp4"
+        case "mpg","mpe","mpeg" : return "video/mpeg"
+        case "qt","mov" : return "video/quicktime"
+        case "m4v" : return "video/x-m4v"
+        case "wmv" : return "video/x-ms-wmv"
+        case "avi" : return "video/x-msvideo"
+        default:
+            return ""
+        }
     }
 
 }
