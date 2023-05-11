@@ -2,7 +2,7 @@
 //  RoomMessages+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 24/4/2023.
+//  Created by Jackson.tmm on 6/5/2023.
 //
 //
 
@@ -25,28 +25,58 @@ extension RoomMessages {
     @NSManaged public var story_available_time: Int32
     @NSManaged public var tempData: Data?
     @NSManaged public var url_path: String?
+    @NSManaged public var message_status: Int16
     @NSManaged public var room: ActiveRooms?
     @NSManaged public var sender: SenderInfo?
 
 }
 
 extension RoomMessages : Identifiable {
-     var FileURL : URL{
-         let url = self.url_path!
-         let encodedURL = url.addingPercentEncoding(withAllowedCharacters:.urlPathAllowed) ?? ""
-         return URL(string: RESOURCES_HOST+encodedURL)!
-     }
-     
-     var FileSizeInMB : Double {
-         if self.file_size == 0 {
-             return 0
-         }
-         return Double(self.file_size) / 1048576 //byte -> MB
-     }
+    var FileURL : URL{
+        let url = self.url_path!
+        let encodedURL = url.addingPercentEncoding(withAllowedCharacters:.urlPathAllowed) ?? ""
+        return URL(string: RESOURCES_HOST+encodedURL)!
+    }
     
+    var FileSizeInMB : Double {
+        if self.file_size == 0 {
+            return 0
+        }
+        return Double(self.file_size) / 1048576 //byte -> MB
+    }
+   
     var isStoryAvailable : Bool{
         let distance = Date.now.distance(to: Date(timeIntervalSince1970: TimeInterval(self.story_available_time)))
         return abs(distance) <= 86400
     }
+    
+    
+    
+    var messageStatus : MessageStatus {
+        switch self.message_status {
+        case 1: return .sending
+        case 2: return .ack
+        case 3: return .received
+        case 4: return .notAck
+        default: return .unknow
+        }
+    }
+}
 
+enum MessageStatus : Int16 {
+    case sending
+    case ack
+    case received
+    case notAck
+    case unknow
+    
+    var rawValue: Int16 {
+        switch self {
+        case .unknow : return 0
+        case .sending : return 1
+        case .ack : return 2
+        case .received : return 3
+        case .notAck : return 4
+        }
+    }
 }

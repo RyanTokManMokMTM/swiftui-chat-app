@@ -15,12 +15,21 @@ enum MediaType : String {
     case Video = "video"
 }
 
+private struct OffsetPreferenceKey: PreferenceKey {
+    
+    static var defaultValue: CGPoint = .zero
+    
+    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) { }
+}
+
 struct ChattingView: View {
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
+    @EnvironmentObject private var videoCallVM : VideoCallViewModel
 //    @EnvironmentObject private var messageModel : MessageViewModel
     let chatUserData : ActiveRooms
     @Binding var messages : [RoomMessages]
+    
 //    @Binding var isActive : Bool
     @StateObject private var hub = BenHubState.shared
     @State private var text : String = ""
@@ -40,79 +49,136 @@ struct ChattingView: View {
     
     @State private var isFileExport : Bool = false
     @State private var fileExportURL : URL? = nil
+    
+    @State private var isFetchMore: Bool = false
+    @State private var isShowMessage = false
+    
+    @State private var isCalling : Bool = false
+    
     var body: some View {
         VStack{
             ScrollViewReader { scroll in
-                ScrollView(.vertical){
-                    VStack{
-                        ForEach(messages.indices,id :\.self) { index in
-                            VStack(spacing:0){
+                   ScrollView(.vertical){
+                       GeometryReader { proxy in
+                           Color.clear.preference(
+                               key: OffsetPreferenceKey.self,
+                               value: proxy.frame(
+                                   in: .named("ScrollViewOrigin")
+                               ).origin
+                           )
+                       }
+                       .frame(width: 0, height: 0)
+                        VStack{
+                            if self.isFetchMore{
+                                ProgressView()
+                                    .onAppear{
+                                        UDM.fetchCurrentRoomMessage()
+                                    }
+                            }
+                            
+                            ForEach(messages.indices,id :\.self) { index in
+                                VStack(spacing:0){
 
 
-                                if messages[index].content_type == ContentType.sys.rawValue{
-                                    SysContentTypeView(message: messages[index])
+                                    if messages[index].content_type == ContentType.sys.rawValue{
+                                        SysContentTypeView(message: messages[index])
+                                    }else {
+
+                                        ChatBubble(direction: isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .sender : .receiver,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: Int(messages[index].content_type),messageStatus: messages[index].messageStatus,sentTime: messages[index].sent_at){
+
+                                            if messages[index].content_type == ContentType.text.rawValue {
+                                                TextContentTypeView(message: messages[index])
+                                            }else if messages[index].content_type == ContentType.img.rawValue{
+                                                ImageContentTypeView(message: messages[index])
+                                            }else if messages[index].content_type == ContentType.file.rawValue{
+                                                FileContentTypeView(message: messages[index])
+                                            }
+                                            else if messages[index].content_type == ContentType.audio.rawValue {
+                                                AudioContentTypeView(message: messages[index])
+                                            } else if messages[index].content_type == ContentType.video.rawValue {
+                                                VideoContentTypeView(message: messages[index])
+                                            }
+                                            else if messages[index].content_type == ContentType.story.rawValue {
+                                                StoryContentTypeView(message: messages[index])
+                                            }
+                                        }
+                                        .transition(.move(edge:  isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .trailing :.leading))
+
+
+
+
+                                        //MARK: For show the post info
+                                        if  messages[index].content_type == ContentType.story.rawValue {
+                                            ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: 1,isSame:true,messageStatus: messages[index].messageStatus){
+                                                StoryImgContentTypeView(message: messages[index])
+                                            }
+                                        }
+
+                                    }
+
+
+                                }
+                                .id(index)
+                            }
+                            .overlay{
+                                Color.white.opacity(self.isShowMessage ? 0 : 1)
+                            }
+                            .onAppear(){
+                                DispatchQueue.main.async{
+                                    //                                print(messages.count)
+                                    withAnimation{
+                                        scroll.scrollTo(messages.count - 1)
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        if !self.isShowMessage {
+                                            self.isShowMessage = true
+                                        }
+                                    }
+                                }
+                                self.isFetchMore = false
+
+                            }
+
+                            .onChange(of: messages.count){ _ in
+                                //                            print(index)
+                                if !self.isFetchMore {
+                                    withAnimation{
+                                        scroll.scrollTo(messages.count - 1)
+                                    }
                                 }else {
-                                    ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: Int(messages[index].content_type)){
-
-                                        if messages[index].content_type == ContentType.text.rawValue {
-                                            TextContentTypeView(message: messages[index])
-                                        }else if messages[index].content_type == ContentType.img.rawValue{
-                                            ImageContentTypeView(message: messages[index])
-                                        }else if messages[index].content_type == ContentType.file.rawValue{
-                                            FileContentTypeView(message: messages[index])
-                                        }
-                                        else if messages[index].content_type == ContentType.audio.rawValue {
-                                            AudioContentTypeView(message: messages[index])
-                                        } else if messages[index].content_type == ContentType.video.rawValue {
-                                            VideoContentTypeView(message: messages[index])
-                                        }
-                                        else if messages[index].content_type == ContentType.story.rawValue {
-                                            StoryContentTypeView(message: messages[index])
-                                        }
-                                    }
-
-                                    //MARK: For show the post info
-                                    if  messages[index].content_type == ContentType.story.rawValue {
-                                        ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: 1,isSame:true){
-                                            StoryImgContentTypeView(message: messages[index])
-                                        }
-                                    }
-
+                                    self.isFetchMore  = false
                                 }
-
-
-                            }.id(index)
-
-                        }
-                        .onAppear(){
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                //                                print(messages.count)
-                                withAnimation{
-                                    scroll.scrollTo(messages.count - 1)
-                                }
-
+                                
+                                
                             }
-
-                        }
-
-                        .onChange(of: messages.count){ _ in
-                            //                            print(index)
-                            withAnimation{
-                                scroll.scrollTo(messages.count - 1)
-                            }
-
                         }
                     }
-                }
+                   .coordinateSpace(name: "ScrollViewOrigin")
+                    .onPreferenceChange(OffsetPreferenceKey.self,
+                                        perform: { point in
+                    
+                        if !isFetchMore && point.y > 100 && UserDataModel.shared.hasMoreMessage() {
+                            print(point.y)
+                            withAnimation{
+                                isFetchMore = true
+                            }
+                        }
+                    })
+
+             
             }
  
             
             InputField()
         }
+        .onDisappear{
+            UDM.currentRoom = -1
+            UDM.currentRoomMessage.removeAll()
+            UDM.previousTotalMessage = 0
+        }
         .fullScreenCover(isPresented: $isPlayAudio){
             AudioPlayerView(isPlayingAudio: $isPlayAudio,fileName: self.audioInfo!.file_name!, path: self.audioInfo!.FileURL)
         }
-        
         .fullScreenCover(isPresented: $isShowVideo){
             VideoPlayerView(isShowVideoPlayer: $isShowVideo, url: self.videoURL!)
         }
@@ -155,31 +221,32 @@ struct ChattingView: View {
             }
             
             //TODO: NOT TO IMPLEMENT THIS NOW
-//            ToolbarItem(placement: .navigationBarTrailing){
-//                HStack{
-//                    Button(action:{
-//                        withAnimation{
-//
-//                        }
-//                    }){
-//                        Image(systemName: "phone.fill")
-//                            .imageScale(.large)
-//                            .foregroundColor(Color.green)
-//                            .bold()
-//                    }
-//                    Button(action:{
-//                        withAnimation{
-//
-//                        }
-//                    }){
-//                        Image(systemName: "video.fill")
-//                            .imageScale(.large)
-//                            .foregroundColor(Color.green)
-//                            .bold()
-//                    }
-//                }
-//
-//            }
+            ToolbarItem(placement: .navigationBarTrailing){
+                HStack{
+                    Button(action:{
+                        withAnimation{
+                            self.isCalling = true
+                            
+                        }
+                    }){
+                        Image(systemName: "phone.fill")
+                            .imageScale(.large)
+                            .foregroundColor(Color.green)
+                            .bold()
+                    }
+                    Button(action:{
+                        withAnimation{
+                            self.isCalling = true
+                        }
+                    }){
+                        Image(systemName: "video.fill")
+                            .imageScale(.large)
+                            .foregroundColor(Color.green)
+                            .bold()
+                    }
+                }
+
+            }
         }
         .onChange(of: self.selectedItem){ newItem in
             Task {
@@ -232,7 +299,32 @@ struct ChattingView: View {
 
         .fullScreenCover(isPresented: $isShowImage){
             ShowImageView(imageURL: self.showImageURL, isShowImage: $isShowImage)
+                
         }
+    }
+    
+    private func checkMessage(messageID : String) async {
+        //TODO: need to be optimized
+        do{
+            try await Task.sleep(nanoseconds: 60_000_000_000)
+        } catch (let err) {
+            print(err.localizedDescription)
+        }
+        
+        let msgUUID = UUID(uuidString: messageID)!
+        guard let message = UserDataModel.shared.findOneMessage(id: msgUUID) else {
+            print("message not found")
+            return
+        }
+        
+        
+        if message.messageStatus == .ack {
+            print("message is ack.")
+            return
+        }
+        
+        
+        UserDataModel.shared.updateMessageStatus(msg: message, status: .notAck)
     }
     
     private func isAudio(ext : String) -> Bool {
@@ -283,13 +375,12 @@ struct ChattingView: View {
         }
         .padding()
         .background(.thickMaterial)
-//        .fullScreenCover(isPresented: $isShowInfo){
-//            if chatUserData.message_type == 1 {
-//                OtherUserProfileView(uuid: self.chatUserData.id!.uuidString,isShowDetail: $isShowInfo)
-//            }else {
-//                OtherGroupProfileView(uuid: self.chatUserData.id!.uuidString,isShowDetail: $isShowInfo)
-//            }
-//        }
+        .fullScreenCover(isPresented: $isCalling){
+            VoiceCallingView(isCallView: $isCalling,data: self.chatUserData)
+                .environmentObject(userModel)
+                .environmentObject(videoCallVM)
+        }
+
     }
     
     private func fileBase64Encoding(data : Data,format : String) -> String {
@@ -331,26 +422,20 @@ struct ChattingView: View {
     }
     
     private func sendMessage(contentType : Int16 = 1){
-        //TODO:
-        /*
-         messageType : 1 - PM
-         From -> current sender user
-         To -> ChatRoomUser
-         messageType : 2 - Group
-         From -> current sender user
-         To -> Room UUID
-         
-         */
+        let msgID = UUID().uuidString
+        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
+        Websocket.shared.onSend(msg: msg)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
         
-        let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
-        Webcoket.shared.onSend(msg: msg)
-        Webcoket.shared.handleMessage(event:.send,msg: msg)
+        Task {
+            await checkMessage(messageID: msgID)
+        }
         self.text.removeAll()
     }
     
     private func sendImage(data : String, imageType : String,mediaType : MediaType = .Image) async {
         let sent_time = Date.now
-        let message = UDM.addRoomMessage(roomIndex: UDM.currentRoom, sender_uuid: self.userModel.profile!.uuid, receiver_uuid: self.chatUserData.id!.uuidString.lowercased(),sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: mediaType == .Image ? 2 : 3, message_type: self.chatUserData.message_type,sent_at: sent_time,tempData:self.selectedData,fileName: "",fileSize: 0,event: .send)
+        let message = UDM.addRoomMessage(roomIndex: UDM.currentRoom, msgID : UUID().uuidString,sender_uuid: self.userModel.profile!.uuid, receiver_uuid: self.chatUserData.id!.uuidString.lowercased(),sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: mediaType == .Image ? 2 : 3, message_type: self.chatUserData.message_type,sent_at: sent_time,tempData:self.selectedData,fileName: "",fileSize: 0,event: .send,messageStatus: .sending)
         chatUserData.last_message = "Sent a \(mediaType.rawValue)"
         chatUserData.last_sent_time = sent_time
         UDM.currentRoomMessage.append(message)
@@ -371,8 +456,12 @@ struct ChattingView: View {
             }
             
             
-            let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
-            Webcoket.shared.onSend(msg: msg)
+            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
+            Websocket.shared.onSend(msg: msg)
+            Task {
+                await checkMessage(messageID: message.id!.uuidString)
+            }
+
         case .failure(let err):
             print(err.localizedDescription)
         }
@@ -397,7 +486,7 @@ struct ChattingView: View {
         }
         
         let sent_time = Date.now
-        let message = UDM.addRoomMessage(roomIndex: UDM.currentRoom, sender_uuid: self.userModel.profile!.uuid,receiver_uuid: self.chatUserData.id!.uuidString.lowercased() ,sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: Int16(contentType),message_type: self.chatUserData.message_type, sent_at: sent_time,tempData:self.selectedData,fileName: fileName,fileSize: fileSize,event: .send)
+        let message = UDM.addRoomMessage(roomIndex: UDM.currentRoom,msgID: UUID().uuidString, sender_uuid: self.userModel.profile!.uuid,receiver_uuid: self.chatUserData.id!.uuidString.lowercased() ,sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: Int16(contentType),message_type: self.chatUserData.message_type, sent_at: sent_time,tempData:self.selectedData,fileName: fileName,fileSize: fileSize,event: .send,messageStatus: .sending)
         
         chatUserData.last_message = sentMsg
         chatUserData.last_sent_time = sent_time
@@ -420,8 +509,12 @@ struct ChattingView: View {
             }
             
             
-            let msg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: fileName,fileSize: fileSize,storyAvailableTime: nil)
-            Webcoket.shared.onSend(msg: msg)
+            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: fileName,fileSize: fileSize,storyAvailableTime: nil)
+            Websocket.shared.onSend(msg: msg)
+            
+            Task {
+                await checkMessage(messageID: message.id!.uuidString)
+            }
         case .failure(let err):
             print(err.localizedDescription)
         }
@@ -429,6 +522,9 @@ struct ChattingView: View {
     }
     
     //MARK Content Type
+    private func isOwner(id : String) -> Bool {
+        return id == userModel.profile!.uuid
+    }
     
     @ViewBuilder
     private func TextContentTypeView(message : RoomMessages) -> some View {
@@ -436,7 +532,7 @@ struct ChattingView: View {
             .font(.system(size:15))
             .padding(10)
             .foregroundColor(Color.white)
-            .background(Color.green)
+            .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color.blue : Color.green)
     }
     
     @ViewBuilder

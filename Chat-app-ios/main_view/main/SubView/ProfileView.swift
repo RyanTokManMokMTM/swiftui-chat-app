@@ -163,7 +163,7 @@ struct ProfileView: View {
                         withAnimation{
                             self.loginState = true
                         }
-                        Webcoket.shared.disconnect()
+                        Websocket.shared.disconnect()
                        
                         UserDefaults.standard.removeObject(forKey: "token")
                         

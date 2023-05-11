@@ -19,3 +19,18 @@ struct Chat_app_iosApp: App {
         }
     }
 }
+
+struct testCall : View  {
+    
+//    @StateObject private var vm = VideoCallViewModel()
+    var body : some View {
+        VStack {
+            Button(action:{
+//                rc.offer()
+//                vm.webRTCClient?.offer()
+            }){
+                Text("offer")
+            }
+        }
+    }
+}

@@ -25,7 +25,7 @@ struct SideMenu<Content:View>: View {
                 .offset(x : self.isAnimated ? 0 : -UIScreen.main.bounds.width / 1.2)
                 .transition(.move(edge: .leading))
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height,alignment:.leading)
+        .frame(maxWidth:.infinity, maxHeight: .infinity,alignment:.leading)
         .edgesIgnoringSafeArea(.all)
         .background(Color.black.opacity(0.5).edgesIgnoringSafeArea(.all).onTapGesture {
            

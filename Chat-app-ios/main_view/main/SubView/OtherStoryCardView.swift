@@ -215,10 +215,10 @@ struct OtherStoryCardView: View {
             return
         }
         
-        let sendMsg = WSMessage(avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.friendInfo.uuid, content: self.comment, contentType: 6, type: 4, messageType: 1, urlPath: self.story!.media_url, groupName: nil, groupAvatar: nil, fileName: nil, fileSize: nil, storyAvailableTime: Int32(self.story!.create_at))
+        let sendMsg = WSMessage(messageID: UUID().uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.friendInfo.uuid, content: self.comment, contentType: 6, type: 4, messageType: 1, urlPath: self.story!.media_url, groupName: nil, groupAvatar: nil, fileName: nil, fileSize: nil, storyAvailableTime: Int32(self.story!.create_at))
       
-        Webcoket.shared.onSend(msg: sendMsg)
-        Webcoket.shared.handleMessage(event:.send,msg: sendMsg,isReplyComment: true)
+        Websocket.shared.onSend(msg: sendMsg)
+        Websocket.shared.handleMessage(event:.send,msg: sendMsg,isReplyComment: true)
         self.comment.removeAll()
         
     }

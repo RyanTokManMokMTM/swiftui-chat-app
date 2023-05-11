@@ -22,12 +22,15 @@ let tags : [MenuTag] = [
 
 
 struct HomeView: View {
+    
     @EnvironmentObject private var storyModel : StoryViewModel
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var userStory : UserStoryViewModel
     @Environment(\.colorScheme) var colorScheme
-
+    
+    @StateObject private var videoCallVM = VideoCallViewModel()
+    @StateObject var hub = BenHubState.shared
     @State private var index = 0
     @State private var search = ""
     @State private var isShowSheet = false
@@ -46,6 +49,7 @@ struct HomeView: View {
                     .environmentObject(UDM)
                     .environmentObject(storyModel)
                     .environmentObject(userStory)
+                    .environmentObject(videoCallVM)
 //                    .tabItem{
 //                        VStack{
 //                            Image(systemName: "message.fill")
@@ -124,9 +128,13 @@ struct HomeView: View {
             }
 //            .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
         }
+        .onAppear{
+            self.videoCallVM.start()
+        }
         .sheet(isPresented: $isShowSheet){
             AddContent(isAddContent: $isShowSheet)
                 .environmentObject(UDM)
+                .environmentObject(userModel)
         }
         .fullScreenCover(isPresented: $isAddStory){
             StoryPhototView(isAddStory: $isAddStory)
@@ -145,7 +153,17 @@ struct HomeView: View {
                 .environmentObject(userModel)
                 .environmentObject(userStory)
         }
-        
+//        .wait(isLoading: $hub.isWaiting){
+//            BenHubLoadingView(message: hub.message)
+//        }
+//        .alert(isAlert: $hub.isPresented){
+//            switch hub.type{
+//            case .normal,.system:
+//                BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+//            case .messge:
+//                BenHubAlertWithMessage( message: hub.message,info: hub.info!)
+//            }
+//        }
       
 //        .accentColor(.green)
         

@@ -117,7 +117,7 @@ struct SignInView: View {
                 }
             }
             .padding(.top,UIScreen.main.bounds.height / 10)
-            
+            .padding(.bottom)
             if self.isSignUp{
                 SignUpView(isSignUp: $isSignUp)
                     .animation(.default)
@@ -152,8 +152,8 @@ struct SignInView: View {
                 }
                
                 BenHubState.shared.AlertMessage(sysImg: "checkmark", message: "login succeed!")
-                Webcoket.shared.connect() //TODO: connect to ws server
-                Webcoket.shared.userModel = userViewModel
+                Websocket.shared.connect() //TODO: connect to ws server
+                Websocket.shared.userModel = userViewModel
 //                Webcoket.shared.userData = UDM
                 Task{
                     await self.userStory.GetUserStories()

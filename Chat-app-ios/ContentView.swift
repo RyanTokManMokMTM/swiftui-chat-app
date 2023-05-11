@@ -37,6 +37,18 @@ struct ContentView: View {
                 
                 
             }
+            .wait(isLoading: $hub.isWaiting){
+                BenHubLoadingView(message: hub.message)
+            }
+            .alert(isAlert: $hub.isPresented){
+                switch hub.type{
+                case .normal,.system:
+                    BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+                case .messge:
+                    BenHubAlertWithMessage( message: hub.message,info: hub.info!)
+                }
+            }
+          
             .accentColor(.green)
             .zIndex(1)
             .fullScreenCover(isPresented: $isShowProfile){
@@ -119,12 +131,6 @@ struct ContentView: View {
                     .background(.white)
                     .zIndex(3)
             }
-        }
-        .wait(isLoading: $hub.isWaiting){
-            BenHubLoadingView(message: hub.message)
-        }
-        .alert(isAlert: $hub.isPresented){
-            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
         }
         .onChange(of: loginSate){ state in
             if state == true{

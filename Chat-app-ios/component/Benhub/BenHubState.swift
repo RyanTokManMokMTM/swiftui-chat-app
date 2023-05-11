@@ -11,6 +11,17 @@ import Foundation
 enum StateType {
     case normal
     case messge
+    case system
+}
+
+struct Info  {
+    let avatarPath : String
+    let name : String
+    
+    
+    var AvatarURL : URL {
+        return URL(string: RESOURCES_HOST + self.avatarPath)!
+    }
 }
 
 final class BenHubState : ObservableObject {
@@ -19,6 +30,8 @@ final class BenHubState : ObservableObject {
     
     private(set) var message : String = ""
     private(set) var sysImg : String = ""
+    private(set) var info : Info? = nil
+    private(set) var type : StateType = .normal
     
     static let shared = BenHubState()
     
@@ -29,6 +42,19 @@ final class BenHubState : ObservableObject {
         withAnimation{
             self.isWaiting = true
         }
+    }
+    
+    func AlertMessageWithUserInfo(message : String, avatarPath : String , name : String ,type : StateType = .normal){
+        self.message = message
+        self.info = Info(avatarPath: avatarPath, name: name)
+        self.type = type
+        
+        DispatchQueue.main.async {
+            withAnimation{
+                self.isPresented = true
+            }
+        }
+        
     }
     
     func AlertMessage(sysImg : String, message : String) {

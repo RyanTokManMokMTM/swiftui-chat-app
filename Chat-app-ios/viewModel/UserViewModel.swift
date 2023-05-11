@@ -7,7 +7,7 @@
 
 import Foundation
 
-@MainActor
+
 class UserViewModel : ObservableObject {
     @Published var profile : UserProfile?
     @Published var friendsList : [UserProfile] = [UserProfile]()

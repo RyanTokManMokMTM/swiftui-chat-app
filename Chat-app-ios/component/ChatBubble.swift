@@ -102,7 +102,9 @@ struct ChatBubble<Content> : View where Content : View {
     let messageType : Int
     let userName : String
     let isSame : Bool
-    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,isSame : Bool = false,@ViewBuilder content : @escaping ()->Content){
+    let messageStatus : MessageStatus
+    let sentTime : Date?
+    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,isSame : Bool = false,messageStatus : MessageStatus,sentTime : Date? = nil,@ViewBuilder content : @escaping ()->Content){
         self.direction = direction
         self.content = content
         self.userAvatarURL = userAvatarURL
@@ -110,6 +112,8 @@ struct ChatBubble<Content> : View where Content : View {
         self.messageType = messageType
         self.userName = userName
         self.isSame = isSame
+        self.messageStatus = messageStatus
+        self.sentTime = sentTime
     }
     
     var body: some View {
@@ -136,22 +140,87 @@ struct ChatBubble<Content> : View where Content : View {
                     }
                 }
                 
-                VStack(alignment:.leading,spacing:5){
-                    if messageType == 2 && direction == .receiver {
+                
+                HStack(alignment:.bottom,spacing:5){
+                    
+                    if direction == .sender {
+                        if messageStatus == .sending {
+                            Image(systemName: "arrow.up.left")
+                                .imageScale(.small)
+                                .foregroundColor(.gray)
+                                .font(.caption2)
+                        } else if messageStatus == .notAck {
+                            Image(systemName: "arrow.counterclockwisek")
+                                .imageScale(.small)
+                                .foregroundColor(.gray)
+                                .font(.caption2)
+                        }
+                    }
+                    
+                    if direction == .sender && sentTime != nil{
+                        Text(sentTime!.sendTimeString())
+                            .foregroundColor(.gray)
+                            .font(.caption2)
+                    }
+                    
+                    VStack(alignment:.leading,spacing:5){
+                        if messageType == 2 && direction == .receiver {
+                            
+                            Text(self.userName)
+                                .font(.footnote)
+                                .bold()
+                        }
                         
-                        Text(self.userName)
-                            .font(.footnote)
-                            .bold()
+                        HStack(alignment: .bottom, spacing: 5){
+                            content()
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .contextMenu{
+                                    if direction == .receiver {
+                                        Button {
+                                            print("Reply")
+                                        } label: {
+                                            Text("Reply")
+                                        }
+                                    }
+                                    
+                                    if direction == .sender {
+                                        Button {
+                                            print("Delete")
+                                        } label: {
+                                            Text("Delete")
+                                        }
+                                        
+                                        Button {
+                                            print("Recall")
+                                        } label: {
+                                            Text("Recall")
+                                        }
+                                    }
+
+                                    
+                                    if messageStatus == .notAck {
+                                        Button {
+                                            print("resent")
+                                        } label: {
+                                            Text("Resend")
+                                        }
+                                    }
+
+                                }
+                            if direction == .receiver && sentTime != nil{
+                                Text(sentTime!.sendTimeString())
+                                    .foregroundColor(.gray)
+                                    .font(.caption2)
+                            }
+                        }
+                       
+                        //                            .clipShape(TextBubbleShape(direction: direction))
+                        
                     }
-                    if contentType == 1 {
-                        content()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-//                            .clipShape(TextBubbleShape(direction: direction))
-                    }else {
-                        content()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
+                    
                 }
+                
+
                 
                 
             }

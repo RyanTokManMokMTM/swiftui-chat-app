@@ -18,6 +18,7 @@
         <attribute name="file_name" optional="YES" attributeType="String"/>
         <attribute name="file_size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="message_status" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sent_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="story_available_time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tempData" optional="YES" attributeType="Binary"/>

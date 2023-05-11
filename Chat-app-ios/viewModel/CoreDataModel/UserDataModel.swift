@@ -17,6 +17,7 @@ class UserDataModel : ObservableObject {
     @Published var info : UserDatas?
     @Published var rooms : [ActiveRooms] = [] 
     @Published var currentRoomMessage : [RoomMessages] = []
+    @Published var previousTotalMessage : Int = 0 //for offset correctly
     private init(){}
 
 //
@@ -68,11 +69,11 @@ class UserDataModel : ObservableObject {
         return activeRoom
     }
     
-    func addRoomMessage(roomIndex: Int,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent) -> RoomMessages {
+    func addRoomMessage(roomIndex: Int,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus) -> RoomMessages {
         
         //TODO: Check Sender Info exist?
         var sender : SenderInfo?
-        if content_type != 7{ //SYSTEM_MESSAGE - no need to create
+        if content_type != ContentType.sys.rawValue{ //SYSTEM_MESSAGE - no need to create
             //MARK: If current is group chat, according to our data structure, sender_id will be the group_id,so we need the recevier_id here
             let id = message_type == 1 ? sender_uuid : event == .send ?  sender_uuid : receiver_uuid
             if let found =  findOneSender(uuid: UUID(uuidString : id)!) {
@@ -83,7 +84,7 @@ class UserDataModel : ObservableObject {
         }
         
         let newMessage = RoomMessages(context: self.manager.context)
-        newMessage.id = UUID()
+        newMessage.id = UUID(uuidString: msgID)!
         newMessage.content = content
         newMessage.sent_at = sent_at
         newMessage.content_type = content_type
@@ -93,6 +94,7 @@ class UserDataModel : ObservableObject {
         newMessage.file_size = fileSize
         newMessage.story_available_time = storyAvailabeTime
         newMessage.sender = sender
+        newMessage.message_status = messageStatus.rawValue
         self.rooms[roomIndex].addToMessages(newMessage)
         self.manager.save()
         
@@ -121,7 +123,7 @@ class UserDataModel : ObservableObject {
         return sender.first
     }
     
-    func addRoomMessage(sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent) -> RoomMessages {
+    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus) -> RoomMessages {
         
         var sender : SenderInfo?
         if content_type != 7{ //SYSTEM_MESSAGE - no need to create
@@ -135,7 +137,7 @@ class UserDataModel : ObservableObject {
         }
 
         let newMessage = RoomMessages(context: self.manager.context)
-        newMessage.id = UUID()
+        newMessage.id = UUID(uuidString: msgID)!
         newMessage.content = content
         newMessage.sent_at = sent_at
         newMessage.content_type = content_type
@@ -144,6 +146,7 @@ class UserDataModel : ObservableObject {
         newMessage.story_available_time = storyAvailabeTime
         newMessage.url_path = fileURL
         newMessage.sender = sender
+        newMessage.message_status = messageStatus.rawValue
         self.manager.save()
         
         return newMessage
@@ -173,18 +176,53 @@ class UserDataModel : ObservableObject {
     }
     
     func fetchCurrentRoomMessage(){
-        if self.currentRoom == -1 {
+    
+        if self.currentRoom == -1 || !hasMoreMessage() {
             return
         }
         
-        if let msg = self.rooms[self.currentRoom].messages?.allObjects as? [RoomMessages] {
-            
+        
+        let count = self.currentRoomMessage.count
+        let predict = NSPredicate(format: "%K == %@", "room" , self.rooms[self.currentRoom])
+        let req = RoomMessages.fetchRequest()
+        let sortBySentTime = NSSortDescriptor(key:"sent_at", ascending:true)
+        req.fetchLimit = 20
+        req.predicate = predict
+        req.sortDescriptors = [sortBySentTime]
+        req.fetchOffset = count
+//        req.fetchOffset = (self.previousTotalMessage - currMessageCount) >= 20 ? currMessageCount : self.previousTotalMessage - currMessageCount
+        
+        do {
+            let data = try self.manager.context.fetch(req)
             DispatchQueue.main.async {
-                self.currentRoomMessage = msg.sorted(by: { $0.sent_at! < $1.sent_at! })
+
+                    self.currentRoomMessage.insert(contentsOf: data, at: 0)
+                
             }
+          
+        } catch (let err){
+            print(err.localizedDescription)
         }
+
     }
     
+    func hasMoreMessage() -> Bool {
+        let count = self.currentRoomMessage.count
+        return (self.previousTotalMessage - count) > 0
+    }
+    
+    func getMessageCount(room : ActiveRooms){
+        let req = RoomMessages.fetchRequest()
+        let predict = NSPredicate(format: "%K == %@", "room" , self.rooms[self.currentRoom])
+        req.predicate = predict
+        
+        do {
+            let count = try self.manager.context.count(for: req)
+            self.previousTotalMessage = count
+        }catch (let err){
+            print(err.localizedDescription)
+        }
+    }
     func removeAllRoomMessage(room activeRoom : ActiveRooms) -> Bool{
         let predict = NSPredicate(format: "%K == %@", "room" , activeRoom)
         let reqesut = NSFetchRequest<NSFetchRequestResult>(entityName: "RoomMessages")
@@ -215,5 +253,22 @@ class UserDataModel : ObservableObject {
         
     }
     
+    @MainActor
+    func findOneMessage(id : UUID) -> RoomMessages?{
+        let request : NSFetchRequest<RoomMessages> = RoomMessages.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@", "id", id as CVarArg)
+        request.fetchLimit = 1
+        guard let message = try? self.manager.context.fetch(request) else {
+            return nil
+        }
+        return message.first
+    }
+    
+    @MainActor
+    func updateMessageStatus(msg : RoomMessages, status : MessageStatus) {
+        msg.message_status = status.rawValue
+        self.manager.save()
+        print(msg)
+    }
     
 }
