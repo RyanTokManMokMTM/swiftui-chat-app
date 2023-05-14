@@ -154,7 +154,7 @@ class WebRTCClient : NSObject {
 //        
 //        
 //        if let data = sdp.JSONData(type: type) {
-//            self.delegate?.webRTCClient(self, sendData: data) //TODO: define in VideoCallViewModel
+//            self.delegate?.webRTCClient(self, sendData: data) //TODO: define in RTCViewModel
 //            print("sent local SDP")
 //        }
 //
@@ -282,12 +282,57 @@ extension WebRTCClient {
     }
     
     func startCapture(renderer: RTCVideoRenderer){
-        guard let capturer = self.videoCapture as? RTCCameraVideoCapturer else { //only for real device
+        guard let capturer = self.videoCapture as? RTCCameraVideoCapturer else {
             return
         }
     
+        guard let (camera,format,fps) = frontCamera() else {
+            return
+        }
+        
+        capturer.startCapture(with: camera,
+                              format: format,
+                              fps: Int(fps.maxFrameRate))
+        self.localVideoTrack?.add(renderer)
+    }
+    
+    func stopCature() -> Bool {
+        guard let capturer = self.videoCapture as? RTCCameraVideoCapturer else {
+            return false
+        }
+        capturer.stopCapture()
+        return true
+    }
+    
+    func changeCamera(possion : CameraPossion) {
+        guard let capturer = self.videoCapture as? RTCCameraVideoCapturer else {
+            return
+        }
+        
+        if possion == .front {
+            guard let (camera,format,fps) = frontCamera() else {
+                return
+            }
+            
+            capturer.startCapture(with: camera,
+                                  format: format,
+                                  fps: Int(fps.maxFrameRate))
+        }else {
+            guard let (camera,format,fps) = backCamera() else {
+                return
+            }
+            
+            capturer.startCapture(with: camera,
+                                  format: format,
+                                  fps: Int(fps.maxFrameRate))
+        }
+        
+        debugPrint("done")
+    }
+    
+    private func frontCamera() -> (AVCaptureDevice,AVCaptureDevice.Format,AVFrameRateRange)? {
         guard
-            let frontCamera = (RTCCameraVideoCapturer.captureDevices().first { $0.position == .back }),
+            let frontCamera = (RTCCameraVideoCapturer.captureDevices().first { $0.position == .front }),
             
                 // choose highest res
             let format = (RTCCameraVideoCapturer.supportedFormats(for: frontCamera).sorted { (f1, f2) -> Bool in
@@ -298,15 +343,29 @@ extension WebRTCClient {
             
                 // choose highest fps
             let fps = (format.videoSupportedFrameRateRanges.sorted { return $0.maxFrameRate < $1.maxFrameRate }.last) else {
-            return
+            return nil
         }
         
-        capturer.startCapture(with: frontCamera,
-                              format: format,
-                              fps: Int(fps.maxFrameRate))
+        return (frontCamera,format,fps)
+    }
+    
+    private func backCamera() -> (AVCaptureDevice,AVCaptureDevice.Format,AVFrameRateRange)? {
+        guard
+            let backCamera = (RTCCameraVideoCapturer.captureDevices().first { $0.position == .back }),
+            
+                // choose highest res
+            let format = (RTCCameraVideoCapturer.supportedFormats(for: backCamera).sorted { (f1, f2) -> Bool in
+                let width1 = CMVideoFormatDescriptionGetDimensions(f1.formatDescription).width
+                let width2 = CMVideoFormatDescriptionGetDimensions(f2.formatDescription).width
+                return width1 < width2
+            }).last,
+            
+                // choose highest fps
+            let fps = (format.videoSupportedFrameRateRanges.sorted { return $0.maxFrameRate < $1.maxFrameRate }.last) else {
+            return nil
+        }
         
-        //        self.localVideoTrack?.add(renderer)
-        self.localVideoTrack?.add(renderer)
+        return (backCamera,format,fps)
     }
     
     func renderRemoteVideo(renderer : RTCVideoRenderer) {

@@ -13,7 +13,8 @@ struct VoiceCallView: View {
     @StateObject private var hub = BenHubState.shared
     @State private var counter : Int = 0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @EnvironmentObject private var videoCallVM : VideoCallViewModel
+    @EnvironmentObject private var videoCallVM : RTCViewModel
+    
     var body: some View {
         ZStack{
             AsyncImage(url: path, content: {img in
@@ -203,7 +204,9 @@ struct VoiceCallView: View {
                     print("Disconnected????")
                     self.videoCallVM.sendDisconnect()
                     self.videoCallVM.DisConnect()
-                    self.videoCallVM.isIncomingCall = false                }
+                    self.videoCallVM.isIncomingCall = false
+                    
+                }
             }){
                 Circle()
                     .fill(.red)

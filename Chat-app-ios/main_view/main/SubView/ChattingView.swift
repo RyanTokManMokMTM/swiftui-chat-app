@@ -25,7 +25,7 @@ private struct OffsetPreferenceKey: PreferenceKey {
 struct ChattingView: View {
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
-    @EnvironmentObject private var videoCallVM : VideoCallViewModel
+    @EnvironmentObject private var videoCallVM : RTCViewModel
 //    @EnvironmentObject private var messageModel : MessageViewModel
     let chatUserData : ActiveRooms
     @Binding var messages : [RoomMessages]
@@ -228,8 +228,7 @@ struct ChattingView: View {
                     Button(action:{
                         DispatchQueue.main.async {
                             setUpReceiverInfo()
-                            //Setting RTC streaming
-                            setUpCallingInfo()
+                            setUpVoiceCallingInfo()
                         }
 
                     }){
@@ -239,9 +238,11 @@ struct ChattingView: View {
                             .bold()
                     }
                     Button(action:{
-                        withAnimation{
-//                            self.isCalling = true
+                        DispatchQueue.main.async {
+                            setUpReceiverInfo()
+                            setUpVideoCallingInfo()
                         }
+
                     }){
                         Image(systemName: "video.fill")
                             .imageScale(.large)
@@ -313,7 +314,7 @@ struct ChattingView: View {
         self.videoCallVM.userAvatar = self.chatUserData.avatar!
     }
     
-    private func setUpCallingInfo(){
+    private func setUpVoiceCallingInfo(){
         self.videoCallVM.start() //TODO: creating a new peer if it don't init and setting RTC device
         self.videoCallVM.voicePrepare() //TODO: To disable video
         self.videoCallVM.callState = .Connecting //TODO: Current status is connecting
@@ -322,6 +323,18 @@ struct ChattingView: View {
         
         //Sending the offer
         self.videoCallVM.sendOffer(type:.Voice) //TODO: sending offer to receiver
+    }
+    
+    
+    private func setUpVideoCallingInfo(){
+        self.videoCallVM.start() //TODO: creating a new peer if it don't init and setting RTC device
+        self.videoCallVM.videoPrepare() //TODO: To enable video
+        self.videoCallVM.callState = .Connecting //TODO: Current status is connecting
+        self.videoCallVM.callingType = .Video //TODO: Type is voice
+        self.videoCallVM.isIncomingCall = true //TODO: show the view
+        
+        //Sending the offer
+        self.videoCallVM.sendOffer(type:.Video) //TODO: sending offer to receiver
     }
     
     private func checkMessage(messageID : String) async {

@@ -10,7 +10,7 @@ import SwiftUI
 struct VoiceCallingView: View {
     @Binding var isCallView : Bool
     @EnvironmentObject private var userVM : UserViewModel
-    @EnvironmentObject private var videoCallVM : VideoCallViewModel
+    @EnvironmentObject private var videoCallVM : RTCViewModel
     let data : ActiveRooms
     var body: some View {
 //        ZStack(alignment: .bottomLeading){

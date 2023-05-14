@@ -29,7 +29,7 @@ struct HomeView: View {
     @EnvironmentObject private var userStory : UserStoryViewModel
     @Environment(\.colorScheme) var colorScheme
     
-    @StateObject private var videoCallVM = VideoCallViewModel()
+    @StateObject private var videoCallVM = RTCViewModel()
     @StateObject var hub = BenHubState.shared
     @State private var index = 0
     @State private var search = ""
@@ -132,10 +132,12 @@ struct HomeView: View {
         .fullScreenCover(isPresented: self.$videoCallVM.isIncomingCall){
             if self.videoCallVM.callingType == .Voice {
                 VoiceCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
-                    .environmentObject(userModel)
+//                    .environmentObject(userModel)
                     .environmentObject(videoCallVM)
             }else {
-                
+                VideoCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
+//                    .environmentObject(userModel)
+                    .environmentObject(videoCallVM)
             }
         }
         .sheet(isPresented: $isShowSheet){

@@ -1,9 +1,10 @@
 //
-//  VideoCallViewModel.swift
+//  RTCViewModel.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 8/5/2023.
+//  Created by Jackson.tmm on 14/5/2023.
 //
+
 
 import Foundation
 import WebRTC
@@ -28,10 +29,14 @@ enum CallingStatus : String {
     case Incoming
     case Ended
     case Pending
-
 }
 
-class VideoCallViewModel : ObservableObject {
+enum CameraPossion {
+    case front
+    case back
+}
+
+class RTCViewModel : ObservableObject {
     @Published var isConnectd : Bool = false
     @Published var isSetLoaclSDP : Bool = false
     @Published var isSetRemoteSDP : Bool = false
@@ -53,6 +58,8 @@ class VideoCallViewModel : ObservableObject {
     
     @Published var isSpeakerOn : Bool = true
     @Published var isAudioOn : Bool  = true
+    @Published var isVideoOn : Bool = true
+    @Published var camera : CameraPossion = .front
     //MARK: Singal
     var webSocket : Websocket?
     var queue = [String]()
@@ -66,7 +73,7 @@ class VideoCallViewModel : ObservableObject {
         self.webSocket = Websocket.shared
         self.webSocket?.delegate = self
         createNewPeer()
-    } 
+    }
     
     func createNewPeer(){
         if self.webRTCClient != nil {
@@ -87,7 +94,9 @@ class VideoCallViewModel : ObservableObject {
     }
     
     func videoPrepare() {
-        self.webRTCClient?.showVideo()
+        if let client = self.webRTCClient,!client.VideoIsEnable{
+            self.webRTCClient?.showVideo()
+        }
     }
     
     func prepare(){
@@ -134,7 +143,7 @@ class VideoCallViewModel : ObservableObject {
 
 }
 
-extension VideoCallViewModel {
+extension RTCViewModel {
     func sendOffer(type : CallingType){
         if self.toUserUUID == nil {
             print("please input candindate uuid")
@@ -189,7 +198,7 @@ extension VideoCallViewModel {
     }
 }
 
-extension VideoCallViewModel : WebRTCClientDelegate{
+extension RTCViewModel : WebRTCClientDelegate{
     func webRTCClient(_ client: WebRTCClient, sendData data: Data) {
         self.sendSingleMessage(data)
     }
@@ -237,7 +246,7 @@ extension VideoCallViewModel : WebRTCClientDelegate{
 
 
 
-extension VideoCallViewModel {
+extension RTCViewModel {
     func sendSingleMessage(_ message : Data) {
         guard let sdpStr = message.toJSONString else {
             return
@@ -273,7 +282,7 @@ extension VideoCallViewModel {
             webRTCClient.handleRemoteDescription(answer, completion: { err  in
                 DispatchQueue.main.async {
                     self.isSetRemoteSDP = true //JUST FOR TESTING
-                } 
+                }
             })
             break
             //TODO:
@@ -313,7 +322,7 @@ extension VideoCallViewModel {
     
 }
 
-extension VideoCallViewModel {
+extension RTCViewModel {
     func mute()  {
         DispatchQueue.main.async {
             self.webRTCClient?.mute()
@@ -335,16 +344,45 @@ extension VideoCallViewModel {
         }
     }
     
+    func videoOff(){
+        DispatchQueue.main.async {
+            self.webRTCClient?.hideVideo()
+            self.isVideoOn = false
+        }
+    }
+    
+    func videoOn(){
+        DispatchQueue.main.async {
+            self.webRTCClient?.showVideo()
+            self.isVideoOn = true
+        }
+    }
+    
     func speakerOff(){
         DispatchQueue.main.async {
             self.webRTCClient?.speakerOff()
             self.isSpeakerOn = false
         }
     }
+    
+    func changeCamera(){
+        guard let _ =  self.webRTCClient?.stopCature() else {
+            return
+        }
+        DispatchQueue.main.async {
+            if self.camera == .front{
+                self.webRTCClient?.changeCamera(possion: .back)
+                self.camera = .back
+            }else if self.camera == .back {
+                self.webRTCClient?.changeCamera(possion: .front)
+                self.camera = .front
+            }
+        }
+    }
 }
 
 
-extension VideoCallViewModel : WebSocketDelegate {
+extension RTCViewModel : WebSocketDelegate {
     func webSocket(_ webSocket: Websocket, didReceive data: WSMessage) {
         //received
         print("received a signal")

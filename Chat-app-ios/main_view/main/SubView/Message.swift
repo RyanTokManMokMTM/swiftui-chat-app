@@ -13,7 +13,7 @@ struct Message: View {
     @EnvironmentObject private var userStory : UserStoryViewModel
     @StateObject private var messageModel = MessageViewModel()
     @EnvironmentObject private var UDM : UserDataModel
-    @EnvironmentObject private var videoCallVM : VideoCallViewModel
+    @EnvironmentObject private var videoCallVM : RTCViewModel
     @Binding var isActive : Bool
     @Binding var isAddStory : Bool
     @State private var isChat = false

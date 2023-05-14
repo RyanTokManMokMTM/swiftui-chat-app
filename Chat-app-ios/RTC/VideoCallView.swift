@@ -8,7 +8,7 @@
 import SwiftUI
 
 //struct VideoCallView: View {
-//    @StateObject private var videoVM = VideoCallViewModel()
+//    @StateObject private var videoVM = RTCViewModel()
 //    var body: some View {
 //        GeometryReader{ geometry in
 //            VStack{
