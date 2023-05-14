@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		20008A6F2A0A7CC300BFC758 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 20008A6E2A0A7CC300BFC758 /* WebRTC */; };
+		20008A732A0E03FB00BFC758 /* VoiceCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20008A722A0E03FB00BFC758 /* VoiceCallView.swift */; };
 		200665BD29E699CC00A7C9E5 /* StoryPhototView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200665BC29E699CC00A7C9E5 /* StoryPhototView.swift */; };
 		200B79A429BDA78F00F1DB70 /* CreateGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200B79A329BDA78F00F1DB70 /* CreateGroup.swift */; };
 		200B79A629BDAFEF00F1DB70 /* GroupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200B79A529BDAFEF00F1DB70 /* GroupViewModel.swift */; };
@@ -82,6 +83,7 @@
 		20A8AA4429B4BD4E00B0243E /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8AA4329B4BD4E00B0243E /* Error.swift */; };
 		20A8AA4729B4C01B00B0243E /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8AA4629B4C01B00B0243E /* UserViewModel.swift */; };
 		20AC7C7229C19D9200C4E7F9 /* RoomManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AC7C7129C19D9200C4E7F9 /* RoomManager.swift */; };
+		20B1267A2A10E12D009FF2AB /* VideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B126792A10E12D009FF2AB /* VideoCallView.swift */; };
 		20BBAA4329A669BB00ED3245 /* VoiceCallingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */; };
 		20CE5D2529A352C9001371A7 /* FriendRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CE5D2429A352C9001371A7 /* FriendRow.swift */; };
 		20CE5D2729A3541C001371A7 /* CallRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CE5D2629A3541C001371A7 /* CallRow.swift */; };
@@ -94,6 +96,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		20008A722A0E03FB00BFC758 /* VoiceCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCallView.swift; sourceTree = "<group>"; };
 		200253AB2A0A312B00F4A672 /* Chat-app-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Chat-app-ios.entitlements"; sourceTree = "<group>"; };
 		200665BC29E699CC00A7C9E5 /* StoryPhototView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryPhototView.swift; sourceTree = "<group>"; };
 		200B79A329BDA78F00F1DB70 /* CreateGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroup.swift; sourceTree = "<group>"; };
@@ -171,6 +174,7 @@
 		20A8AA4329B4BD4E00B0243E /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		20A8AA4629B4C01B00B0243E /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
 		20AC7C7129C19D9200C4E7F9 /* RoomManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomManager.swift; sourceTree = "<group>"; };
+		20B126792A10E12D009FF2AB /* VideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallView.swift; sourceTree = "<group>"; };
 		20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCallingView.swift; sourceTree = "<group>"; };
 		20CE5D2429A352C9001371A7 /* FriendRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRow.swift; sourceTree = "<group>"; };
 		20CE5D2629A3541C001371A7 /* CallRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallRow.swift; sourceTree = "<group>"; };
@@ -411,6 +415,8 @@
 				20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */,
 				20CE5D2A29A354D6001371A7 /* CallView.swift */,
 				2073D66E29A252B800AA29D9 /* Message.swift */,
+				20008A722A0E03FB00BFC758 /* VoiceCallView.swift */,
+				20B126792A10E12D009FF2AB /* VideoCallView.swift */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -569,6 +575,7 @@
 				203417DB2A091E980076C942 /* RTCVideoView.swift in Sources */,
 				20CE5D2B29A354D6001371A7 /* CallView.swift in Sources */,
 				2035126A29F6637C00139AD3 /* SenderInfo+CoreDataClass.swift in Sources */,
+				20008A732A0E03FB00BFC758 /* VoiceCallView.swift in Sources */,
 				2030090429EFC2E8007E3AED /* ShowImageView.swift in Sources */,
 				20CE5D2729A3541C001371A7 /* CallRow.swift in Sources */,
 				20164E3B29BADCDA00F61813 /* SearchUserViewModel.swift in Sources */,
@@ -613,6 +620,7 @@
 				20F47B2D29C598D2003D5CD0 /* DocumentPicker.swift in Sources */,
 				200665BD29E699CC00A7C9E5 /* StoryPhototView.swift in Sources */,
 				2076908B29B62CE400ACD532 /* Data.swift in Sources */,
+				20B1267A2A10E12D009FF2AB /* VideoCallView.swift in Sources */,
 				20BBAA4329A669BB00ED3245 /* VoiceCallingView.swift in Sources */,
 				20A8895329C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift in Sources */,
 				20A8AA3C29B49BCA00B0243E /* ChatAppService.swift in Sources */,

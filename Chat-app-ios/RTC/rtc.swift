@@ -46,6 +46,8 @@ class WebRTCClient : NSObject {
     
     //how many candinate is connected
     private var candidateQueue = [RTCIceCandidate]()
+    private let audioQueue = DispatchQueue(label: "audio")
+    private let rtcAudioSession =  RTCAudioSession.sharedInstance()
     
     weak var delegate: WebRTCClientDelegate?
     private var hasReceivedSPD = false
@@ -68,6 +70,10 @@ class WebRTCClient : NSObject {
         setUp()
     }
     
+    func Disconnect(){
+        self.peerConn?.close()
+        
+    }
 
     func setUp(){
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement" : "true"])
@@ -133,26 +139,26 @@ class WebRTCClient : NSObject {
         }
     }
     
-    private func setLocalSDP(_ sdp : RTCSessionDescription) {
-        guard let peerConn = peerConn else {
-            print("Peer connection have't created.")
-            return
-        }
-
-        peerConn.setLocalDescription(sdp) { err in
-            if let err = err {
-                print(err)
-                return
-            }
-        }
-        
-        
-        if let data = sdp.JSONData() {
-            self.delegate?.webRTCClient(self, sendData: data) //TODO: define in VideoCallViewModel
-            print("sent local SDP")
-        }
-
-    }
+//    private func setLocalSDP(_ sdp : RTCSessionDescription,type : CallingType) {
+//        guard let peerConn = peerConn else {
+//            print("Peer connection have't created.")
+//            return
+//        }
+//
+//        peerConn.setLocalDescription(sdp) { err in
+//            if let err = err {
+//                print(err)
+//                return
+//            }
+//        }
+//        
+//        
+//        if let data = sdp.JSONData(type: type) {
+//            self.delegate?.webRTCClient(self, sendData: data) //TODO: define in VideoCallViewModel
+//            print("sent local SDP")
+//        }
+//
+//    }
     
     private func setCandindate(remoteCandidate : RTCIceCandidate){
         guard let peerConn = peerConn else {
@@ -379,9 +385,6 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
         print("didOpen Data Channel")
         self.remoteDataChannel = dataChannel
     }
-    
-    
-    
 }
 
 extension WebRTCClient: RTCDataChannelDelegate {
@@ -394,12 +397,91 @@ extension WebRTCClient: RTCDataChannelDelegate {
     }
 }
 
+extension WebRTCClient {
+    func mute(){
+        self.setAudioEnable(false)
+    }
+    
+    func unmute(){
+        self.setAudioEnable(true)
+    }
+    
+    func speakerOn(){
+        self.audioQueue.async { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.rtcAudioSession.lockForConfiguration()
+            do {
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+                try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
+                try self.rtcAudioSession.setActive(true)
+            } catch let err {
+                debugPrint("Error setting AVAAudioSession \(err)")
+            }
+            self.rtcAudioSession.unlockForConfiguration()
+            
+        }
+    }
+    
+    func speakerOff(){
+        self.audioQueue.async { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.rtcAudioSession.lockForConfiguration()
+            do {
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+                try self.rtcAudioSession.overrideOutputAudioPort(.none)
+            } catch let err {
+                debugPrint("Error setting AVAAudioSession \(err)")
+            }
+            self.rtcAudioSession.unlockForConfiguration()
+            
+        }
+    }
+    
+    private func setAudioEnable(_ isEnable : Bool){
+        guard let peerConn = self.peerConn else {
+            debugPrint("Peerconnection is not init.")
+            return
+        }
+        
+        let audioTrack = peerConn.transceivers.compactMap { return $0.sender.track as? RTCAudioTrack}
+        audioTrack.forEach { $0.isEnabled = isEnable}
+    }
+}
+
+extension WebRTCClient {
+    func showVideo(){
+        self.setVideoEnable(true)
+    }
+    
+    func hideVideo(){
+        self.setVideoEnable(false)
+    }
+    
+    
+    
+    private func setVideoEnable(_ isEnable : Bool){
+        guard let peerConn = self.peerConn else {
+            debugPrint("Peerconnection is not init.")
+            return
+        }
+        
+        let videoTrack = peerConn.transceivers.compactMap { return $0.sender.track as? RTCVideoTrack}
+        videoTrack.forEach { $0.isEnabled = isEnable}
+    }
+}
+
 
 extension RTCSessionDescription {
-    func JSONData() -> Data? {
+    func JSONData(type : CallingType) -> Data? {
         let typeStr = RTCSessionDescription.string(for: self.type)
         let dict = ["type": typeStr,
+                    "call" : type.rawValue.description,
                     "sdp": self.sdp]
+        //callType : 0 -> Voice , 1 -> Vedio
         return dict.JSONData
     }
 }

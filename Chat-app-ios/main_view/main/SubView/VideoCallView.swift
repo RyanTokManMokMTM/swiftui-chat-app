@@ -1,13 +1,13 @@
 //
-//  VoiceCallingView.swift
+//  VideoCallView.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 22/2/2023.
+//  Created by Jackson.tmm on 14/5/2023.
 //
 
 import SwiftUI
 
-struct VoiceCallingView: View {
+struct VideoCallView: View {
     @Binding var isCallView : Bool
     @EnvironmentObject private var userVM : UserViewModel
     @EnvironmentObject private var videoCallVM : VideoCallViewModel
@@ -53,10 +53,12 @@ struct VoiceCallingView: View {
             }
         
     }
+    
+    
 }
 
-//struct VoiceCallingView_Previews: PreviewProvider {
+//struct VideoCallView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        VoiceCallingView(data: dummyContentList[0])
+//        VideoCallView()
 //    }
 //}

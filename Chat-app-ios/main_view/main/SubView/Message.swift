@@ -26,19 +26,19 @@ struct Message: View {
     var body: some View {
         
         List{
-            HStack{
-                Button(action: {
-                    DispatchQueue.main.async {
-                        self.showSheet = true
-                    }
-                }){
-                    Text("Setting demo")
-                }
-            }
-            .padding()
-            .background(Color.blue)
-            .cornerRadius(10)
-            
+//            HStack{
+//                Button(action: {
+//                    DispatchQueue.main.async {
+//                        self.showSheet = true
+//                    }
+//                }){
+//                    Text("Setting demo")
+//                }
+//            }
+//            .padding()
+//            .background(Color.blue)
+//            .cornerRadius(10)
+//            
             ScrollView(.horizontal,showsIndicators: false){
                 HStack(spacing: 12){
 
@@ -124,23 +124,23 @@ struct Message: View {
                 }
                 
                 Button(action:{
-                    if self.videoCallVM.toUserUUID == nil {
-                        print("please input candindate uuid")
-                        return
-                    }
-                    if self.videoCallVM.isConnectd && !self.videoCallVM.isSetRemoteSDP && !self.videoCallVM.isSetLoaclSDP {
-                        //is connecte and not set remote and not set ans
-                        videoCallVM.webRTCClient?.offer(){ sdp in
-                            DispatchQueue.main.async {
-                                self.videoCallVM.isSetLoaclSDP = true
-                            }
-                            
-                            if let sdpData = sdp.JSONData() {
-                                //send via websocket
-                                self.videoCallVM.sendSingleMessage(sdpData)
-                            }
-                        }
-                    }
+//                    if self.videoCallVM.toUserUUID == nil {
+//                        print("please input candindate uuid")
+//                        return
+//                    }
+//                    if self.videoCallVM.isConnectd && !self.videoCallVM.isSetRemoteSDP && !self.videoCallVM.isSetLoaclSDP {
+//                        //is connecte and not set remote and not set ans
+//                        videoCallVM.webRTCClient?.offer(){ sdp in
+//                            DispatchQueue.main.async {
+//                                self.videoCallVM.isSetLoaclSDP = true
+//                            }
+//
+//                            if let sdpData = sdp.JSONData() {
+//                                //send via websocket
+//                                self.videoCallVM.sendSingleMessage(sdpData)
+//                            }
+//                        }
+//                    }
                 }){
                     Text("Send Offer")
                         .foregroundColor(.white)
@@ -150,22 +150,22 @@ struct Message: View {
                 .cornerRadius(10)
                 
                 Button(action:{
-                    if self.videoCallVM.toUserUUID == nil {
-                        print("please input candindate uuid")
-                        return
-                    }
-                    if self.videoCallVM.isConnectd && self.videoCallVM.isSetRemoteSDP && !self.videoCallVM.isSetLoaclSDP{
-                        videoCallVM.webRTCClient?.answer(){ sdp in
-                            DispatchQueue.main.async {
-                                self.videoCallVM.isSetLoaclSDP = true
-                            }
-                            
-                            if let sdpData = sdp.JSONData() {
-                                //send via websocket
-                                self.videoCallVM.sendSingleMessage(sdpData)
-                            }
-                        }
-                    }
+//                    if self.videoCallVM.toUserUUID == nil {
+//                        print("please input candindate uuid")
+//                        return
+//                    }
+//                    if self.videoCallVM.isConnectd && self.videoCallVM.isSetRemoteSDP && !self.videoCallVM.isSetLoaclSDP{
+//                        videoCallVM.webRTCClient?.answer(){ sdp in
+//                            DispatchQueue.main.async {
+//                                self.videoCallVM.isSetLoaclSDP = true
+//                            }
+//
+//                            if let sdpData = sdp.JSONData() {
+//                                //send via websocket
+//                                self.videoCallVM.sendSingleMessage(sdpData)
+//                            }
+//                        }
+//                    }
                     
                     
                 }){

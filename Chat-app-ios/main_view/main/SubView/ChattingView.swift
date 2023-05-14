@@ -53,7 +53,7 @@ struct ChattingView: View {
     @State private var isFetchMore: Bool = false
     @State private var isShowMessage = false
     
-    @State private var isCalling : Bool = false
+    @State private var isVoiceChat : Bool = false
     
     var body: some View {
         VStack{
@@ -171,10 +171,12 @@ struct ChattingView: View {
             
             InputField()
         }
+   
         .onDisappear{
             UDM.currentRoom = -1
             UDM.currentRoomMessage.removeAll()
             UDM.previousTotalMessage = 0
+            self.videoCallVM.toUserUUID = nil
         }
         .fullScreenCover(isPresented: $isPlayAudio){
             AudioPlayerView(isPlayingAudio: $isPlayAudio,fileName: self.audioInfo!.file_name!, path: self.audioInfo!.FileURL)
@@ -224,10 +226,12 @@ struct ChattingView: View {
             ToolbarItem(placement: .navigationBarTrailing){
                 HStack{
                     Button(action:{
-                        withAnimation{
-                            self.isCalling = true
-                            
+                        DispatchQueue.main.async {
+                            setUpReceiverInfo()
+                            //Setting RTC streaming
+                            setUpCallingInfo()
                         }
+
                     }){
                         Image(systemName: "phone.fill")
                             .imageScale(.large)
@@ -236,7 +240,7 @@ struct ChattingView: View {
                     }
                     Button(action:{
                         withAnimation{
-                            self.isCalling = true
+//                            self.isCalling = true
                         }
                     }){
                         Image(systemName: "video.fill")
@@ -301,6 +305,23 @@ struct ChattingView: View {
             ShowImageView(imageURL: self.showImageURL, isShowImage: $isShowImage)
                 
         }
+    }
+    
+    private func setUpReceiverInfo(){
+        self.videoCallVM.toUserUUID = self.chatUserData.id!.uuidString.lowercased()
+        self.videoCallVM.userName = self.chatUserData.name!
+        self.videoCallVM.userAvatar = self.chatUserData.avatar!
+    }
+    
+    private func setUpCallingInfo(){
+        self.videoCallVM.start() //TODO: creating a new peer if it don't init and setting RTC device
+        self.videoCallVM.voicePrepare() //TODO: To disable video
+        self.videoCallVM.callState = .Connecting //TODO: Current status is connecting
+        self.videoCallVM.callingType = .Voice //TODO: Type is voice
+        self.videoCallVM.isIncomingCall = true //TODO: show the view
+        
+        //Sending the offer
+        self.videoCallVM.sendOffer(type:.Voice) //TODO: sending offer to receiver
     }
     
     private func checkMessage(messageID : String) async {
@@ -375,11 +396,12 @@ struct ChattingView: View {
         }
         .padding()
         .background(.thickMaterial)
-        .fullScreenCover(isPresented: $isCalling){
-            VoiceCallingView(isCallView: $isCalling,data: self.chatUserData)
-                .environmentObject(userModel)
-                .environmentObject(videoCallVM)
-        }
+//        .fullScreenCover(isPresented: $isVoiceChat){
+////            VoiceCallingView(isCallView: $isVoiceChat,data: self.chatUserData)
+//            VoiceCallView(name: self.chatUserData.name!, path: self.chatUserData.AvatarURL)
+//                .environmentObject(userModel)
+//                .environmentObject(videoCallVM)
+//        }
 
     }
     

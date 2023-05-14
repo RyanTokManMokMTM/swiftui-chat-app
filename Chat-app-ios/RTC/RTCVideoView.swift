@@ -13,9 +13,14 @@ struct RTCVideoView : UIViewRepresentable {
     let track : RTCVideoTrack?
     let webClient : WebRTCClient?
     let isRemote : Bool
+    let isVoice : Bool
     @Binding var refershTrack : Bool
     func makeUIView(context: Context) -> RTCMTLVideoView {
         let view = RTCMTLVideoView(frame: .zero)
+        if isVoice {
+            return view
+        }
+        
         view.videoContentMode = .scaleAspectFill
         if isRemote {
             self.webClient?.renderRemoteVideo(renderer: view)
@@ -28,7 +33,14 @@ struct RTCVideoView : UIViewRepresentable {
     
     func updateUIView(_ uiView: RTCMTLVideoView, context: Context) {
         if refershTrack {
-            print("update")
+            if isVoice {
+                DispatchQueue.main.async {
+                    refershTrack = false
+                }
+
+                return
+            }
+            
             DispatchQueue.main.async {
                 if isRemote {
                     self.webClient?.renderRemoteVideo(renderer: uiView)

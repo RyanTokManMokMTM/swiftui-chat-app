@@ -23,6 +23,7 @@ enum ContentType : Int16,CaseIterable {
     case story
     case sys
     
+    
     var rawValue: Int16 {
         switch self{
         case .text : return 1
@@ -162,7 +163,8 @@ class Websocket : ObservableObject {
                             handleMessage(event: .receive, msg: msg)
                             break
                         case 5:
-                            print("receive a webRTC signal")
+//                            print("receive a webRTC signal")
+//                            print(msg)
                             self.delegate?.webSocket(self, didReceive: msg) //TODO: VideoCall VM handel this.
                            
                             break
@@ -406,6 +408,7 @@ class Websocket : ObservableObject {
     
     
     func sendRTCSignal(toUUID : String, sdp : String) {
+        print("send signaling")
         let wsMSG = WSMessage(messageID: UUID().uuidString, avatar: userModel?.profile?.avatar, fromUserName: userModel?.profile?.name, fromUUID: userModel?.profile?.uuid, toUUID: toUUID, content:sdp , contentType: 7, type: 5, messageType: 1, urlPath: nil, groupName: nil, groupAvatar: nil, fileName: nil, fileSize: nil, storyAvailableTime: nil)
         
         self.onSend(msg: wsMSG)

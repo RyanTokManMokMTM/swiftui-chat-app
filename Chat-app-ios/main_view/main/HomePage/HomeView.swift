@@ -128,8 +128,15 @@ struct HomeView: View {
             }
 //            .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
         }
-        .onAppear{
-            self.videoCallVM.start()
+
+        .fullScreenCover(isPresented: self.$videoCallVM.isIncomingCall){
+            if self.videoCallVM.callingType == .Voice {
+                VoiceCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
+                    .environmentObject(userModel)
+                    .environmentObject(videoCallVM)
+            }else {
+                
+            }
         }
         .sheet(isPresented: $isShowSheet){
             AddContent(isAddContent: $isShowSheet)
