@@ -67,7 +67,6 @@ extension View {
                     .transition(AnyTransition.move(edge: .top).combined(with: .opacity))
                     .zIndex(1)
                     .onAppear{
-//                        print("???")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2){
                             withAnimation{
                                 isAlert.wrappedValue = false

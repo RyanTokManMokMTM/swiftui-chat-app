@@ -8,9 +8,9 @@
 import Foundation
 
 
-let HTTP_HOST = "http://192.168.1.115:8000/api/v1"
-let WS_HOST = "ws://192.168.1.115:8000/ws"
-let RESOURCES_HOST = "http://192.168.1.115:8000/resources"
+let HTTP_HOST = "http://localhost:8000/api/v1"
+let WS_HOST = "ws://localhost:8000/ws"
+let RESOURCES_HOST = "http://localhost:8000/resources"
 
 
 protocol APIService {

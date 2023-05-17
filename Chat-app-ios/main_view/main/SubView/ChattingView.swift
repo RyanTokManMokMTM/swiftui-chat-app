@@ -359,7 +359,9 @@ struct ChattingView: View {
         
         
         UserDataModel.shared.updateMessageStatus(msg: message, status: .notAck)
+        print("no ack")
     }
+    
     
     private func isAudio(ext : String) -> Bool {
         return ext == "mp3" || ext == "wav" || ext == "m3u" || ext == "m4a"

@@ -37,17 +37,7 @@ struct ContentView: View {
                 
                 
             }
-            .wait(isLoading: $hub.isWaiting){
-                BenHubLoadingView(message: hub.message)
-            }
-            .alert(isAlert: $hub.isPresented){
-                switch hub.type{
-                case .normal,.system:
-                    BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
-                case .messge:
-                    BenHubAlertWithMessage( message: hub.message,info: hub.info!)
-                }
-            }
+//            
           
             .accentColor(.green)
             .zIndex(1)
@@ -129,6 +119,7 @@ struct ContentView: View {
                     .environmentObject(userStory)
                     .transition(.move(edge: .bottom))
                     .background(.white)
+                  
                     .zIndex(3)
             }
         }
@@ -138,6 +129,17 @@ struct ContentView: View {
                 DispatchQueue.main.async {
                     self.isShowMenu = false
                 }
+            }
+        }
+        .wait(isLoading: $hub.isWaiting){
+            BenHubLoadingView(message: hub.message)
+        }
+        .alert(isAlert: $hub.isPresented){
+            switch hub.type{
+            case .normal,.system:
+                BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+            case .messge:
+                BenHubAlertWithMessage( message: hub.message,info: hub.info!)
             }
         }
 

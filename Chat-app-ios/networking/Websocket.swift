@@ -66,7 +66,7 @@ protocol WebSocketDelegate : class {
 }
 
 class Websocket : ObservableObject {
-    let WS_HOST = "ws://192.168.1.115:8000/ws"
+    let WS_HOST = "ws://localhost:8000/ws"
     var session : URLSessionWebSocketTask?
     static var shared = Websocket()
     
@@ -130,7 +130,7 @@ class Websocket : ObservableObject {
                 
                 do {
                     let msg = try JSONDecoder().decode(WSMessage.self, from: data)
-//                    print(msg)
+
                 } catch(let err) {
                     print(err.localizedDescription)
                 }
@@ -310,9 +310,8 @@ class Websocket : ObservableObject {
             
             if event == .receive{
                 sendAck(messageID: msg.messageID!,  formUUID: self.userModel!.profile!.uuid)
-                
-                
-                if UserDataModel.shared.currentRoom == -1 || UserDataModel.shared.rooms[UserDataModel.shared.currentRoom].id!.uuidString.lowercased() != roomID.uuidString{
+
+                if UserDataModel.shared.currentRoom == -1 || UserDataModel.shared.rooms[UserDataModel.shared.currentRoom].id!.uuidString.lowercased() != roomID.uuidString.lowercased(){
                     if msg.messageType == 1 {
                         
                         let notifyMessage : String

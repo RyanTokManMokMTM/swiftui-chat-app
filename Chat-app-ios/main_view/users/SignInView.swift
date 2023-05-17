@@ -14,9 +14,9 @@ struct SignInView: View {
     @State private var isCheck = false
     @State private var isSignUp = false
     @AppStorage("token") var token : String = ""
-    @AppStorage("userName") var userEmail : String = ""
-    @AppStorage("password") var userPassword : String = ""
-    @AppStorage("userAvatar") var userAvatar : String = ""
+//    @AppStorage("userName") var userEmail : String = ""
+//    @AppStorage("password") var userPassword : String = ""
+//    @AppStorage("userAvatar") var userAvatar : String = ""
     
     @Binding var isLogin : Bool
     @EnvironmentObject private var userViewModel : UserViewModel
