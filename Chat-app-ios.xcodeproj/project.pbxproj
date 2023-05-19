@@ -91,6 +91,7 @@
 		20CE5D3129A35622001371A7 /* FriendContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CE5D3029A35622001371A7 /* FriendContent.swift */; };
 		20DB4DC929F2756500FF4C8B /* GroupSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DB4DC829F2756400FF4C8B /* GroupSearchView.swift */; };
 		20E0966829FE766800B5EBA7 /* Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E0966729FE766800B5EBA7 /* Doc.swift */; };
+		20EA19B82A174430006427F9 /* serverConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EA19B72A174430006427F9 /* serverConfig.swift */; };
 		20F47B2D29C598D2003D5CD0 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F47B2C29C598D2003D5CD0 /* DocumentPicker.swift */; };
 /* End PBXBuildFile section */
 
@@ -182,6 +183,7 @@
 		20CE5D3029A35622001371A7 /* FriendContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendContent.swift; sourceTree = "<group>"; };
 		20DB4DC829F2756400FF4C8B /* GroupSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSearchView.swift; sourceTree = "<group>"; };
 		20E0966729FE766800B5EBA7 /* Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Doc.swift; sourceTree = "<group>"; };
+		20EA19B72A174430006427F9 /* serverConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serverConfig.swift; sourceTree = "<group>"; };
 		20F47B2C29C598D2003D5CD0 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -317,6 +319,7 @@
 				2091E9C5299CECE500EB9A7C /* Preview Content */,
 				209F7ABC29BC41C3003701E8 /* AppDelegate.swift */,
 				209F7AC029BC42DC003701E8 /* PersistenceController.swift */,
+				20EA19B72A174430006427F9 /* serverConfig.swift */,
 			);
 			path = "Chat-app-ios";
 			sourceTree = "<group>";
@@ -545,6 +548,7 @@
 			files = (
 				2091E9D2299D1E2B00EB9A7C /* apiService.swift in Sources */,
 				2099ACDE29BB02E1008CDFEA /* UserContentView.swift in Sources */,
+				20EA19B82A174430006427F9 /* serverConfig.swift in Sources */,
 				206D250E29F41D59008E3727 /* EditView.swift in Sources */,
 				204C4A4229B721A5007AA02E /* menuRow.swift in Sources */,
 				20A8AA4729B4C01B00B0243E /* UserViewModel.swift in Sources */,

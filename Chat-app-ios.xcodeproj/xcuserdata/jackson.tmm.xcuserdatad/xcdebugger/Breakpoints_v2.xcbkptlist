@@ -94,8 +94,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
             landmarkName = "handleMessage(event:msg:isReplyComment:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -242,6 +242,54 @@
             endingLineNumber = "4"
             landmarkName = "unknown"
             landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "929AAACA-6E99-4E0A-BFBB-6973DEEBDD72"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/networking/Websocket.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
+            landmarkName = "handleMessage(event:msg:isReplyComment:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "929AAACA-6E99-4E0A-BFBB-6973DEEBDD72 - 60ea1ca4baaae4aa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor @Sendable () -&gt; () in Chat_app_ios.Websocket.handleMessage(event: Chat_app_ios.MessageEvent, msg: Chat_app_ios.WSMessage, isReplyComment: Swift.Bool) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/networking/Websocket.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "249"
+                  endingLineNumber = "249"
+                  offsetFromSymbolStart = "6528">
+               </Location>
+               <Location
+                  uuid = "929AAACA-6E99-4E0A-BFBB-6973DEEBDD72 - 60ea1ca4baaae4aa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor @Sendable () -&gt; () in Chat_app_ios.Websocket.handleMessage(event: Chat_app_ios.MessageEvent, msg: Chat_app_ios.WSMessage, isReplyComment: Swift.Bool) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/networking/Websocket.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "249"
+                  endingLineNumber = "249"
+                  offsetFromSymbolStart = "2636">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

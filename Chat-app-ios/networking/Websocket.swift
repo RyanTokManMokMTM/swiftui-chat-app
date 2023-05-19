@@ -13,6 +13,26 @@ enum MessageEvent {
     case send
     case receive
 }
+//
+//enum SocketMessageType : Int16{
+//    case PING
+//    case PONG
+//    case SYSTEM
+//    case MESSAGE
+//    case RTC
+//    case MESSAGE_ACK
+//
+//    var rawValue: Int16{
+//        switch self {
+//        case .PING : return 1
+//        case .PONG : return 2
+//        case .MESSAGE : return 3
+//        case .RTC : return 4
+//
+//        }
+//    }
+//
+//}
 
 enum ContentType : Int16,CaseIterable {
     case text
@@ -66,7 +86,6 @@ protocol WebSocketDelegate : class {
 }
 
 class Websocket : ObservableObject {
-    let WS_HOST = "ws://localhost:8000/ws"
     var session : URLSessionWebSocketTask?
     static var shared = Websocket()
     
@@ -119,7 +138,8 @@ class Websocket : ObservableObject {
     }
     
     
-    @MainActor func onReceive(result : Result<URLSessionWebSocketTask.Message, Error>) -> Void {
+    @MainActor
+    func onReceive(result : Result<URLSessionWebSocketTask.Message, Error>) -> Void {
         self.session?.receive(completionHandler: self.onReceive(result:))
         switch result {
         case.success(let message):
@@ -146,37 +166,25 @@ class Websocket : ObservableObject {
                     if let type = msg.type {
                         switch type {
                         case 1:
-                            //HEAT_BEAT_PING
-                            print("receive a ping message from server")
                             sendPong()
                             break
                         case 2:
-                            //HEAT_BEAT_PONG
-                            print("receive a pong message from server")
                             break
                         case 3:
-                            //SYSTEM MESSAGE
-                            print("receive a system message from server")
                             break
                         case 4:
-                            //GROUP/PEER/OTHER MESSAGE
                             handleMessage(event: .receive, msg: msg)
                             break
                         case 5:
-//                            print("receive a webRTC signal")
-//                            print(msg)
                             self.delegate?.webSocket(self, didReceive: msg) //TODO: VideoCall VM handel this.
-                           
                             break
                         case 6:
-                            print("receive a message Ack singal")
                             guard let id = msg.messageID else {
                                 break
                             }
+                            print("ack :\(id)")
                             updateMessageStatus(messsageID: id)
                             break
-                            //message ack
-                            
                         default:
                             print("UNKNOW TYPE")
                         }
@@ -341,7 +349,8 @@ class Websocket : ObservableObject {
             }
             
         }
-        
+        print("Message Saved with\(msg.messageID)")
+
         //send a ack message if is receiver
         
         
@@ -387,12 +396,12 @@ class Websocket : ObservableObject {
     
     @MainActor
     func updateMessageStatus(messsageID : String){
+        
         guard let message = UserDataModel.shared.findOneMessage(id: UUID(uuidString: messsageID)!) else {
-            print("message not found")
+            print("\(messsageID) : message not found")
             return
         }
-        
-        print(message)
+
         
         UserDataModel.shared.updateMessageStatus(msg: message, status: .ack)
         UserDataModel.shared.fetchUserRoom()

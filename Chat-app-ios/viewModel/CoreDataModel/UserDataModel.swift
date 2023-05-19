@@ -22,7 +22,7 @@ class UserDataModel : ObservableObject {
 
 //
     func fetchUserData(id : Int16) -> Bool{
-        print(id)
+//        print(id)
         let predicate = NSPredicate(format: "id == %i", id)
         let request = NSFetchRequest<UserDatas>(entityName: "UserDatas")
         request.predicate = predicate
@@ -113,7 +113,7 @@ class UserDataModel : ObservableObject {
     }
     
     func findOneSender(uuid : UUID) -> SenderInfo?{
-        print("find sender info :\(uuid.uuidString)")
+//        print("find sender info :\(uuid.uuidString)")
         let request : NSFetchRequest<SenderInfo> = SenderInfo.fetchRequest()
         request.predicate = NSPredicate(format: "%K == %@", "id", uuid as CVarArg)
         request.fetchLimit = 1
@@ -185,7 +185,7 @@ class UserDataModel : ObservableObject {
         let count = self.currentRoomMessage.count
         let predict = NSPredicate(format: "%K == %@", "room" , self.rooms[self.currentRoom])
         let req = RoomMessages.fetchRequest()
-        let sortBySentTime = NSSortDescriptor(key:"sent_at", ascending:true)
+        let sortBySentTime = NSSortDescriptor(key:"sent_at", ascending:false)
         req.fetchLimit = 20
         req.predicate = predict
         req.sortDescriptors = [sortBySentTime]
@@ -195,9 +195,7 @@ class UserDataModel : ObservableObject {
         do {
             let data = try self.manager.context.fetch(req)
             DispatchQueue.main.async {
-
-                    self.currentRoomMessage.insert(contentsOf: data, at: 0)
-                
+                self.currentRoomMessage.insert(contentsOf: data.reversed(), at: 0)
             }
           
         } catch (let err){
@@ -253,7 +251,6 @@ class UserDataModel : ObservableObject {
         
     }
     
-    @MainActor
     func findOneMessage(id : UUID) -> RoomMessages?{
         let request : NSFetchRequest<RoomMessages> = RoomMessages.fetchRequest()
         request.predicate = NSPredicate(format: "%K == %@", "id", id as CVarArg)
@@ -268,7 +265,6 @@ class UserDataModel : ObservableObject {
     func updateMessageStatus(msg : RoomMessages, status : MessageStatus) {
         msg.message_status = status.rawValue
         self.manager.save()
-        print(msg)
     }
     
 }

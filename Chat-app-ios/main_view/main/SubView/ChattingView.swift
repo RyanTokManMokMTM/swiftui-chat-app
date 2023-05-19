@@ -461,8 +461,8 @@ struct ChattingView: View {
     private func sendMessage(contentType : Int16 = 1){
         let msgID = UUID().uuidString
         let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
-        Websocket.shared.onSend(msg: msg)
         Websocket.shared.handleMessage(event:.send,msg: msg)
+        Websocket.shared.onSend(msg: msg)
         
         Task {
             await checkMessage(messageID: msgID)
