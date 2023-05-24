@@ -104,7 +104,11 @@ struct ChatBubble<Content> : View where Content : View {
     let isSame : Bool
     let messageStatus : MessageStatus
     let sentTime : Date?
-    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,isSame : Bool = false,messageStatus : MessageStatus,sentTime : Date? = nil,@ViewBuilder content : @escaping ()->Content){
+    @Binding var isReplyMessage : Bool
+    @Binding var replyMessage : RoomMessages?
+    let message : RoomMessages
+    
+    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,isSame : Bool = false,messageStatus : MessageStatus,sentTime : Date? = nil,isReplyMessage: Binding<Bool>,replyMessage : Binding<RoomMessages?>,message : RoomMessages,@ViewBuilder content : @escaping ()->Content){
         self.direction = direction
         self.content = content
         self.userAvatarURL = userAvatarURL
@@ -114,6 +118,10 @@ struct ChatBubble<Content> : View where Content : View {
         self.isSame = isSame
         self.messageStatus = messageStatus
         self.sentTime = sentTime
+        self._isReplyMessage = isReplyMessage
+        self._replyMessage = replyMessage
+        self.message = message
+
     }
     
     var body: some View {
@@ -174,39 +182,51 @@ struct ChatBubble<Content> : View where Content : View {
                         HStack(alignment: .bottom, spacing: 5){
                             content()
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .contextMenu{
-                                    if direction == .receiver {
-                                        Button {
-                                            print("Reply")
-                                        } label: {
-                                            Text("Reply")
-                                        }
-                                    }
-                                    
-                                    if direction == .sender {
-                                        Button {
-                                            print("Delete")
-                                        } label: {
-                                            Text("Delete")
-                                        }
-                                        
-                                        Button {
-                                            print("Recall")
-                                        } label: {
-                                            Text("Recall")
-                                        }
-                                    }
-
-                                    
-                                    if messageStatus == .notAck {
-                                        Button {
-                                            print("resent")
-                                        } label: {
-                                            Text("Resend")
-                                        }
-                                    }
-
-                                }
+//                                .contextMenu{
+//
+//                                    if direction == .receiver {
+//                                        Button {
+//                                            DispatchQueue.main.async {
+//                                                withAnimation{
+//                                                    self.isReplyMessage = true
+//                                                    self.replyMessage = message
+//                                                }
+//                                            }
+//                                        } label: {
+//                                            Text("Reply")
+//                                        }
+//                                    }else if direction == .sender {
+//
+//                                        Button {
+//                                            DispatchQueue.main.async {
+//                                                withAnimation{
+//                                                    self.isReplyMessage = true
+//                                                    self.replyMessage = message
+//                                                }
+//                                            }
+//                                        } label: {
+//                                            Text("Reply")
+//                                        }
+//
+//                                        Button {
+//                                            print("Recall")
+//                                        } label: {
+//                                            Text("Recall")
+//                                        }
+//
+//                                    }
+//
+//
+//                                    if messageStatus == .notAck {
+//                                        Button {
+//                                            print("resent")
+//                                        } label: {
+//                                            Text("Resend")
+//                                        }
+//                                    }
+//
+//                                }
+//
                             if direction == .receiver && sentTime != nil{
                                 Text(sentTime!.sendTimeString())
                                     .foregroundColor(.gray)
@@ -232,4 +252,6 @@ struct ChatBubble<Content> : View where Content : View {
         .padding([.top,.bottom],self.contentType == 6 ? 0 : 5)
         .padding((direction == .sender) ? .leading : .trailing,70)
     }
+    
+   
 }

@@ -2,7 +2,7 @@
 //  RoomMessages+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 6/5/2023.
+//  Created by Jackson.tmm on 21/5/2023.
 //
 //
 
@@ -21,13 +21,14 @@ extension RoomMessages {
     @NSManaged public var file_name: String?
     @NSManaged public var file_size: Int64
     @NSManaged public var id: UUID?
+    @NSManaged public var message_status: Int16
     @NSManaged public var sent_at: Date?
     @NSManaged public var story_available_time: Int32
     @NSManaged public var tempData: Data?
     @NSManaged public var url_path: String?
-    @NSManaged public var message_status: Int16
     @NSManaged public var room: ActiveRooms?
     @NSManaged public var sender: SenderInfo?
+    @NSManaged public var replyMessage: RoomMessages?
 
 }
 
@@ -49,9 +50,7 @@ extension RoomMessages : Identifiable {
         let distance = Date.now.distance(to: Date(timeIntervalSince1970: TimeInterval(self.story_available_time)))
         return abs(distance) <= 86400
     }
-    
-    
-    
+
     var messageStatus : MessageStatus {
         switch self.message_status {
         case 1: return .sending
@@ -60,6 +59,42 @@ extension RoomMessages : Identifiable {
         case 4: return .notAck
         default: return .unknow
         }
+    }
+    
+    var replyMessageContent : String {
+        guard let replyMsg = self.replyMessage else {
+            return ""
+        }
+        if self.content_type == ContentType.msgReply.rawValue {
+            var message : String = ""
+            
+            switch replyMsg.content_type {
+            case ContentType.text.rawValue,ContentType.msgReply.rawValue:
+                message.append(replyMsg.content ?? "")
+                break
+            case ContentType.img.rawValue:
+                message.append("[ image content ]")
+                break
+            case ContentType.file.rawValue:
+                message.append("[ file content ]")
+                break
+            case ContentType.audio.rawValue:
+                message.append("[ audio content ]")
+                break
+            case ContentType.video.rawValue:
+                message.append("[ video content ]")
+                break
+            case ContentType.story.rawValue:
+                message.append("[ story content ]")
+                break
+            default:
+                return ""
+                
+            }
+            
+            return message
+        }
+        return ""
     }
 }
 

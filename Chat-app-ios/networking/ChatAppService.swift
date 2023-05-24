@@ -602,6 +602,18 @@ class ChatAppService : APIService {
         return await self.AsyncFetchAndDecode(request: request)
     }
     
+    func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStickerGroup.rawValue + stickerID.description) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
     
     func DownloadTask(fileURL : URL) async -> Result<URL,Error>{
         return await AsyncDownload(url: fileURL)

@@ -10,6 +10,8 @@ import SwiftUI
 struct SignInView: View {
    
     @State private var email : String = ""
+    @FocusState private var isFocusEmail : Bool
+    @FocusState private var isFocusPassword : Bool
     @State private var password : String = ""
     @State private var isCheck = false
     @State private var isSignUp = false
@@ -29,7 +31,7 @@ struct SignInView: View {
         ZStack{
             VStack{
                 HStack{
-                    Image(systemName: "bubble.right.fill")
+                    Image(systemName: "message.fill")
                         .imageScale(.large)
                         .foregroundColor(.green)
                     Text("Hey!")
@@ -42,6 +44,7 @@ struct SignInView: View {
                     HStack{
                         TextField("Email", text: $email)
                             .padding()
+                            .focused($isFocusEmail)
                     }
                     .padding(.vertical,5)
         //            .padding(.horizontal,5)
@@ -52,6 +55,7 @@ struct SignInView: View {
                     HStack{
                         SecureField("Password", text: $password)
                             .padding()
+                            .focused($isFocusPassword)
                     }
                     .padding(.vertical,5)
         //            .padding(.horizontal,5)
@@ -79,7 +83,8 @@ struct SignInView: View {
                 .padding(.horizontal)
 
                 Button(action: {
-                   
+                    self.isFocusEmail = false
+                    self.isFocusPassword = false
                     Task.init{
                         await self.sendSignInRequest()
                         //TODO: Update Token

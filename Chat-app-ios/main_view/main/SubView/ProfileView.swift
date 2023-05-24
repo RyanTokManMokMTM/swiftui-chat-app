@@ -112,7 +112,7 @@ struct ProfileView: View {
     @EnvironmentObject private var userModel : UserViewModel
     @Binding var isShowSetting : Bool
     @Binding var loginState : Bool
-    
+    @StateObject private var hub = BenHubState.shared
     @State private var isEdit : Bool = false
     @State private var isUpdateState : Bool = false
     var body: some View {
@@ -247,7 +247,20 @@ struct ProfileView: View {
         .fullScreenCover(isPresented: $isEdit){
             UserProfileEditView(isEditProfile: $isEdit)
                 .environmentObject(userModel)
+            
         }
+        .wait(isLoading: $hub.isWaiting){
+            BenHubLoadingView(message: hub.message)
+        }
+        .alert(isAlert: $hub.isPresented){
+            switch hub.type{
+            case .normal,.system:
+                BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+            case .messge:
+                BenHubAlertWithMessage( message: hub.message,info: hub.info!)
+            }
+        }
+      
         
     }
     

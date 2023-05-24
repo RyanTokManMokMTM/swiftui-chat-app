@@ -340,3 +340,10 @@ struct FriendStory : Decodable,Identifiable{
         return URL(string: RESOURCES_HOST + self.avatar)!
     }
 }
+
+
+struct GetStickerGroupResp : Decodable {
+    let code : UInt
+    let sticker_id : String
+    let resources_path : [String]
+}

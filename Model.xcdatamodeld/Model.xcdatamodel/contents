@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ActiveRooms" representedClassName=".ActiveRooms" syncable="YES">
         <attribute name="avatar" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -23,6 +23,7 @@
         <attribute name="story_available_time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tempData" optional="YES" attributeType="Binary"/>
         <attribute name="url_path" optional="YES" attributeType="String"/>
+        <relationship name="replyMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RoomMessages"/>
         <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActiveRooms" inverseName="messages" inverseEntity="ActiveRooms"/>
         <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SenderInfo" inverseName="roomMessage" inverseEntity="SenderInfo"/>
     </entity>
@@ -31,6 +32,14 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="roomMessage" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RoomMessages" inverseName="sender" inverseEntity="RoomMessages"/>
+    </entity>
+    <entity name="StickerResources" representedClassName="StickerResources" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="path" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Stickers" representedClassName="Stickers" syncable="YES" codeGenerationType="class">
+        <attribute name="stickerID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="resoucres" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StickerResources"/>
     </entity>
     <entity name="UserDatas" representedClassName="UserDatas" syncable="YES">
         <attribute name="avatar" optional="YES" attributeType="String"/>

@@ -84,12 +84,12 @@ struct StatusMessageEditView: View {
             }
             self.msg = String(self.msg.prefix(50))
         }
-        .wait(isLoading: $hub.isWaiting){
-            BenHubLoadingView(message: hub.message)
-        }
-        .alert(isAlert: $hub.isPresented){
-            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
-        }
+//        .wait(isLoading: $hub.isWaiting){
+//            BenHubLoadingView(message: hub.message)
+//        }
+//        .alert(isAlert: $hub.isPresented){
+//            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+//        }
     }
     
     private func check(msg : String) -> Bool {

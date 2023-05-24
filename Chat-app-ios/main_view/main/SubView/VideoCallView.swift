@@ -69,13 +69,21 @@ struct VideoCallView: View {
         .onChange(of: self.videoCallVM.callState){ state in
             if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
                 DispatchQueue.main.async {
+                    SoundManager.shared.stopPlaying()
                     self.videoCallVM.isIncomingCall = false
                     self.videoCallVM.DisConnect()
                     hub.AlertMessage(sysImg: "", message: "Video Call Ended")
+                    playEndCallSoundEffect()
                 }
             }
         }
 
+    }
+    private func playEndCallSoundEffect(){
+        guard let url = Bundle.main.url(forResource: "endcall", withExtension: ".mp3") else {
+            return
+        }
+        SoundManager.shared.playSound(url: url,repeatTime: 0)
     }
     
     @ViewBuilder
@@ -127,11 +135,10 @@ struct VideoCallView: View {
                                 .bold()
                                 .foregroundColor(.white)
 
-                            VStack{
-                                Text("Calling...")
-                                    .foregroundColor(.white)
-                                    .fontWeight(.medium)
-                                    .font(.footnote)
+                            HStack {
+                                DotView() // 1.
+                                DotView(delay: 0.2) // 2.
+                                DotView(delay: 0.4) // 3.
                             }
                             Spacer()
                         }
@@ -285,12 +292,19 @@ struct VideoCallView: View {
                                 .bold()
                                 .foregroundColor(.white)
 
-                            VStack{
-                                Text("Video Calling...")
+                            VStack(spacing:5){
+                                Text("Video Calling")
                                     .foregroundColor(.white)
-                                    .fontWeight(.medium)
                                     .font(.footnote)
+                                HStack{
+                                    DotView() // 1.
+                                    DotView(delay: 0.2) // 2.
+                                    DotView(delay: 0.4) // 3.
+                                }
+                               
                             }
+                            .padding(.vertical,5)
+                            
 
                         }
                         .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)

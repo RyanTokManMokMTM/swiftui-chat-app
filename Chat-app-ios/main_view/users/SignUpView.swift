@@ -131,12 +131,12 @@ struct SignUpView: View {
 //            Spacer()
         
         }
-        .wait(isLoading: $hub.isWaiting){
-            BenHubLoadingView(message: hub.message)
-        }
-        .alert(isAlert: $hub.isPresented){
-            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
-        }
+//        .wait(isLoading: $hub.isWaiting){
+//            BenHubLoadingView(message: hub.message)
+//        }
+//        .alert(isAlert: $hub.isPresented){
+//            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+//        }
 
     }
     

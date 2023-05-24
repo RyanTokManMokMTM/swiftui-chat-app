@@ -9,6 +9,7 @@ import SwiftUI
 import PhotosUI
 import UniformTypeIdentifiers
 import AVKit
+import AVFoundation
 
 enum MediaType : String {
     case Image = "image"
@@ -54,6 +55,11 @@ struct ChattingView: View {
     @State private var isShowMessage = false
     
     @State private var isVoiceChat : Bool = false
+    @State private var isUseSticket : Bool = false
+    @State private var isShowMoreContent : Bool = false
+    @State private var isReplyMessage : Bool = false
+    @State private var replyMessage : RoomMessages?
+    @State private var placeHolder : String  = "Message"
     
     var body: some View {
         VStack{
@@ -79,40 +85,28 @@ struct ChattingView: View {
                             ForEach(messages.indices,id :\.self) { index in
                                 VStack(spacing:0){
 
-
+                                    
                                     if messages[index].content_type == ContentType.sys.rawValue{
                                         SysContentTypeView(message: messages[index])
                                     }else {
-
-                                        ChatBubble(direction: isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .sender : .receiver,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: Int(messages[index].content_type),messageStatus: messages[index].messageStatus,sentTime: messages[index].sent_at){
-
-                                            if messages[index].content_type == ContentType.text.rawValue {
-                                                TextContentTypeView(message: messages[index])
-                                            }else if messages[index].content_type == ContentType.img.rawValue{
-                                                ImageContentTypeView(message: messages[index])
-                                            }else if messages[index].content_type == ContentType.file.rawValue{
-                                                FileContentTypeView(message: messages[index])
-                                            }
-                                            else if messages[index].content_type == ContentType.audio.rawValue {
-                                                AudioContentTypeView(message: messages[index])
-                                            } else if messages[index].content_type == ContentType.video.rawValue {
-                                                VideoContentTypeView(message: messages[index])
-                                            }
-                                            else if messages[index].content_type == ContentType.story.rawValue {
-                                                StoryContentTypeView(message: messages[index])
-                                            }
+                                        
+                                        ChatBubble(direction: isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .sender : .receiver,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: Int(messages[index].content_type),messageStatus: messages[index].messageStatus,sentTime: messages[index].sent_at,isReplyMessage:$isReplyMessage,replyMessage:$replyMessage,message : messages[index]){
+                                            
+                                            content(message: messages[index])
+                                            
                                         }
                                         .transition(.move(edge:  isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .trailing :.leading))
 
-
+           
+         
 
 
                                         //MARK: For show the post info
-                                        if  messages[index].content_type == ContentType.story.rawValue {
-                                            ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: 1,isSame:true,messageStatus: messages[index].messageStatus){
-                                                StoryImgContentTypeView(message: messages[index])
-                                            }
-                                        }
+//                                        if  messages[index].content_type == ContentType.story.rawValue {
+//                                            ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: 1,isSame:true,messageStatus: messages[index].messageStatus,isReplyMessage:$isReplyMessage,replyMessage : $replyMessage,message : messages[index]){
+//                                                StoryImgContentTypeView(message: messages[index])
+//                                            }
+//                                        }
 
                                     }
 
@@ -167,15 +161,13 @@ struct ChattingView: View {
 
              
             }
- 
-            
             InputField()
         }
    
         .onDisappear{
-            UDM.currentRoom = -1
-            UDM.currentRoomMessage.removeAll()
-            UDM.previousTotalMessage = 0
+            self.UDM.currentRoom = nil
+            self.UDM.currentRoomMessage.removeAll()
+            self.UDM.previousTotalMessage = 0
             self.videoCallVM.toUserUUID = nil
         }
         .fullScreenCover(isPresented: $isPlayAudio){
@@ -224,32 +216,35 @@ struct ChattingView: View {
             
             //TODO: NOT TO IMPLEMENT THIS NOW
             ToolbarItem(placement: .navigationBarTrailing){
-                HStack{
-                    Button(action:{
-                        DispatchQueue.main.async {
-                            setUpReceiverInfo()
-                            setUpVoiceCallingInfo()
-                        }
+                if chatUserData.message_type == 1{
+                    HStack{
+                        Button(action:{
+                            DispatchQueue.main.async {
+                                setUpReceiverInfo()
+                                setUpVoiceCallingInfo()
+                            }
 
-                    }){
-                        Image(systemName: "phone.fill")
-                            .imageScale(.large)
-                            .foregroundColor(Color.green)
-                            .bold()
-                    }
-                    Button(action:{
-                        DispatchQueue.main.async {
-                            setUpReceiverInfo()
-                            setUpVideoCallingInfo()
+                        }){
+                            Image(systemName: "phone.fill")
+                                .imageScale(.large)
+                                .foregroundColor(Color.green)
+                                .bold()
                         }
+                        Button(action:{
+                            DispatchQueue.main.async {
+                                setUpReceiverInfo()
+                                setUpVideoCallingInfo()
+                            }
 
-                    }){
-                        Image(systemName: "video.fill")
-                            .imageScale(.large)
-                            .foregroundColor(Color.green)
-                            .bold()
+                        }){
+                            Image(systemName: "video.fill")
+                                .imageScale(.large)
+                                .foregroundColor(Color.green)
+                                .bold()
+                        }
                     }
                 }
+                
 
             }
         }
@@ -372,54 +367,355 @@ struct ChattingView: View {
     }
     
     @ViewBuilder
-    func InputField() -> some View{
-        VStack{
-            HStack{
-                Button(action:{
-                    withAnimation{
-                        self.showPicker.toggle()
+    private func commentContextMenu(message : RoomMessages) -> some View {
+        if let id = message.sender?.id?.uuidString.lowercased()  {
+            
+            let isSender = isOwner(id: id)
+            if !isSender {
+                Button {
+                    DispatchQueue.main.async {
+                        withAnimation{
+                            self.isReplyMessage = true
+                            self.replyMessage = message
+                        }
                     }
-                }){
-                    Image(systemName: "plus")
-                        .imageScale(.large)
-                        .foregroundColor( .blue)
+                } label: {
+                    Text("Reply")
                 }
+            }else if isSender {
                 
-                PhotosPicker(selection: $selectedItem, matching: .any(of: [.images,.videos]),photoLibrary: .shared()){
-                    Image(systemName: "photo.fill")
-                        .imageScale(.large)
-                        .foregroundColor( .blue)
-                }
-                
-                TextField("訊息",text:$text)
-                    .padding(.horizontal)
-                    .frame(height:37)
-                    .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 13))
-                    .focused($isFocus)
-                    .submitLabel(.send)
-                    .onSubmit{
-                        //                        sendMessage()
-                        sendMessage()
-                        self.messageIndex = messages.count - 1
+                Button {
+                    DispatchQueue.main.async {
+                        withAnimation{
+                            self.isReplyMessage = true
+                            self.replyMessage = message
+                        }
                     }
-                
-                
+                } label: {
+                    Text("Reply")
+                }
+
+                Button {
+                    print("Recall")
+                } label: {
+                    Text("Recall")
+                }
 
             }
-            .frame(height: 37)
-        }
-        .padding()
-        .background(.thickMaterial)
-//        .fullScreenCover(isPresented: $isVoiceChat){
-////            VoiceCallingView(isCallView: $isVoiceChat,data: self.chatUserData)
-//            VoiceCallView(name: self.chatUserData.name!, path: self.chatUserData.AvatarURL)
-//                .environmentObject(userModel)
-//                .environmentObject(videoCallVM)
-//        }
 
+            
+            if message.messageStatus == .notAck {
+                Button {
+                    print("resent")
+                } label: {
+                    Text("Resend")
+                }
+            }
+        }
     }
     
+    @ViewBuilder
+    private func content(message : RoomMessages) -> some View{
+        if message.content_type == ContentType.text.rawValue {
+            TextContentTypeView(message: message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                }
+                
+        }else if message.content_type == ContentType.img.rawValue{
+            ImageContentTypeView(message:message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                }
+        }else if message.content_type == ContentType.file.rawValue{
+            FileContentTypeView(message: message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                    Button("Save to file disk",action:{
+                        Task {
+                            await self.downloadAndSave(message:message)
+                        }
+                    })
+                    .disabled(message.tempData != nil)
+                }
+        }else if message.content_type == ContentType.audio.rawValue {
+            AudioContentTypeView(message: message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                    Button("Save to file disk",action:{
+                        Task {
+                            await self.downloadAndSave(message:message)
+                        }
+                    })
+                    .disabled(message.tempData != nil)
+                }
+        } else if message.content_type == ContentType.video.rawValue {
+            VideoContentTypeView(message: message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                    Button("Save to album"){
+                        hub.SetWait(message: "Downloading and saving...")
+                        Task {
+                            
+                            let resp = await ChatAppService.shared.DownloadTask(fileURL: message.FileURL)
+                            hub.isWaiting = false
+                            switch resp {
+                            case .success(let fileURL):
+                                do {
+                                    let documentsURL = try
+                                    FileManager.default.url(for: .picturesDirectory,
+                                                            in: .userDomainMask,
+                                                            appropriateFor: nil,
+                                                            create: true)
+                                    
+                                    let savedURL = documentsURL.appendingPathComponent(message.file_name!)
+                                    try FileManager.default.moveItem(at: fileURL, to: savedURL)
+                                    PHPhotoLibrary.shared().performChanges({
+                                        PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: savedURL)
+                                    }) { saved, error in
+                                        if saved {
+                                            hub.AlertMessage(sysImg: "checkmark", message: "Saved successfully.")
+                                        }
+                                    }
+                                }catch (let err){
+                                    //                                print(err.localizedDescription)
+                                    hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
+                                }
+                                
+                            case .failure(let err):
+                                print(err.localizedDescription)
+                                hub.AlertMessage(sysImg: "exclamationmark.circle", message: err.localizedDescription)
+                            }
+                            
+                        }
+                    }
+                }
+            
+        }else if message.content_type == ContentType.story.rawValue {
+            StoryContentTypeView(message: message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                }
+        } else if message.content_type == ContentType.msgReply.rawValue {
+            replyMessageContentTypeView(message: message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                }
+        } else if message.content_type == ContentType.sticker.rawValue {
+            StickerContentTypeView(message: message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                }
+        }
+    }
+    
+    
+    @ViewBuilder
+    func InputField() -> some View{
+        VStack{
+            if self.isReplyMessage {
+                HStack{
+                    Text(replyMessageContent())
+                        .font(.system(size: 10))
+                        .padding(5)
+                        .lineLimit(1)
+                    Spacer()
+                    
+                    Button(action:{
+                        DispatchQueue.main.async {
+                            withAnimation{
+                                self.isReplyMessage = false
+                                self.replyMessage = nil
+                            }
+                           
+                        }
+                    }){
+                        Image(systemName: "xmark.circle.fill")
+                            .imageScale(.small)
+                    }
+                    .padding(5)
+                }
+                .background(BlurView(style: .systemChromeMaterialLight).cornerRadius(10))
+                
+            }
+            HStack{
+//                HStack{
+////                    Spacer()
+//
+//                    Button(action:{
+//                        withAnimation{
+//                            self.showPicker.toggle()
+//                        }
+//                    }){
+//                        Image(systemName: "speaker.wave.2.fill")
+//                            .imageScale(.large)
+//                            .foregroundColor( .blue)
+//                    }
+////
+//                }
+            
+                VStack(alignment:.leading){
+
+                        TextField(placeHolder,text:$text)
+                            .padding(.horizontal)
+                            .frame(height:37)
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 13))
+                            .focused($isFocus)
+                            .submitLabel(.send)
+                            .onSubmit{
+                                //                        sendMessage()
+                                if self.isReplyMessage {
+                                    sendReplyMessage()
+                                }else {
+                                    sendMessage()
+                                }
+                                self.messageIndex = messages.count - 1
+                            }
+                        
+//                    }
+                   
+                }
+                
+                Button(action:{
+                    withAnimation{
+                        if self.isShowMoreContent  {
+                            self.isShowMoreContent = false
+                        }
+                        
+                        if self.isUseSticket {
+                            self.isUseSticket = false
+                            self.isFocus = true
+                        }else {
+                            self.isUseSticket = true
+                            self.isFocus = false
+                        }
+                        
+                    }
+                }){
+                    Image(systemName: self.isUseSticket ? "keyboard" :"face.smiling")
+                        .imageScale(.large)
+                        .foregroundColor( .blue)
+                }
+                
+                Button(action:{
+                    withAnimation{
+//                        self.showPicker.toggle()
+
+                        self.isUseSticket = false
+                        self.isFocus = false
+                        self.isShowMoreContent = true
+                    }
+                }){
+                    Image(systemName: "plus.circle")
+                        .imageScale(.large)
+                        .foregroundColor( .blue)
+                }
+
+            }
+            if self.isUseSticket {
+                StickerView(onSend: self.onSendSticker(stickerUri:))
+            }
+            
+            if self.isShowMoreContent{
+                AddContentView(content: {
+                    Group{
+                        moreContentCell(sysName: "doc.circle", cellName: "File"){
+                            withAnimation{
+                                self.showPicker = true
+                            }
+                        }
+                        
+                        PhotosPicker(selection: $selectedItem, matching: .any(of: [.images]),photoLibrary: .shared()){
+                            VStack(spacing:10){
+                                Image(systemName: "photo.circle")
+                                    .imageScale(.large)
+                                    .foregroundColor(.blue)
+                                Text("Image")
+                                    .foregroundColor(.black)
+                                    .font(.footnote)
+                                    .fontWeight(.medium)
+                            }
+                        }
+                        
+                        PhotosPicker(selection: $selectedItem, matching: .any(of: [.videos]),photoLibrary: .shared()){
+                            VStack(spacing:10){
+                                Image(systemName: "video.circle")
+                                    .imageScale(.large)
+                                    .foregroundColor(.blue)
+                                Text("Video")
+                                    .foregroundColor(.black)
+                                    .font(.footnote)
+                                    .fontWeight(.medium)
+                            }
+                        }
+//
+                    }
+                })
+            }
+        }
+        .padding(8)
+        .background(.thickMaterial)
+        .onChange(of: self.isReplyMessage){ state in
+            if state {
+                self.placeHolder = "@\(self.replyMessage?.sender?.name ?? "UNKNOW")"
+            }else {
+                self.placeHolder = "Message"
+            }
+        }
+        .onChange(of: self.isFocus) { state in
+            if state  {
+                self.isUseSticket = false
+            }
+        }
+    }
+    
+    private func playMessageSentSound(){
+        AudioServicesPlayAlertSound(MESSAGE_SENT_SOUND_ID)
+    }
+    
+    private func replyMessageContent() -> String {
+        guard let replyMsg = self.replyMessage else {
+            return ""
+        }
+        print(replyMsg)
+        var message : String = "\(replyMsg.sender?.name ?? "") : "
+
+        switch replyMsg.content_type {
+        case ContentType.text.rawValue, ContentType.msgReply.rawValue:
+            message.append(replyMsg.content ?? "")
+            break
+        case ContentType.img.rawValue:
+            message.append("[ image content ]")
+            break
+        case ContentType.file.rawValue:
+            message.append("[ file content ]")
+            break
+        case ContentType.audio.rawValue:
+            message.append("[ audio content ]")
+            break
+        case ContentType.video.rawValue:
+            message.append("[ video content ]")
+            break
+        case ContentType.story.rawValue:
+            message.append("[ story content ]")
+            break
+            
+        default:
+            return ""
+            
+        }
+        
+        return message
+    }
+
+    //MARK Content Type
+    private func isOwner(id : String) -> Bool {
+        return id == userModel.profile!.uuid
+    }
+    
+}
+extension ChattingView {
     private func fileBase64Encoding(data : Data,format : String) -> String {
         let base64 = data.base64EncodedString()
         return "data:image/\(format);base64,\(base64)"
@@ -459,9 +755,15 @@ struct ChattingView: View {
     }
     
     private func sendMessage(contentType : Int16 = 1){
+        if self.text.isEmpty {
+            return
+        }
         let msgID = UUID().uuidString
-        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
+        
+        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: nil)
         Websocket.shared.handleMessage(event:.send,msg: msg)
+        
+        playMessageSentSound()
         Websocket.shared.onSend(msg: msg)
         
         Task {
@@ -470,13 +772,54 @@ struct ChattingView: View {
         self.text.removeAll()
     }
     
+    private func onSendSticker(stickerUri : String){
+//        print("sent sticker")
+        let msgID = UUID().uuidString
+
+        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: nil, contentType: ContentType.sticker.rawValue, type: 4, messageType: self.chatUserData.message_type,urlPath: stickerUri,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: nil)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
+
+        playMessageSentSound()
+        Websocket.shared.onSend(msg: msg)
+
+        Task {
+            await checkMessage(messageID: msgID)
+        }
+    }
+    
+    private func sendReplyMessage(contentType : Int16 = ContentType.msgReply.rawValue){
+        if self.text.isEmpty {
+            return
+        }
+        let msgID = UUID().uuidString
+        
+        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: self.replyMessage!.id!.uuidString)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
+        
+        playMessageSentSound()
+        Websocket.shared.onSend(msg: msg)
+        
+        Task {
+            await checkMessage(messageID: msgID)
+        }
+        self.text.removeAll()
+        DispatchQueue.main.async {
+            withAnimation{
+                self.replyMessage = nil
+                self.isReplyMessage = false
+            }
+        }
+
+    }
+    
     private func sendImage(data : String, imageType : String,mediaType : MediaType = .Image) async {
         let sent_time = Date.now
-        let message = UDM.addRoomMessage(roomIndex: UDM.currentRoom, msgID : UUID().uuidString,sender_uuid: self.userModel.profile!.uuid, receiver_uuid: self.chatUserData.id!.uuidString.lowercased(),sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: mediaType == .Image ? 2 : 3, message_type: self.chatUserData.message_type,sent_at: sent_time,tempData:self.selectedData,fileName: "",fileSize: 0,event: .send,messageStatus: .sending)
+        let message = UDM.addRoomMessage(room: UDM.currentRoom!, msgID : UUID().uuidString,sender_uuid: self.userModel.profile!.uuid, receiver_uuid: self.chatUserData.id!.uuidString.lowercased(),sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: mediaType == .Image ? 2 : 3, message_type: self.chatUserData.message_type,sent_at: sent_time,tempData:self.selectedData,fileName: "",fileSize: 0,event: .send,messageStatus: .sending)
+        
         chatUserData.last_message = "Sent a \(mediaType.rawValue)"
         chatUserData.last_sent_time = sent_time
         UDM.currentRoomMessage.append(message)
-        
+        playMessageSentSound()
         let req = UploadImageReq(image_type: imageType, data: data)
         let resp = await ChatAppService.shared.UploadImage(req: req)
         switch resp{
@@ -493,7 +836,7 @@ struct ChattingView: View {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil)
+            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: nil)
             Websocket.shared.onSend(msg: msg)
             Task {
                 await checkMessage(messageID: message.id!.uuidString)
@@ -523,12 +866,12 @@ struct ChattingView: View {
         }
         
         let sent_time = Date.now
-        let message = UDM.addRoomMessage(roomIndex: UDM.currentRoom,msgID: UUID().uuidString, sender_uuid: self.userModel.profile!.uuid,receiver_uuid: self.chatUserData.id!.uuidString.lowercased() ,sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: Int16(contentType),message_type: self.chatUserData.message_type, sent_at: sent_time,tempData:self.selectedData,fileName: fileName,fileSize: fileSize,event: .send,messageStatus: .sending)
+        let message = UDM.addRoomMessage(room: UDM.currentRoom!,msgID: UUID().uuidString, sender_uuid: self.userModel.profile!.uuid,receiver_uuid: self.chatUserData.id!.uuidString.lowercased() ,sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: Int16(contentType),message_type: self.chatUserData.message_type, sent_at: sent_time,tempData:self.selectedData,fileName: fileName,fileSize: fileSize,event: .send,messageStatus: .sending)
         
         chatUserData.last_message = sentMsg
         chatUserData.last_sent_time = sent_time
         UDM.currentRoomMessage.append(message)
-        
+        playMessageSentSound()
 //        let req = UploadFileReq(file_name: fileName, data: data)
         let req = UploadFileReq(data: data, file_name: fileName)
         let resp = await ChatAppService.shared.UploadFile(req: req, fileExt: ext)
@@ -546,7 +889,7 @@ struct ChattingView: View {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,groupName: nil,groupAvatar: nil,fileName: fileName,fileSize: fileSize,storyAvailableTime: nil)
+            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: fileName,fileSize: fileSize,storyAvailableTime: nil, replyMessageID: nil)
             Websocket.shared.onSend(msg: msg)
             
             Task {
@@ -557,11 +900,9 @@ struct ChattingView: View {
         }
         UDM.manager.save()
     }
-    
-    //MARK Content Type
-    private func isOwner(id : String) -> Bool {
-        return id == userModel.profile!.uuid
-    }
+}
+
+extension ChattingView {
     
     @ViewBuilder
     private func TextContentTypeView(message : RoomMessages) -> some View {
@@ -572,6 +913,41 @@ struct ChattingView: View {
             .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color.blue : Color.green)
     }
     
+    @ViewBuilder
+    private func replyMessageContentTypeView(message : RoomMessages) -> some View {
+        
+        VStack(alignment:.leading){
+            VStack(alignment:.leading){
+                Button(action:{
+                    print("Find The message")
+                }){
+                    VStack(alignment:.leading,spacing:8){
+                        Text("\(message.replyMessage?.sender?.name ?? "") \(message.replyMessage?.sent_at?.sendTimeString() ?? "")")
+                        Text(message.replyMessageContent)
+                            .lineLimit(2)
+                    }
+                    .font(.system(size:13))
+                    .padding(.vertical,10)
+                    .padding(.horizontal,10)
+                    .foregroundColor(.white)
+                    .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color("ReplySenderBlue").cornerRadius(10) : Color("ReplyReceiverGreen").cornerRadius(10))
+                    
+                }
+                .buttonStyle(.plain)
+
+                Text(message.content ?? "")
+                    .font(.system(size:15))
+                    .foregroundColor(Color.white)
+                    
+            }
+            .padding(10)
+
+               
+        }
+        .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color.blue : Color.green)
+
+    }
+
     @ViewBuilder
     private func ImageContentTypeView(message : RoomMessages) -> some View {
         ZStack{
@@ -643,14 +1019,14 @@ struct ChattingView: View {
             .padding(10)
             .foregroundColor(Color.white)
             .background(.green)
-            .contextMenu{
-                Button("save to file disk",action:{
-                    Task {
-                        await self.downloadAndSave(message:message)
-                    }
-                })
-                .disabled(message.tempData != nil)
-            }
+//            .contextMenu{
+//                Button("save to file disk",action:{
+//                    Task {
+//                        await self.downloadAndSave(message:message)
+//                    }
+//                })
+//                .disabled(message.tempData != nil)
+//            }
             .overlay{
                 if message.tempData != nil {
                     Color.black
@@ -694,7 +1070,7 @@ struct ChattingView: View {
                         VStack(alignment: .leading,spacing: 5){
                             Text(message.file_name ?? "" )
                                 .bold()
-                                .font(.headline)
+                                .font(.subheadline)
                                 .multilineTextAlignment(.leading)
                             
                             Text("size : \(String(format: "%.2f", message.FileSizeInMB)) MB")
@@ -706,14 +1082,14 @@ struct ChattingView: View {
                     .padding(10)
                     .foregroundColor(Color.white)
                     .background(.green)
-                    .contextMenu{
-                        Button("save to file disk",action:{
-                            Task {
-                                await self.downloadAndSave(message:message)
-                            }
-                        })
-                        .disabled(message.tempData != nil)
-                    }
+//                    .contextMenu{
+//                        Button("save to file disk",action:{
+//                            Task {
+//                                await self.downloadAndSave(message:message)
+//                            }
+//                        })
+//                        .disabled(message.tempData != nil)
+//                    }
                     .overlay{
                         if message.tempData != nil {
                             Color.black
@@ -762,121 +1138,122 @@ struct ChattingView: View {
                                     .scaleEffect(1.7)
                             }
                     }
-                    .contextMenu{
-                        Button("save to album"){
-                            hub.SetWait(message: "Downloading and saving...")
-                            Task {
-                                
-                                let resp = await ChatAppService.shared.DownloadTask(fileURL: message.FileURL)
-                                hub.isWaiting = false
-                                switch resp {
-                                case .success(let fileURL):
-                                    do {
-                                        let documentsURL = try
-                                        FileManager.default.url(for: .picturesDirectory,
-                                                                in: .userDomainMask,
-                                                                appropriateFor: nil,
-                                                                create: true)
-                                        
-                                        let savedURL = documentsURL.appendingPathComponent(message.file_name!)
-//                                        print(savedURL.absoluteString)
-//                                        let fileData = try Data(contentsOf: fileURL)
-//                                        try fileData.write(to: savedURL)
-                                        try FileManager.default.moveItem(at: fileURL, to: savedURL)
-                                        PHPhotoLibrary.shared().performChanges({
-                                            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: savedURL)
-                                        }) { saved, error in
-                                            if saved {
-                                                hub.AlertMessage(sysImg: "checkmark", message: "Saved successfully.")
-                                            }
-                                        }
-                 
-                                        //                                hub.AlertMessage(sysImg: "checkmark", message: "Saved successfully.")
-                                    }catch (let err){
-                                        //                                print(err.localizedDescription)
-                                        hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
-                                    }
-                                    
-                                case .failure(let err):
-                                    print(err.localizedDescription)
-                                    hub.AlertMessage(sysImg: "exclamationmark.circle", message: err.localizedDescription)
-                                }
-                                
-                            }
-                        }
-                    }
+//                    .contextMenu{
+//                        Button("save to album"){
+//                            hub.SetWait(message: "Downloading and saving...")
+//                            Task {
+//
+//                                let resp = await ChatAppService.shared.DownloadTask(fileURL: message.FileURL)
+//                                hub.isWaiting = false
+//                                switch resp {
+//                                case .success(let fileURL):
+//                                    do {
+//                                        let documentsURL = try
+//                                        FileManager.default.url(for: .picturesDirectory,
+//                                                                in: .userDomainMask,
+//                                                                appropriateFor: nil,
+//                                                                create: true)
+//
+//                                        let savedURL = documentsURL.appendingPathComponent(message.file_name!)
+////                                        print(savedURL.absoluteString)
+////                                        let fileData = try Data(contentsOf: fileURL)
+////                                        try fileData.write(to: savedURL)
+//                                        try FileManager.default.moveItem(at: fileURL, to: savedURL)
+//                                        PHPhotoLibrary.shared().performChanges({
+//                                            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: savedURL)
+//                                        }) { saved, error in
+//                                            if saved {
+//                                                hub.AlertMessage(sysImg: "checkmark", message: "Saved successfully.")
+//                                            }
+//                                        }
+//
+//                                        //                                hub.AlertMessage(sysImg: "checkmark", message: "Saved successfully.")
+//                                    }catch (let err){
+//                                        //                                print(err.localizedDescription)
+//                                        hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
+//                                    }
+//
+//                                case .failure(let err):
+//                                    print(err.localizedDescription)
+//                                    hub.AlertMessage(sysImg: "exclamationmark.circle", message: err.localizedDescription)
+//                                }
+//
+//                            }
+//                        }
+//                    }
                     
                 }
             }
         }
         .transition(.identity)
     }
+    
     @ViewBuilder
     private func StoryContentTypeView(message : RoomMessages) -> some View {
-        VStack(alignment:message.sender!.id!.uuidString.lowercased() != userModel.profile!.uuid  ? .leading : .trailing,spacing:0){
+        VStack(alignment:.leading){
+            VStack(alignment:.leading){
+                Text("Reply to a story")
+                    .font(.footnote)
+                    .fontWeight(.medium)
+                    .foregroundColor(.orange)
 
+                VStack(alignment:.leading,spacing:8){
+                    if message.sender!.id!.uuidString.lowercased() != userModel.profile!.uuid {
 
-            Text("Reply to a story")
-                .font(.footnote)
-                .foregroundColor(.gray)
-
-
-            if message.sender!.id!.uuidString.lowercased() != userModel.profile!.uuid {
-
-                HStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color(uiColor:UIColor.systemGray2))
-                        .frame(width:5,height:100)
-                        .padding(.vertical)
-                    AsyncImage(url: message.FileURL, content: { img in
-                        img
-                            .resizable()
-                            .frame(maxWidth:60,maxHeight:95)
-                            .aspectRatio(contentMode: .fill)
-                            .cornerRadius(10)
-
-                    }, placeholder: {
-                        ProgressView()
-                            .frame(width: 30,height: 30)
-
-                    })
-                }
-
-
-            }else {
-                HStack{
-
-                    if message.isStoryAvailable {
-                        AsyncImage(url: message.FileURL, content: {img in
+                        AsyncImage(url: message.FileURL, content: { img in
                             img
                                 .resizable()
-                                .frame(maxWidth:60,maxHeight:95)
                                 .aspectRatio(contentMode: .fill)
                                 .cornerRadius(10)
-                                .frame(height:40)
+
                         }, placeholder: {
                             ProgressView()
                                 .frame(width: 30,height: 30)
 
                         })
+
+
+
                     }else {
-                        Text("Story unavaiable.")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                        HStack{
+
+                            if message.isStoryAvailable {
+                                AsyncImage(url: message.FileURL, content: {img in
+                                    img
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .cornerRadius(10)
+
+                                }, placeholder: {
+                                    ProgressView()
+                                        .frame(width: 30,height: 30)
+
+                                })
+                            }else {
+                                Text("Story unavaiable.")
+                                    .font(.subheadline)
+                                    .foregroundColor(.red)
+                            }
+
+
+                        }
+
                     }
-
-
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color(uiColor:UIColor.systemGray2))
-                        .frame(width:5,height:message.isStoryAvailable ? 100 : 20)
-                        .padding(.vertical)
                 }
+                .font(.system(size:13))
+                .padding(.vertical,10)
+                .padding(.horizontal,10)
+                .foregroundColor(.white)
+                .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color("ReplySenderBlue").cornerRadius(10) : Color("ReplyReceiverGreen").cornerRadius(10))
+
+                Text(message.content ?? "")
+                    .font(.system(size:15))
+                    .foregroundColor(Color.white)
 
             }
-
+            .padding(10)
         }
-
-
+        .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color.blue : Color.green)
     }
     
     @ViewBuilder
@@ -888,6 +1265,7 @@ struct ChattingView: View {
             .background(Color.green)
 
     }
+    
     @ViewBuilder
     private func SysContentTypeView(message : RoomMessages) -> some View {
         Text(message.content ?? "")
@@ -898,8 +1276,47 @@ struct ChattingView: View {
             .background(BlurView(style: .systemMaterialLight).cornerRadius(10))
             .fontWeight(.medium)
     }
+    
+    @ViewBuilder
+    private func StickerContentTypeView(message : RoomMessages) -> some View {
+        VStack{
+            AsyncImage(url: message.FileURL, content: {img in
+                img
+                    
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width:120,height: 120)
+                    .aspectRatio(contentMode: .fit)
+            }, placeholder: {
+                ProgressView()
+                    .scaledToFit()
+                    .frame(width:120,height: 120)
+                    .aspectRatio(contentMode: .fit)
+            })
+        }
+
+    }
 }
 
+extension ChattingView {
+    
+    @ViewBuilder
+    private func moreContentCell(sysName : String,cellName : String, action : @escaping () -> () ) -> some View {
+        Button(action:action){
+            VStack(spacing:10){
+                Image(systemName: sysName)
+                    .imageScale(.large)
+                    .foregroundColor(.blue)
+                Text(cellName)
+                    .foregroundColor(.black)
+                    .font(.footnote)
+                    .fontWeight(.medium)
+            }
+            .padding(10)
+        }
+
+    }
+}
 
 //struct ChattingView_Previews: PreviewProvider {
 //    static var previews: some View {

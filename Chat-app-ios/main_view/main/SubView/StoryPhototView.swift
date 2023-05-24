@@ -71,6 +71,7 @@ struct StoryPhototView: View {
 struct postStoryImageView : View {
     @EnvironmentObject private var svm : StoryPostModel
     @EnvironmentObject private var userStory : UserStoryViewModel
+    @StateObject private var hub = BenHubState.shared
     @Binding var isCreatePost : Bool
     var body: some View {
         VStack{
@@ -102,14 +103,16 @@ struct postStoryImageView : View {
     }
     
     private func createStory() async{
+  
         let resp = await ChatAppService.shared.CreateStory(mediaData: self.svm.imageData!)
         switch resp {
         case .success(let data):
-            print(data.story_id)
+            hub.AlertMessage(sysImg: "checkmark", message: "Posted")
             DispatchQueue.main.async {
                 self.userStory.userStories.append(UInt(data.story_id))
             }
         case .failure(let err):
+            hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
             print(err.localizedDescription)
         }
     }

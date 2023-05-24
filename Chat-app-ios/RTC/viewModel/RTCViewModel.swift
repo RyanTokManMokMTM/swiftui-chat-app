@@ -152,6 +152,13 @@ extension RTCViewModel {
         if self.isConnectd && !self.isSetRemoteSDP && !self.isSetLoaclSDP {
             //is connecte and not set remote and not set ans
             print("sending offer")
+            guard let url = Bundle.main.url(forResource: "call", withExtension: ".mp3") else {
+                self.callState = .Ended
+                return
+            }
+            
+            SoundManager.shared.playSound(url: url)
+            
             self.webRTCClient?.offer(){ sdp in
                 DispatchQueue.main.async {
                     self.isSetLoaclSDP = true
@@ -162,6 +169,7 @@ extension RTCViewModel {
                     //send via websocket
                     print("sendeing offer signal")
                     self.sendSingleMessage(sdpData)
+
                 }else {
                     print("????sadasdas")
                 }
@@ -231,8 +239,10 @@ extension RTCViewModel : WebRTCClientDelegate{
             self.connectionStatus = state
             switch state {
             case .connected, .completed:
+                SoundManager.shared.stopPlaying()
                 self.callState = .Connected
             case .disconnected,.failed, .closed:
+                
                 self.callState = .Ended
             case .new, .checking, .count:
                 self.callState = .Connecting
@@ -284,6 +294,8 @@ extension RTCViewModel {
                     self.isSetRemoteSDP = true //JUST FOR TESTING
                 }
             })
+            SoundManager.shared.stopPlaying()
+            
             break
             //TODO:
         case .offer(let offer): //receving offer -> offer is the remoteSDP for the receiver
@@ -307,6 +319,11 @@ extension RTCViewModel {
                 self.userAvatar = websocketMessage.avatar!
                 self.callingType = SignalMessage.getCallType(message: message)
                 self.isIncomingCall = true
+//                NSDataAsset(name: "ringing")
+                guard let url = Bundle.main.url(forResource: "ringing", withExtension: ".mp3") else {
+                    return
+                }
+                SoundManager.shared.playSound(url: url)
             }
             break
         case .bye:

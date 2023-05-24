@@ -45,6 +45,8 @@ protocol APIService {
     func GetActiveStories() async  -> Result<GetActiveStoryResp,Error>
     func GetStoryInfo(storyID : UInt) async  -> Result<GetStoryInfoResp,Error>
     
+    func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error>
+    
     func DownloadTask(fileURL : URL) async -> Result<URL,Error>
 }
 
@@ -118,6 +120,8 @@ enum APIEndPoint : String,CaseIterable {
     case GetActiveStories
     case GetStoryInfo
     
+    case GetStickerGroup
+    
     var rawValue: String {
         switch self {
         case .HealthCheck : return  "/ping"
@@ -159,6 +163,8 @@ enum APIEndPoint : String,CaseIterable {
         case .GetUserStories: return "/stories"
         case .GetActiveStories: return "/stories/active"
         case .GetStoryInfo: return "/story/"
+            
+        case .GetStickerGroup : return "/sticker/"
         }
     }
 }

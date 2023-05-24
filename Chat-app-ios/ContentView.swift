@@ -5,6 +5,7 @@
 //  Created by Jackson.tmm on 15/2/2023.
 
 import SwiftUI
+import AVFoundation
 
 class SearchState : ObservableObject {
     @Published var isChatFromProfile : Bool = false
@@ -35,15 +36,16 @@ struct ContentView: View {
                     .environmentObject(storyModel)
                     .environmentObject(userStory)
                 
-                
             }
-//            
+ 
           
             .accentColor(.green)
             .zIndex(1)
             .fullScreenCover(isPresented: $isShowProfile){
                 ProfileView(isShowSetting: $isShowProfile,loginState: $loginSate)
                     .environmentObject(userModel)
+   
+                
             }
             .fullScreenCover(isPresented: $isAddStory){
                 StoryPhototView(isAddStory: $isAddStory)
@@ -106,9 +108,11 @@ struct ContentView: View {
                         }
                     }
                     .environmentObject(userModel)
+     
                     //                    .navigationTitle("")
                 }.accentColor(.black)
                     .zIndex(2)
+                    
             }
             
             if self.loginSate {
@@ -119,8 +123,9 @@ struct ContentView: View {
                     .environmentObject(userStory)
                     .transition(.move(edge: .bottom))
                     .background(.white)
-                  
                     .zIndex(3)
+                
+    
             }
         }
         .onChange(of: loginSate){ state in
@@ -142,6 +147,7 @@ struct ContentView: View {
                 BenHubAlertWithMessage( message: hub.message,info: hub.info!)
             }
         }
+      
 
 
     }
@@ -152,3 +158,5 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+

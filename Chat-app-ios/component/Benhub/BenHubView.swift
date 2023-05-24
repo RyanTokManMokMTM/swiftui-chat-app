@@ -61,19 +61,20 @@ extension View {
     func alert<Content : View>(isAlert : Binding<Bool>,@ViewBuilder content : () -> Content) -> some View{
         ZStack(alignment:.top){
             self
+                .zIndex(0)
             
             if isAlert.wrappedValue {
                 BenHubView(type:.Alert,content: content)
                     .transition(AnyTransition.move(edge: .top).combined(with: .opacity))
                     .zIndex(1)
-                    .onAppear{
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-                            withAnimation{
-                                isAlert.wrappedValue = false
-                                print(isAlert.wrappedValue)
-                            }
-                        }
-                    }
+//                    .onAppear{
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+//                            withAnimation{
+//                                isAlert.wrappedValue = false
+//                                print(isAlert.wrappedValue)
+//                            }
+//                        }
+//                    }
             }
         }
     }

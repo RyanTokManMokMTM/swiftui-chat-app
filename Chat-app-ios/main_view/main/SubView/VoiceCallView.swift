@@ -7,6 +7,22 @@
 
 import SwiftUI
 
+struct DotView: View {
+    @State var delay: Double = 0 // 1.
+    @State var scale: CGFloat = 0.5
+    var body: some View {
+        Circle()
+            .fill(.white)
+            .frame(width: 5, height: 5)
+            .scaleEffect(scale)
+            .animation(Animation.easeInOut(duration: 0.6).repeatForever().delay(delay)) // 2.
+            .onAppear {
+                withAnimation {
+                    self.scale = 1
+                }
+            }
+    }
+}
 struct VoiceCallView: View {
     let name : String
     let path : URL
@@ -74,9 +90,23 @@ struct VoiceCallView: View {
                         .foregroundColor(.white)
                         .font(.subheadline)
                 }else {
-                    Image(systemName: "ellipsis")
-                        .imageScale(.medium)
-                        .foregroundColor(.white)
+                    
+                    
+                    VStack(spacing:5){
+                        if self.videoCallVM.callState == .Incoming {
+                            Text("Voice Calling")
+                                .foregroundColor(.white)
+                                .font(.footnote)
+                        }
+                        HStack{
+                            DotView() // 1.
+                            DotView(delay: 0.2) // 2.
+                            DotView(delay: 0.4) // 3.
+                        }
+                       
+                    }
+                    
+                    
                 }
                 
                 Spacer()
@@ -109,9 +139,11 @@ struct VoiceCallView: View {
 //                print("State Changed : \(state)")
                 if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
                     DispatchQueue.main.async {
+                        SoundManager.shared.stopPlaying()
                         self.videoCallVM.isIncomingCall = false
                         self.videoCallVM.DisConnect()
                         hub.AlertMessage(sysImg: "", message: "Voice Call Ended")
+                        playEndCallSoundEffect()
                     }
                 }
             }
@@ -119,6 +151,14 @@ struct VoiceCallView: View {
             
         }
     }
+    
+    private func playEndCallSoundEffect(){
+        guard let url = Bundle.main.url(forResource: "endcall", withExtension: ".mp3") else {
+            return
+        }
+        SoundManager.shared.playSound(url: url,repeatTime: 0)
+    }
+    
     @ViewBuilder
     private func IncomingCall() -> some View {
         HStack{
@@ -150,9 +190,12 @@ struct VoiceCallView: View {
                 Button(action:{
                     //Send a Bye signal
                     DispatchQueue.main.async { //TODO: Send disconnected signal and Disconnect and reset all RTC
+//                        SoundManager.shared.stopPlaying()
+//                        playEndCallSoundEffect()
                         self.videoCallVM.sendDisconnect()
                         self.videoCallVM.DisConnect()
                         self.videoCallVM.isIncomingCall = false
+                        
                     }
                  
                 }){

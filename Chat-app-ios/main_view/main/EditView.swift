@@ -49,12 +49,12 @@ struct EditView: View {
             }
             .padding()
         }
-        .wait(isLoading: $hub.isWaiting){
-            BenHubLoadingView(message: hub.message)
-        }
-        .alert(isAlert: $hub.isPresented){
-            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
-        }
+//        .wait(isLoading: $hub.isWaiting){
+//            BenHubLoadingView(message: hub.message)
+//        }
+//        .alert(isAlert: $hub.isPresented){
+//            BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+//        }
         .onChange(of: text){ _ in
             if text != data && !self.isEdit {
                 isEdit = true

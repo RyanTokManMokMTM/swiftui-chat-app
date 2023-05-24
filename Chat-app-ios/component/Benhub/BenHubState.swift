@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Foundation
+import Combine
+
 
 enum StateType {
     case normal
@@ -28,14 +30,27 @@ final class BenHubState : ObservableObject {
     @Published var isWaiting : Bool = false
     @Published var isPresented : Bool = false
     
+    private var cancelable : Set<AnyCancellable> = []
     private(set) var message : String = ""
     private(set) var sysImg : String = ""
     private(set) var info : Info? = nil
     private(set) var type : StateType = .normal
+
     
     static let shared = BenHubState()
     
-    private init(){}
+    private init(){
+        self.persentedPublishr
+            .sink{ persent in
+                if persent == true{
+                    withAnimation{
+                        self.isPresented = false
+                    }
+                }
+                
+            }
+            .store(in: &cancelable)
+    }
     
     func SetWait(message : String) {
         self.message = message
@@ -43,6 +58,8 @@ final class BenHubState : ObservableObject {
             self.isWaiting = true
         }
     }
+    
+
     
     func AlertMessageWithUserInfo(message : String, avatarPath : String , name : String ,type : StateType = .normal){
         self.message = message
@@ -66,5 +83,14 @@ final class BenHubState : ObservableObject {
                 self.isPresented = true
             }
         }
+    }
+    
+    private var persentedPublishr : AnyPublisher<Bool,Never>{
+        $isPresented
+            .debounce(for: 2, scheduler: RunLoop.main)
+            .map{ _isPresented in
+                return _isPresented
+            }
+            .eraseToAnyPublisher()
     }
 }

@@ -13,14 +13,15 @@ import SwiftUI
 class UserDataModel : ObservableObject {
     static let shared = UserDataModel()
     let manager = PersistenceController.shared
-    @Published var currentRoom : Int = -1
+//    @Published var currentRoom : Int = -1
+    @Published var currentRoom : ActiveRooms? = nil //or id???
     @Published var info : UserDatas?
     @Published var rooms : [ActiveRooms] = [] 
     @Published var currentRoomMessage : [RoomMessages] = []
     @Published var previousTotalMessage : Int = 0 //for offset correctly
     private init(){}
 
-//
+    //MARK: fetchUserData Fetch current user info from Cache
     func fetchUserData(id : Int16) -> Bool{
 //        print(id)
         let predicate = NSPredicate(format: "id == %i", id)
@@ -42,7 +43,8 @@ class UserDataModel : ObservableObject {
             return false
         }
     }
-//
+    
+    //MARK: addUserData Add User Data to Cache
     func addUserData(id : Int16,uuid : String,email : String, name : String, avatar : String){
         let data = UserDatas(context: self.manager.context)
         data.id = id
@@ -55,6 +57,7 @@ class UserDataModel : ObservableObject {
         self.info = data
     }
     
+    //MARK: addRoom Add a new Active Room
     func addRoom(id : String,name : String, avatar : String,message_type : Int16) -> ActiveRooms? {
         let activeRoom = ActiveRooms(context: self.manager.context)
         activeRoom.id = UUID(uuidString: id)
@@ -69,7 +72,8 @@ class UserDataModel : ObservableObject {
         return activeRoom
     }
     
-    func addRoomMessage(roomIndex: Int,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus) -> RoomMessages {
+    //MARK: addRoomMessage Add a new messsge of the room to the cache
+    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus) -> RoomMessages {
         
         //TODO: Check Sender Info exist?
         var sender : SenderInfo?
@@ -95,12 +99,13 @@ class UserDataModel : ObservableObject {
         newMessage.story_available_time = storyAvailabeTime
         newMessage.sender = sender
         newMessage.message_status = messageStatus.rawValue
-        self.rooms[roomIndex].addToMessages(newMessage)
+        room.addToMessages(newMessage)
         self.manager.save()
         
         return newMessage
     }
     
+    //MARK: createOneSenderInfo Create One Sender Info to cache
     func createOneSenderInfo(uuid : String,avatar : String,name : String) -> SenderInfo{
         let senderUUID = UUID(uuidString: uuid)!
         let senderInfo = SenderInfo(context: self.manager.context)
@@ -112,8 +117,8 @@ class UserDataModel : ObservableObject {
         return senderInfo
     }
     
+    //MARK: findOneSender Find One Sender in cache
     func findOneSender(uuid : UUID) -> SenderInfo?{
-//        print("find sender info :\(uuid.uuidString)")
         let request : NSFetchRequest<SenderInfo> = SenderInfo.fetchRequest()
         request.predicate = NSPredicate(format: "%K == %@", "id", uuid as CVarArg)
         request.fetchLimit = 1
@@ -123,6 +128,7 @@ class UserDataModel : ObservableObject {
         return sender.first
     }
     
+    //MARK: addRoomMessage Add a new message to Room
     func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus) -> RoomMessages {
         
         var sender : SenderInfo?
@@ -176,26 +182,26 @@ class UserDataModel : ObservableObject {
     }
     
     func fetchCurrentRoomMessage(){
-    
-        if self.currentRoom == -1 || !hasMoreMessage() {
+        guard let room = self.currentRoom  else {
+            return
+        }
+        if !hasMoreMessage() {
             return
         }
         
         
         let count = self.currentRoomMessage.count
-        let predict = NSPredicate(format: "%K == %@", "room" , self.rooms[self.currentRoom])
+        let predict = NSPredicate(format: "%K == %@", "room" , room)
         let req = RoomMessages.fetchRequest()
         let sortBySentTime = NSSortDescriptor(key:"sent_at", ascending:false)
         req.fetchLimit = 20
         req.predicate = predict
         req.sortDescriptors = [sortBySentTime]
         req.fetchOffset = count
-//        req.fetchOffset = (self.previousTotalMessage - currMessageCount) >= 20 ? currMessageCount : self.previousTotalMessage - currMessageCount
-        
         do {
             let data = try self.manager.context.fetch(req)
             DispatchQueue.main.async {
-                self.currentRoomMessage.insert(contentsOf: data.reversed(), at: 0)
+                    self.currentRoomMessage.insert(contentsOf: data.reversed(), at: 0)
             }
           
         } catch (let err){
@@ -211,7 +217,7 @@ class UserDataModel : ObservableObject {
     
     func getMessageCount(room : ActiveRooms){
         let req = RoomMessages.fetchRequest()
-        let predict = NSPredicate(format: "%K == %@", "room" , self.rooms[self.currentRoom])
+        let predict = NSPredicate(format: "%K == %@", "room" , room)
         req.predicate = predict
         
         do {
@@ -221,6 +227,9 @@ class UserDataModel : ObservableObject {
             print(err.localizedDescription)
         }
     }
+    
+    
+    
     func removeAllRoomMessage(room activeRoom : ActiveRooms) -> Bool{
         let predict = NSPredicate(format: "%K == %@", "room" , activeRoom)
         let reqesut = NSFetchRequest<NSFetchRequestResult>(entityName: "RoomMessages")
@@ -268,3 +277,4 @@ class UserDataModel : ObservableObject {
     }
     
 }
+
