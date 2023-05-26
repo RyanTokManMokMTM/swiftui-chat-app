@@ -15,6 +15,7 @@
     <entity name="RoomMessages" representedClassName="RoomMessages" syncable="YES">
         <attribute name="content" optional="YES" attributeType="String"/>
         <attribute name="content_type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="deleted_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="file_name" optional="YES" attributeType="String"/>
         <attribute name="file_size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

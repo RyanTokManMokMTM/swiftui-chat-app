@@ -27,9 +27,9 @@ struct ChattingView: View {
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
-//    @EnvironmentObject private var messageModel : MessageViewModel
     let chatUserData : ActiveRooms
     @Binding var messages : [RoomMessages]
+    
     
 //    @Binding var isActive : Bool
     @StateObject private var hub = BenHubState.shared
@@ -97,17 +97,6 @@ struct ChattingView: View {
                                         }
                                         .transition(.move(edge:  isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .trailing :.leading))
 
-           
-         
-
-
-                                        //MARK: For show the post info
-//                                        if  messages[index].content_type == ContentType.story.rawValue {
-//                                            ChatBubble(direction: messages[index].sender!.id!.uuidString.lowercased() != userModel.profile!.uuid ? .receiver : .sender,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: 1,isSame:true,messageStatus: messages[index].messageStatus,isReplyMessage:$isReplyMessage,replyMessage : $replyMessage,message : messages[index]){
-//                                                StoryImgContentTypeView(message: messages[index])
-//                                            }
-//                                        }
-
                                     }
 
 
@@ -147,29 +136,30 @@ struct ChattingView: View {
                             }
                         }
                     }
+                  
                    .coordinateSpace(name: "ScrollViewOrigin")
                     .onPreferenceChange(OffsetPreferenceKey.self,
                                         perform: { point in
                     
                         if !isFetchMore && point.y > 100 && UserDataModel.shared.hasMoreMessage() {
-                            print(point.y)
+//                            print(point.y)
                             withAnimation{
                                 isFetchMore = true
                             }
                         }
                     })
 
-             
+                InputField()
             }
-            InputField()
+            
         }
-   
         .onDisappear{
             self.UDM.currentRoom = nil
             self.UDM.currentRoomMessage.removeAll()
             self.UDM.previousTotalMessage = 0
             self.videoCallVM.toUserUUID = nil
         }
+
         .fullScreenCover(isPresented: $isPlayAudio){
             AudioPlayerView(isPlayingAudio: $isPlayAudio,fileName: self.audioInfo!.file_name!, path: self.audioInfo!.FileURL)
         }
@@ -365,6 +355,7 @@ struct ChattingView: View {
     private func isVideo(ext : String) -> Bool {
         return ext == "mp4"
     }
+
     
     @ViewBuilder
     private func commentContextMenu(message : RoomMessages) -> some View {
@@ -396,7 +387,17 @@ struct ChattingView: View {
                 }
 
                 Button {
-                    print("Recall")
+                    let sendSystemMessage = "\(message.sender?.name ?? "UNKNOW") recalled a message."
+                    let systemMessage = "You recalled a message."
+                    UserDataModel.shared.deleteMessage(msg: message, content: systemMessage)
+
+                    DispatchQueue.main.async {
+                   
+                        //MARK: removed the message from cache and send a message to all user
+                        //send a signal to other for recall the message
+                        Websocket.shared.recallMessage(message: message, toUUID: self.chatUserData.id!.uuidString.lowercased(), messageType: self.chatUserData.message_type,sendMessage: sendSystemMessage)
+
+                    }
                 } label: {
                     Text("Recall")
                 }
@@ -503,9 +504,7 @@ struct ChattingView: View {
                 }
         } else if message.content_type == ContentType.sticker.rawValue {
             StickerContentTypeView(message: message)
-                .contextMenu{
-                    commentContextMenu(message: message)
-                }
+
         }
     }
     
@@ -539,20 +538,7 @@ struct ChattingView: View {
                 
             }
             HStack{
-//                HStack{
-////                    Spacer()
-//
-//                    Button(action:{
-//                        withAnimation{
-//                            self.showPicker.toggle()
-//                        }
-//                    }){
-//                        Image(systemName: "speaker.wave.2.fill")
-//                            .imageScale(.large)
-//                            .foregroundColor( .blue)
-//                    }
-////
-//                }
+
             
                 VStack(alignment:.leading){
 
@@ -601,10 +587,16 @@ struct ChattingView: View {
                 Button(action:{
                     withAnimation{
 //                        self.showPicker.toggle()
-
-                        self.isUseSticket = false
-                        self.isFocus = false
-                        self.isShowMoreContent = true
+                        if isShowMoreContent {
+                            self.isShowMoreContent = false
+                           
+                        }else {
+                            
+                            self.isUseSticket = false
+                            self.isFocus = false
+                            self.isShowMoreContent = true
+                        }
+                      
                     }
                 }){
                     Image(systemName: "plus.circle")
@@ -1282,7 +1274,6 @@ extension ChattingView {
         VStack{
             AsyncImage(url: message.FileURL, content: {img in
                 img
-                    
                     .resizable()
                     .scaledToFit()
                     .frame(width:120,height: 120)

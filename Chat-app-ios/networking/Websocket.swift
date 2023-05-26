@@ -43,11 +43,9 @@ enum ContentType : Int16,CaseIterable {
     case video
     case story
     case sys
-    
     case msgReply
-    //
-     case sticker
-    
+    case sticker
+
     
     var rawValue: Int16 {
         switch self{
@@ -188,6 +186,10 @@ class Websocket : ObservableObject {
                             print("ack :\(id)")
                             updateMessageStatus(messsageID: id)
                             break
+                        case 7:
+                            print("recall message")
+                            updateMessage(wsMSG: msg)
+                            //Find the message and update the message
                         default:
                             print("UNKNOW TYPE")
                         }
@@ -230,7 +232,6 @@ class Websocket : ObservableObject {
     
     @MainActor
     func handleMessage(event : MessageEvent,msg : WSMessage ,isReplyComment : Bool = false){
-        
         DispatchQueue.main.async { [self] in
             //            print("receving a message / sending a message....")
             var roomID : UUID
@@ -258,13 +259,7 @@ class Websocket : ObservableObject {
                     GroupRoomName = room.name!
                     GroupRoomAvatar = room.avatar!
                 }
-                //            if let index = UserDataModel.shared.findOneRoomWithIndex(uuid: roomID){
-                //                addNewMessageToRoomCache(msg: msg, roop: index, messageID: messageID, sentTime: sentTime, event: event)
-                //                if msg.messageType == 2 {
-                //                    GroupRoomName = UserDataModel.shared.rooms[index].name!
-                //                    GroupRoomAvatar = UserDataModel.shared.rooms[index].avatar!
-                //                }
-                //            } else {
+  
             } else{
                 //TODO: what to do if the room is not exist in current client
                 if isReplyComment {
@@ -344,17 +339,11 @@ class Websocket : ObservableObject {
             }
             
         }
-//        print("Message Saved with\(msg.messageID)")
-
-        //send a ack message if is receiver
-        
-        
     }
 
     
     @MainActor
     func updateMessageStatus(messsageID : String){
-        
         guard let message = UserDataModel.shared.findOneMessage(id: UUID(uuidString: messsageID)!) else {
             print("\(messsageID) : message not found")
             return
@@ -379,12 +368,29 @@ class Websocket : ObservableObject {
         
         self.onSend(msg: wsMSG)
     }
+    
+    func recallMessage(message : RoomMessages,toUUID : String,messageType : Int16,sendMessage : String){
+        let recallMessage = WSMessage(messageID: message.id!.uuidString, avatar: message.sender?.avatar, fromUserName: message.sender?.name, fromUUID: message.sender?.id?.uuidString.lowercased(), toUUID: toUUID, content: sendMessage, contentType: ContentType.sys.rawValue, type: 7, messageType: messageType, urlPath: nil, fileName: nil, fileSize: nil, storyAvailableTime: nil, replyMessageID: nil)
+        self.onSend(msg: recallMessage)
+    }
+    
+    @MainActor
+    func updateMessage(wsMSG : WSMessage){
+        guard let message = UserDataModel.shared.findOneMessage(id: UUID(uuidString: wsMSG.messageID!)!) else {
+            return
+        }
 
+    
+        UserDataModel.shared.deleteMessage(msg: message, content: wsMSG.content ?? "")
+        UserDataModel.shared.fetchUserRoom()
+    }
 }
 
 extension Websocket {
     private func playReceivedMessageSound(){
-        AudioServicesPlaySystemSound(MESSAGE_RECVIVED_SOUND_ID)
+//        AudioServicesPlaySystemSound(MESSAGE_RECVIVED_SOUND_ID)
+        AudioServicesPlayAlertSound(MESSAGE_RECVIVED_SOUND_ID)
+            
     }
 }
 

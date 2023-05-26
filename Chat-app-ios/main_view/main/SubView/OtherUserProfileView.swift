@@ -223,6 +223,8 @@ struct OtherUserProfileView: View {
     @Binding var isShowDetail: Bool
     @State private var result : OtherUserInfo? = nil
     @StateObject private var hub = BenHubState.shared
+    
+    @Environment(\.presentationMode) var presentation
     var body: some View {
         VStack{
             VStack{
@@ -259,7 +261,6 @@ struct OtherUserProfileView: View {
                     
                    
                 }
-                //            Spacer()
                 buttonView()
             }
             .frame(width:UIScreen.main.bounds.width / 1.5)
@@ -270,19 +271,6 @@ struct OtherUserProfileView: View {
         .foregroundColor(.white)
         .frame(width:UIScreen.main.bounds.width,height:UIScreen.main.bounds.height)
         .edgesIgnoringSafeArea(.all)
-//        .overlay(alignment:.topLeading){
-//            Button(action: {
-//                withAnimation{
-//                    isShowDetail = false
-//                }
-//            }){
-//                Image(systemName: "xmark")
-//                    .foregroundColor(.white)
-//                    .imageScale(.large)
-//            }
-//            .padding(.horizontal)
-//            .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-//        }
         .background(
             VStack{
                 AsyncImage(url: self.result?.user_info.CoverURL, content: { img in
@@ -304,7 +292,6 @@ struct OtherUserProfileView: View {
                 await self.getProfile()
             }
         }
-     
     }
     
     @ViewBuilder
@@ -327,11 +314,9 @@ struct OtherUserProfileView: View {
                                 .font(.system(size:14))
                         }
                     }
-                    
                     Spacer()
-                    
                     Button(action: {
-                        
+                        self.presentation.wrappedValue.dismiss()
                     }){
                         VStack(spacing:8){
                             Image(systemName: "message")

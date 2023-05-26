@@ -86,7 +86,7 @@ class UserDataModel : ObservableObject {
                 sender = createOneSenderInfo(uuid: id, avatar: sender_avatar, name: sender_name)
             }
         }
-        
+
         let newMessage = RoomMessages(context: self.manager.context)
         newMessage.id = UUID(uuidString: msgID)!
         newMessage.content = content
@@ -275,6 +275,22 @@ class UserDataModel : ObservableObject {
         msg.message_status = status.rawValue
         self.manager.save()
     }
+    
+    
+    @MainActor
+    func deleteMessage(msg : RoomMessages,content : String) {
+        msg.room!.last_message = content
+        msg.room!.unread_message -= msg.room!.unread_message > 0 ? 1 : 0
+        msg.deleted_at = Date.now
+        msg.content = content
+        msg.url_path = nil
+        msg.file_name = nil
+        msg.file_size = 0
+        msg.content_type = ContentType.sys.rawValue
+        self.manager.save()
+    }
+    
+    
     
 }
 

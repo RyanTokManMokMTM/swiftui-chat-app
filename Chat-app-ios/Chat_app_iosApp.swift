@@ -31,7 +31,7 @@ struct Chat_app_iosApp: App {
     let persistenceContainer = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-//            AudioPlayerView( fileName: "test.mp3", path: "/test.mp3")
+
             ContentView()
                 .environment(\.managedObjectContext, persistenceContainer.container.viewContext)
         }
