@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		20008A6F2A0A7CC300BFC758 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 20008A6E2A0A7CC300BFC758 /* WebRTC */; };
 		20008A732A0E03FB00BFC758 /* VoiceCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20008A722A0E03FB00BFC758 /* VoiceCallView.swift */; };
+		2000E0A02A21E40C00F03480 /* DrawingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2000E09F2A21E40C00F03480 /* DrawingScreen.swift */; };
+		2000E0A32A21F06200F03480 /* DragTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2000E0A22A21F06200F03480 /* DragTextView.swift */; };
 		200665BD29E699CC00A7C9E5 /* StoryPhototView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200665BC29E699CC00A7C9E5 /* StoryPhototView.swift */; };
 		200B79A429BDA78F00F1DB70 /* CreateGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200B79A329BDA78F00F1DB70 /* CreateGroup.swift */; };
 		200B79A629BDAFEF00F1DB70 /* GroupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200B79A529BDAFEF00F1DB70 /* GroupViewModel.swift */; };
@@ -21,6 +23,7 @@
 		201CB7B329BEEAFE0036D181 /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CB7B229BEEAFE0036D181 /* NavigationState.swift */; };
 		2022AFA729C99F4B00C47383 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2022AFA629C99F4B00C47383 /* URL.swift */; };
 		2030090429EFC2E8007E3AED /* ShowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2030090329EFC2E8007E3AED /* ShowImageView.swift */; };
+		2033F7332A22228400D7AC4D /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2033F7322A22228400D7AC4D /* ShareView.swift */; };
 		203417D12A08E2C10076C942 /* rtc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203417D02A08E2C10076C942 /* rtc.swift */; };
 		203417D42A08E79E0076C942 /* config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203417D32A08E79E0076C942 /* config.swift */; };
 		203417DB2A091E980076C942 /* RTCVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203417DA2A091E980076C942 /* RTCVideoView.swift */; };
@@ -104,6 +107,8 @@
 
 /* Begin PBXFileReference section */
 		20008A722A0E03FB00BFC758 /* VoiceCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCallView.swift; sourceTree = "<group>"; };
+		2000E09F2A21E40C00F03480 /* DrawingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingScreen.swift; sourceTree = "<group>"; };
+		2000E0A22A21F06200F03480 /* DragTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragTextView.swift; sourceTree = "<group>"; };
 		200253AB2A0A312B00F4A672 /* Chat-app-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Chat-app-ios.entitlements"; sourceTree = "<group>"; };
 		200665BC29E699CC00A7C9E5 /* StoryPhototView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryPhototView.swift; sourceTree = "<group>"; };
 		200B79A329BDA78F00F1DB70 /* CreateGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroup.swift; sourceTree = "<group>"; };
@@ -117,6 +122,7 @@
 		201CB7B229BEEAFE0036D181 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
 		2022AFA629C99F4B00C47383 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		2030090329EFC2E8007E3AED /* ShowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowImageView.swift; sourceTree = "<group>"; };
+		2033F7322A22228400D7AC4D /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		203417D02A08E2C10076C942 /* rtc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rtc.swift; sourceTree = "<group>"; };
 		203417D32A08E79E0076C942 /* config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = config.swift; sourceTree = "<group>"; };
 		203417DA2A091E980076C942 /* RTCVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTCVideoView.swift; sourceTree = "<group>"; };
@@ -213,6 +219,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2000E09E2A21E3F900F03480 /* drawView */ = {
+			isa = PBXGroup;
+			children = (
+				2000E0A12A21F04E00F03480 /* dragTextView */,
+				2000E09F2A21E40C00F03480 /* DrawingScreen.swift */,
+			);
+			path = drawView;
+			sourceTree = "<group>";
+		};
+		2000E0A12A21F04E00F03480 /* dragTextView */ = {
+			isa = PBXGroup;
+			children = (
+				2000E0A22A21F06200F03480 /* DragTextView.swift */,
+			);
+			path = dragTextView;
+			sourceTree = "<group>";
+		};
+		2033F7312A22226F00D7AC4D /* shareView */ = {
+			isa = PBXGroup;
+			children = (
+				2033F7322A22228400D7AC4D /* ShareView.swift */,
+			);
+			path = shareView;
+			sourceTree = "<group>";
+		};
 		203417D22A08E7890076C942 /* RTC */ = {
 			isa = PBXGroup;
 			children = (
@@ -418,6 +449,8 @@
 		2094454929F79D2700BBD9A4 /* SubView */ = {
 			isa = PBXGroup;
 			children = (
+				2033F7312A22226F00D7AC4D /* shareView */,
+				2000E09E2A21E3F900F03480 /* drawView */,
 				20A1B4EF29F5252C0088FD6A /* OtherUserProfileView.swift */,
 				2035126C29F6827900139AD3 /* GroupProfileEditView.swift */,
 				2043304F29F3ADD3004305C0 /* ListGourpMemberView.swift */,
@@ -591,6 +624,7 @@
 				20B1267C2A10E5E6009FF2AB /* VideoCallView.swift in Sources */,
 				20AF749D2A1DD30F00A07D12 /* AddContentView.swift in Sources */,
 				20164E3D29BAE51700F61813 /* CustomSearchBar.swift in Sources */,
+				2000E0A02A21E40C00F03480 /* DrawingScreen.swift in Sources */,
 				2073D66B29A250EF00AA29D9 /* HomeView.swift in Sources */,
 				2043305029F3ADD3004305C0 /* ListGourpMemberView.swift in Sources */,
 				2035126D29F6827900139AD3 /* GroupProfileEditView.swift in Sources */,
@@ -615,6 +649,7 @@
 				2091E9DB299FC29200EB9A7C /* BlurView.swift in Sources */,
 				20E0966829FE766800B5EBA7 /* Doc.swift in Sources */,
 				2069095629F2AF4E000EB157 /* GroupProfileView.swift in Sources */,
+				2033F7332A22228400D7AC4D /* ShareView.swift in Sources */,
 				208B4CBA29F3CA3F001F2EF1 /* UserProfileEditView.swift in Sources */,
 				201140F629A49F7200015AD8 /* ChatBubble.swift in Sources */,
 				2076908929B5FCF100ACD532 /* SideMenu.swift in Sources */,
@@ -637,6 +672,7 @@
 				209F754C29FB928500F7501B /* AudioPlayerView.swift in Sources */,
 				209F754E29FBB8DD00F7501B /* DateComponentFormatter.swift in Sources */,
 				208FE8A829E42BBE00D8A820 /* StoryOtherView.swift in Sources */,
+				2000E0A32A21F06200F03480 /* DragTextView.swift in Sources */,
 				209034FD29FD04C000DE66AF /* helper.swift in Sources */,
 				2035126B29F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift in Sources */,
 				2073D66F29A252B800AA29D9 /* Message.swift in Sources */,
@@ -792,12 +828,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Chat-app-ios/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Hey!";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Privacy - Camera Usage Description.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
@@ -833,12 +869,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Chat-app-ios/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Hey!";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Privacy - Camera Usage Description.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;

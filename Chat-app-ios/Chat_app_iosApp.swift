@@ -28,12 +28,16 @@ class SoundManager : ObservableObject {
 @main
 struct Chat_app_iosApp: App {
 //    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @State private var isEnd = false
     let persistenceContainer = PersistenceController.shared
     var body: some Scene {
         WindowGroup {
-
-            ContentView()
-                .environment(\.managedObjectContext, persistenceContainer.container.viewContext)
+            ZStack{
+//                LaunchScreenView(isEnd: self.$isEnd)
+                ContentView()
+                    .environment(\.managedObjectContext, persistenceContainer.container.viewContext)
+            }
+                
         }
     }
 }

@@ -62,6 +62,124 @@ struct StoryPhototView: View {
     }
 }
 
+
+
+struct StoryPhotot2View: View {
+    @StateObject private var drawVM = DrawScreenViewModel()
+//    @EnvironmentObject private var userStory : UserStoryViewModel
+//    @StateObject private var svm = StoryPostModel()
+    @State private var selectedPickerItem : PhotosPickerItem? = nil
+    @FocusState private var isFocus : Bool
+//
+//    @Binding var isAddStory : Bool
+    var body: some View {
+        ZStack {
+//            NavigationStack{
+            //            if self.selecteImage != nil {
+            PhotosPicker(selection: $selectedPickerItem, matching: .images) {
+                Label("Select a photo", systemImage: "photo")
+                
+            }
+            .tint(.purple)
+            .controlSize(.large)
+            .frame(maxWidth:.infinity,maxHeight: .infinity)
+            .overlay(alignment:.topLeading){
+                Button(action:{
+                    withAnimation{
+                        //                        self.isAddStory = false
+                    }
+                }){
+                    HStack{
+                        Image(systemName: "xmark")
+                            .imageScale(.large)
+                    }
+                    
+                }
+                .padding(.horizontal)
+            }
+            
+            if self.drawVM.isSelected {
+                DrawingScreen().environmentObject(self.drawVM)
+                    .transition(.move(edge: .trailing))
+                    .background(Color.white.edgesIgnoringSafeArea(.all))
+            }
+            //                NavigationLink(destination:DrawingScreen().environmentObject(self.drawVM),isActive: self.$drawVM.isSelected){
+            //                    PhotosPicker(selection: $selectedPickerItem, matching: .images) {
+            //                        Label("Select a photo", systemImage: "photo")
+            //
+            //                    }
+            //                    .tint(.purple)
+            //                    .controlSize(.large)
+            //
+            //                }
+            
+            if self.drawVM.isAddText {
+                Color.black.opacity(0.75).edgesIgnoringSafeArea(.all)
+                
+                
+                TextField("Type Here",text: $drawVM.textBox[drawVM.currentIndex].text)
+                    .font(.system(size:35))
+                    .colorScheme(.dark)
+                    .foregroundColor(drawVM.textBox[drawVM.currentIndex].textColor)
+                    .padding()
+                    .focused($isFocus)
+                
+                HStack{
+                    Button(action:{
+                        //close the view
+                        self.drawVM.closeTextView()
+                    }){
+                        Text("Cancel")
+                            .fontWeight(.heavy)
+                            .foregroundColor(.white)
+                            .padding()
+                    }
+                    Spacer()
+                    Button(action:{
+                        //add a text box
+                        self.drawVM.toolPicker.setVisible(false, forFirstResponder: self.drawVM.canvas)
+                        self.drawVM.canvas.resignFirstResponder()
+                        
+                        self.drawVM.isAddText = false
+                    }){
+                        Text("Done")
+                            .fontWeight(.heavy)
+                            .foregroundColor(.white)
+                            .padding()
+                    }
+                }
+                .overlay{
+                    ColorPicker(selection: $drawVM.textBox[drawVM.currentIndex].textColor, supportsOpacity: false){}
+                        .labelsHidden()
+                }
+                .frame(maxHeight: .infinity,alignment: .top)
+                .onChange(of: self.drawVM.isAddText){ v in
+                    if v {
+                        isFocus = true
+                    }else {
+                        isFocus = false
+                    }
+                }
+                
+            }
+
+        }
+        .onChange(of: self.selectedPickerItem){ newItem in
+            Task {
+                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    self.drawVM.selecteImage = data
+                    self.drawVM.isSelected = true
+                }
+            }
+        }
+        
+       
+
+    }
+}
+
+
+
 //struct StoryPhototView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        StoryPhototView()

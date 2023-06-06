@@ -43,92 +43,54 @@ struct HomeView: View {
     @State private var isShowProfile : Bool = false
     var body: some View {
         ZStack{
-//            TabView(selection:$index){
-                Message(isActive: $isActive,isAddStory:$isAddStory)
-                    .environmentObject(userModel)
-                    .environmentObject(UDM)
-                    .environmentObject(storyModel)
-                    .environmentObject(userStory)
-                    .environmentObject(videoCallVM)
-//                    .tabItem{
-//                        VStack{
-//                            Image(systemName: "message.fill")
-//                            Text("Messages")
-//                        }
-//                    }
-//                    .tag(0)
-//                    .badge(99)
-                
-//
-//                CallView()
-//                    .tabItem{
-//                        VStack{
-//                            Image(systemName: "phone.fill")
-//                            Text("Calls")
-//                        }
-//
-//                    }
-//                    .tag(1)
-//                    .environmentObject(userModel)
-//
-//                //            NavigationStack{
-//                FriendContent()
-//                    .tabItem{
-//                        VStack{
-//                            Image(systemName: "person.2")
-//                            Text("Friends")
-//                        }
-//
-//                    }
-//                    .tag(2)
-//                    .badge(5)
-//                    .environmentObject(userModel)
-//
-                
-                
-//            }
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar{
-                ToolbarItem(placement: .principal){
-                    Text(tags[self.index].navBarTitle)
-                        .bold()
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                }
-                
-                ToolbarItem(placement: .navigationBarLeading){
-                    Button(action:{
-                        withAnimation{
-                            self.isShowMenu = true
-                        }
-                    }){
-                        Image(systemName: "list.bullet")
-                            .imageScale(.large)
-                            .foregroundColor(Color.green)
+            //            TabView(selection:$index){
+            Message(isActive: $isActive,isAddStory:$isAddStory)
+                .environmentObject(userModel)
+                .environmentObject(UDM)
+                .environmentObject(storyModel)
+                .environmentObject(userStory)
+                .environmentObject(videoCallVM)
+                .navigationTitle("")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar{
+                    ToolbarItem(placement: .principal){
+                        Text(tags[self.index].navBarTitle)
                             .bold()
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarLeading){
+                        Button(action:{
+                            withAnimation{
+                                self.isShowMenu = true
+                            }
+                        }){
+                            Image(systemName: "list.bullet")
+                                .imageScale(.large)
+                                .foregroundColor(Color.green)
+                                .bold()
+                        }
+                        
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing){
+                        Button(action:{
+                            withAnimation{
+                                self.isShowSheet.toggle()
+                            }
+                        }){
+                            Image(systemName: tags[self.index].toolbarIcon)
+                                .imageScale(.large)
+                                .foregroundColor(Color.green)
+                                .bold()
+                        }
+                        
+                        
                     }
                     
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing){
-                    Button(action:{
-                        withAnimation{
-                            self.isShowSheet.toggle()
-                        }
-                    }){
-                        Image(systemName: tags[self.index].toolbarIcon)
-                            .imageScale(.large)
-                            .foregroundColor(Color.green)
-                            .bold()
-                    }
-                    
-                    
-                }
-                
-            }
-//            .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
+            //            .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
         }
-
         .fullScreenCover(isPresented: self.$videoCallVM.isIncomingCall){
             if self.videoCallVM.callingType == .Voice {
                 VoiceCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
