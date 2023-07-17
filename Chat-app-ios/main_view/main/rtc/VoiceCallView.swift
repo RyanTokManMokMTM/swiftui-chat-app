@@ -23,6 +23,7 @@ struct DotView: View {
             }
     }
 }
+
 struct VoiceCallView: View {
     let name : String
     let path : URL

@@ -234,24 +234,25 @@ struct Message: View {
     
     @ViewBuilder
     private func AddActiveItme() -> some View {
-        
         //TODO: if current user is not post any Story -> add button
         //TODO: else current user posted any -> show user post
         VStack{
+            
             AsyncImage(url: self.userModel.profile?.AvatarURL ?? URL(string: ""), content: { img in
                img
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: userStory.userStories.isEmpty ? 75 : 65,height: userStory.userStories.isEmpty ? 75 : 65)
                     .clipShape(Circle())
-                   
-                    
+
                    
             }, placeholder: {
                 ProgressView()
                     .frame(width:75,height: 75)
             })
         }
+
+       
         .frame(width: 80,height: 80)
         .clipShape(Circle())
         .overlay(alignment:.bottomTrailing){
@@ -273,7 +274,9 @@ struct Message: View {
         }
         .onTapGesture {
             if userStory.userStories.isEmpty {
-                self.isAddStory = true
+                DispatchQueue.main.async {
+                    self.isAddStory = true
+                }
             }else {
                 DispatchQueue.main.async {
                     userStory.isShowStory = true

@@ -185,7 +185,11 @@ struct ChattingView: View {
                         .padding(.horizontal,5)
                     }
                 }else {
-                    NavigationLink(destination: OtherGroupProfileView(uuid: self.chatUserData.id!.uuidString, isShowDetail: $isShowInfo)){
+                    NavigationLink(
+                        destination:
+                                    OtherGroupProfileView(uuid: self.chatUserData.id!.uuidString, isShowDetail: $isShowInfo)
+                        .environmentObject(userModel)
+                    ){
                         HStack(){
                             Text(self.chatUserData.name ?? "UNKNOW CHAT")
                                 .bold()

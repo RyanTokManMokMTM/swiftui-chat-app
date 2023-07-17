@@ -35,16 +35,45 @@ struct OtherStoryCardView: View {
         GeometryReader{ reader in
             ZStack{
                 AsyncImage(url: story?.MediaURL, content: { img in
-                    img
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .ignoresSafeArea(.keyboard)
+                    VStack{
+                        img
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .top)
+                            .clipped()
+
+                        HStack{
+                            VStack{
+                                TextField(text: $comment) {
+                                    Text("Comment")
+                                        .foregroundColor(.white)
+                                }
+                                .foregroundColor(.white)
+                                .padding(8)
+                                .padding(.horizontal,5)
+                                .focused($isFocus)
+                                .onSubmit {
+                                    Task {
+                                        await replyStory()
+                                    }
+                                }
+                                
+                            }
+                            .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .stroke(.white, lineWidth: 1)
+                            ))
+                            
+                        }
+                        .padding(.horizontal)
+                    }
+
+                                        
                 }, placeholder: {
                     ProgressView()
                         
                 })
             }
-            .frame(maxWidth:.infinity,maxHeight: .infinity,alignment: .center)
             .overlay{
                 HStack(spacing:0){
                     //TODO: Tap on left -> moving backward
@@ -79,74 +108,46 @@ struct OtherStoryCardView: View {
                 }
             }
             .overlay(alignment:.topTrailing) {
-                VStack{
+                HStack{
                     HStack{
-                        HStack{
-                            AsyncImage(url: friendInfo.AvatarURL, content: { img in
-                                img
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width:35,height:35)
-                                    .clipShape(Circle())
-                                
-                            }, placeholder: {
-                                ProgressView()
-                                    .frame(width:35,height:35)
-                                   
-                            })
+                        AsyncImage(url: friendInfo.AvatarURL, content: { img in
+                            img
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width:35,height:35)
+                                .clipShape(Circle())
                             
-                            VStack(alignment:.leading){
-                                Text(friendInfo.name)
-                                    .font(.system(size:15))
-                                    .bold()
-                                    .foregroundColor(.white)
-                                
-                                Text(story?.CreatedTime.hourBetween() ?? "--")
-                                    .font(.system(size:13))
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        Spacer()
-                        Button(action:{
-                            withAnimation{
-                                self.storyModel.isShowStory = false
-                            }
-                        }){
-                            Image(systemName: "xmark")
-                                .imageScale(.medium)
+                        }, placeholder: {
+                            ProgressView()
+                                .frame(width:35,height:35)
+                            
+                        })
+                        
+                        VStack(alignment:.leading){
+                            Text(friendInfo.name)
+                                .font(.system(size:15))
+                                .bold()
                                 .foregroundColor(.white)
-                                .padding(5)
-                                .background(Color.black.cornerRadius(25))
+                            
+                            Text(story?.CreatedTime.hourBetween() ?? "--")
+                                .font(.system(size:13))
+                                .foregroundColor(.white)
                         }
                     }
                     Spacer()
-                    HStack{
-                        VStack{
-                            TextField(text: $comment) {
-                                Text("Comment")
-                                    .foregroundColor(.white)
-                            }
-                            .foregroundColor(.white)
-                                .padding(8)
-                                .padding(.horizontal,5)
-                                .focused($isFocus)
-                                .onSubmit {
-                                    Task {
-                                        await replyStory()
-                                    }
-                                }
-                                
+                    Button(action:{
+                        withAnimation{
+                            self.storyModel.isShowStory = false
                         }
-                        .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
-                            RoundedRectangle(cornerRadius: 25)
-                                .stroke(.white, lineWidth: 1)
-                        ))
-                        
+                    }){
+                        Image(systemName: "xmark")
+                            .imageScale(.medium)
+                            .foregroundColor(.white)
+                            .padding(5)
+                            .background(Color.black.cornerRadius(25))
                     }
-                  
-                    
-               
                 }
+                
                 .padding()
             } //the close button
             .overlay(alignment:.top,content: {
@@ -194,7 +195,6 @@ struct OtherStoryCardView: View {
                 }
             }
             .onAppear{
-                //TODO: Reset time progress
                 self.timeProgress = 0
             }
         }
@@ -303,9 +303,42 @@ struct UserStoryCardView: View {
             ZStack{
                 
                 AsyncImage(url: self.storyInfo?.MediaURL, content: { img in
-                    img
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+                    VStack{
+                        img
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .top)
+                            .clipped()
+                        
+                        HStack{
+                            
+                            Spacer()
+                            HStack{
+                                Image(systemName: "ellipsis")
+                                    .imageScale(.large)
+                                    .foregroundColor(.white)
+                                    .padding(8)
+    //                                .background(Color.black.cornerRadius(25))
+                                    .contextMenu{
+                                        Button {
+                                            Task{
+                                                if await self.userStory.deleteStory(storyID:self.userStory.currentStoryID){
+                                                    self.timeProgress = CGFloat(self.userStory.currentStoryIndex)
+                                                }
+                                            }
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                                
+                    
+                            }
+                            .padding(.horizontal,5)
+                                
+                        }
+                        .padding(.horizontal)
+                      
+                    }
                 }, placeholder: {
                     ProgressView()
                 })
@@ -353,76 +386,45 @@ struct UserStoryCardView: View {
                 }
             }
             .overlay(alignment:.topTrailing,content: {
-                VStack{
+                
+                HStack{
                     HStack{
-                        HStack{
-                            AsyncImage(url: userModel.profile!.AvatarURL, content: { img in
-                                img
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width:35,height:35)
-                                    .clipShape(Circle())
-                                
-                            }, placeholder: {
-                                ProgressView()
-                                    .frame(width:35,height:35)
-                                   
-                            })
+                        AsyncImage(url: userModel.profile!.AvatarURL, content: { img in
+                            img
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width:35,height:35)
+                                .clipShape(Circle())
                             
-                            VStack(alignment:.leading){
-                                Text(userModel.profile!.name)
-                                    .font(.system(size:15))
-                                    .bold()
-                                    .foregroundColor(.white)
+                        }, placeholder: {
+                            ProgressView()
+                                .frame(width:35,height:35)
                                 
-                                Text(storyInfo?.CreatedTime.hourBetween() ?? "--")
-                                    .font(.system(size:13))
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        Spacer()
-                        Button(action:{
-                            withAnimation{
-                                self.userStory.isShowStory = false
-                            }
-                        }){
-                            Image(systemName: "xmark")
-                                .imageScale(.medium)
+                        })
+                        
+                        VStack(alignment:.leading){
+                            Text(userModel.profile!.name)
+                                .font(.system(size:15))
+                                .bold()
                                 .foregroundColor(.white)
-                                .padding(5)
-                                .background(Color.black.cornerRadius(25))
+                            
+                            Text(storyInfo?.CreatedTime.hourBetween() ?? "--")
+                                .font(.system(size:13))
+                                .foregroundColor(.white)
                         }
                     }
                     Spacer()
-                    HStack{
-                        
-                        Spacer()
-                        HStack{
-                            Image(systemName: "ellipsis")
-                                .imageScale(.large)
-                                .foregroundColor(.white)
-                                .padding(8)
-//                                .background(Color.black.cornerRadius(25))
-                                .contextMenu{
-                                    Button {
-                                        Task{
-                                            if await self.userStory.deleteStory(storyID:self.userStory.currentStoryID){
-                                                self.timeProgress = CGFloat(self.userStory.currentStoryIndex)
-                                            }
-                                        }
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                            
-                
+                    Button(action:{
+                        withAnimation{
+                            self.userStory.isShowStory = false
                         }
-                        .padding(.horizontal,5)
-                            
+                    }){
+                        Image(systemName: "xmark")
+                            .imageScale(.medium)
+                            .foregroundColor(.white)
+                            .padding(5)
+                            .background(Color.black.cornerRadius(25))
                     }
-                  
-                    
-               
                 }
                 .padding()
             }) //the close button

@@ -22,9 +22,11 @@ struct StoryOtherView: View {
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .frame(maxWidth:.infinity,maxHeight: .infinity)
+            .edgesIgnoringSafeArea(.all)
+//            .frame(maxWidth:.infinity,maxHeight: .infinity)
             .background(Color.black)
             .transition(.move(edge: .bottom))
+            
 
         }
     }
@@ -41,7 +43,7 @@ struct StoryUserView: View {
             
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        .frame(maxWidth:.infinity,maxHeight: .infinity)
+        .edgesIgnoringSafeArea(.all)
         .background(Color.black)
         .transition(.move(edge: .bottom))
         

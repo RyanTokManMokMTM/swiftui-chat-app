@@ -11,6 +11,7 @@ struct ListGourpMemberView: View {
     let groupID : UInt
     @State private var members : [GroupMemberInfo] = []
     @State private var viewUserProfile : Bool = true
+    @EnvironmentObject private var userModel : UserViewModel
     var body: some View {
         List (){
             ForEach(self.members,id:\.id){ info in
@@ -69,6 +70,24 @@ struct ListGourpMemberView: View {
                         .padding(5)
                         .background(BlurView(style: .systemMaterialLight).cornerRadius(5))
                 }
+                
+                Spacer()
+                
+//                if data.is_group_lead && data.uuid != userModel.profile?.uuid {
+//                    Button(action:{
+//                        //To remove your ...
+//                        print("to remove user...")
+//                    }){
+//                        //Can be remove....
+//                        Image(systemName: "xmark")
+//                            .imageScale(.medium)
+//                            .fontWeight(.bold)
+//                            .foregroundColor(.red)
+//                            .padding(8)
+//                            .background(BlurView(style: .systemMaterialLight).clipShape(Circle()))
+//                    }
+//                }
+                
             }
             
             

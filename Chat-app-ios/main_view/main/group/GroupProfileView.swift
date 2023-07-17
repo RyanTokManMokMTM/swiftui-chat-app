@@ -10,6 +10,7 @@ import SwiftUI
 struct GroupProfileView: View {
     @Binding var info : FullGroupInfo
     @State private var members : [GroupMemberInfo] = []
+    @EnvironmentObject private var userVM : UserViewModel
     var body: some View {
         List{
             GroupHeader()
@@ -24,7 +25,11 @@ struct GroupProfileView: View {
                 }
                 
                 
-                NavigationLink(destination: ListGourpMemberView(groupID: info.id)){
+                NavigationLink(
+                    destination: ListGourpMemberView(groupID: info.id)
+                        .environmentObject(userVM)
+                
+                ){
 //                    HStack{
                     Text("view all members")
                         .foregroundColor(.gray)
@@ -204,10 +209,11 @@ struct OtherGroupProfileView: View {
     @Binding var isShowDetail: Bool
     @State private var info : FullGroupInfo? = nil
     @State private var members : [GroupMemberInfo] = []
+    @EnvironmentObject private var userModel : UserViewModel
     var body: some View {
         List{
             GroupHeader()
-          
+            
             Section("Members : \(info?.members ?? 0)"){
                 ScrollView(.horizontal,showsIndicators: false){
                     HStack{
@@ -218,14 +224,18 @@ struct OtherGroupProfileView: View {
                 }
                 
                 
-                NavigationLink(destination: ListGourpMemberView(groupID: info?.id ?? 0)){
-//                    HStack{
+                NavigationLink(
+                    destination:
+                        ListGourpMemberView(groupID: info?.id ?? 0)
+                        .environmentObject(userModel)
+                ){
+                    //                    HStack{
                     Text("view all members")
                         .foregroundColor(.gray)
                 }
-        
+                
             }
-           
+            
         }
         .overlay(alignment:.bottom){
             if self.info != nil {
