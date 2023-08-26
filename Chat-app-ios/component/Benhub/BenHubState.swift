@@ -52,6 +52,13 @@ final class BenHubState : ObservableObject {
             .store(in: &cancelable)
     }
     
+    func reset() {
+        self.message.removeAll()
+        self.sysImg.removeAll()
+        self.info = nil
+        self.type = .normal
+    }
+    
     func SetWait(message : String) {
         self.message = message
         withAnimation{

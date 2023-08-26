@@ -21,6 +21,7 @@ protocol APIService {
     func AddFriend(req : AddFriendReq) async -> Result<AddFriendResp,Error>
     func DeleteFriend(req : DeleteFriendReq) async -> Result<DeleteFriendResp,Error>
     func GetFriendList() async -> Result<GetFriendListResp,Error>
+    func GetFriendInfo(friendUUID : String) async -> Result<GetFriendInfoResp,Error>
     
     func CreateGroup(req : CreateGroupReq) async -> Result<CreateGroupResp,Error>
     func JoinGroup(req : JoinGroupReq) async -> Result<JoinGroupResp,Error>
@@ -41,7 +42,7 @@ protocol APIService {
      
     func CreateStory(mediaData : Data) async -> Result<CreateStoryResp,Error>
     func DeleteStory(req : DeleteStoryReq) async  -> Result<DeleteStoryResp,Error>
-    func GetUserStories() async  -> Result<GetUserStoriesResp,Error>
+    func GetUserStories(id : Int) async  -> Result<GetUserStoriesResp,Error>
     func GetActiveStories() async  -> Result<GetActiveStoryResp,Error>
     func GetStoryInfo(storyID : UInt) async  -> Result<GetStoryInfoResp,Error>
     
@@ -96,6 +97,7 @@ enum APIEndPoint : String,CaseIterable {
     case AddFriend
     case DeleteFriend
     case GetFriendList
+    case GetFriendInfo
     
     case CreateGroup
     case JoinGroup
@@ -138,6 +140,7 @@ enum APIEndPoint : String,CaseIterable {
         case .AddFriend : return "/user/friend"
         case .DeleteFriend : return "/user/friend"
         case .GetFriendList : return "/user/friends"
+        case .GetFriendInfo : return "/user/friend/"
             
         case .CreateGroup : return "/group"
         case .JoinGroup : return "/group/join/"
@@ -160,7 +163,7 @@ enum APIEndPoint : String,CaseIterable {
             
         case .AddStory: return "/story"
         case .DeleteStory: return "/story"
-        case .GetUserStories: return "/stories"
+        case .GetUserStories: return "/stories/"
         case .GetActiveStories: return "/stories/active"
         case .GetStoryInfo: return "/story/"
             

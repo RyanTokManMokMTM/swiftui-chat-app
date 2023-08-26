@@ -72,11 +72,11 @@ struct HomeView: View {
                         }
                         
                     }
-                    
+                
                     ToolbarItem(placement: .navigationBarTrailing){
                         Button(action:{
                             withAnimation{
-                                self.isShowSheet.toggle()
+                                self.isShowSheet = true
                             }
                         }){
                             Image(systemName: tags[self.index].toolbarIcon)
@@ -107,26 +107,7 @@ struct HomeView: View {
                 .environmentObject(UDM)
                 .environmentObject(userModel)
         }
-        .fullScreenCover(isPresented: $isAddStory){
-            StoryPhototView(isAddStory: $isAddStory)
-                .environmentObject(userModel)
-                .environmentObject(userStory)
-        }
-        .fullScreenCover(isPresented: $storyModel.isShowStory){
-            StoryOtherView()
-                .environmentObject(storyModel)
-                .onDisappear{
-                    self.storyModel.currentStory = 0
-                }
-        }
-        .fullScreenCover(isPresented: $userStory.isShowStory){
-            StoryUserView()
-                .environmentObject(userModel)
-                .environmentObject(userStory)
-        }
 
-//        .accentColor(.green)
-        
     }
     
 

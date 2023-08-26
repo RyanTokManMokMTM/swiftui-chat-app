@@ -7,20 +7,6 @@
 
 import SwiftUI
 
-struct StoryInfo : Identifiable {
-    let id : UInt
-    let media_url : String
-    let create_at : UInt
-    
-    var MediaURL : URL {
-        return URL(string: RESOURCES_HOST + self.media_url)!
-    }
-                    
-    var CreatedTime : Date {
-        return Date(timeIntervalSince1970: TimeInterval(self.create_at))
-    }
-}
-
 struct OtherStoryCardView: View {
     @Binding var friendInfo : FriendStory
     @State private var story : StoryInfo?
@@ -31,49 +17,49 @@ struct OtherStoryCardView: View {
     @State private var timeProgress : CGFloat = 0
     @State private var index = 0
     @FocusState private var isFocus : Bool
+    
+    @State private var isLoadingStoriesList = false
+    @State private var stories : [UInt] = []
+    
+    @State private var isStoryUnavaiable : Bool = false
+    @StateObject private var hub = BenHubState.shared
     var body: some View {
         GeometryReader{ reader in
             ZStack{
-                AsyncImage(url: story?.MediaURL, content: { img in
-                    VStack{
-                        img
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .top)
-                            .clipped()
-
-                        HStack{
-                            VStack{
-                                TextField(text: $comment) {
-                                    Text("Comment")
-                                        .foregroundColor(.white)
-                                }
-                                .foregroundColor(.white)
-                                .padding(8)
-                                .padding(.horizontal,5)
-                                .focused($isFocus)
-                                .onSubmit {
-                                    Task {
-                                        await replyStory()
-                                    }
-                                }
-                                
-                            }
-                            .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .stroke(.white, lineWidth: 1)
-                            ))
-                            
-                        }
-                        .padding(.horizontal)
-                    }
-
-                                        
-                }, placeholder: {
+                if isLoadingStoriesList{
                     ProgressView()
-                        
-                })
+                        .background(Color.black)
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .center)
+                        .cornerRadius(10)
+                        .clipped()
+                }else if isStoryUnavaiable {
+                    VStack{
+                        Text("Story Unavailable.")
+                            .foregroundColor(.white)
+                    }
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .center)
+                        .cornerRadius(10)
+                        .clipped()
+                }else {
+                    AsyncImage(url: story?.MediaURL, content: { img in
+                        VStack{
+                            img
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .top)
+                                .cornerRadius(10)
+                                .clipped()
+                        }
+    //                    .padding(.horizontal)
+                    }, placeholder: {
+                        ProgressView()
+                            
+                    })
+                }
+
+//                .frame(height:UIScreen.main.bounds.height)
             }
+            .frame(maxWidth:.infinity,maxHeight: .infinity,alignment: .top)
             .overlay{
                 HStack(spacing:0){
                     //TODO: Tap on left -> moving backward
@@ -96,7 +82,7 @@ struct OtherStoryCardView: View {
                         .onTapGesture {
                             //move forward
                             
-                            if (self.timeProgress + 1) > CGFloat(friendInfo.stories_ids.count) {
+                            if (self.timeProgress + 1) > CGFloat(self.stories.count) {
                                 //Move to other story section
                                 updateStory(isForward: true)
                             }else {
@@ -108,71 +94,129 @@ struct OtherStoryCardView: View {
                 }
             }
             .overlay(alignment:.topTrailing) {
-                HStack{
+                VStack{
                     HStack{
-                        AsyncImage(url: friendInfo.AvatarURL, content: { img in
-                            img
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width:35,height:35)
-                                .clipShape(Circle())
+                        HStack{
+                            AsyncImage(url: friendInfo.AvatarURL, content: { img in
+                                img
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width:35,height:35)
+                                    .clipShape(Circle())
+                                
+                            }, placeholder: {
+                                ProgressView()
+                                    .frame(width:35,height:35)
+                                
+                            })
                             
-                        }, placeholder: {
-                            ProgressView()
-                                .frame(width:35,height:35)
-                            
-                        })
-                        
-                        VStack(alignment:.leading){
-                            Text(friendInfo.name)
-                                .font(.system(size:15))
-                                .bold()
+                            VStack(alignment:.leading){
+                                Text(friendInfo.name)
+                                    .font(.system(size:15))
+                                    .bold()
+                                    .foregroundColor(.white)
+                                
+                                Text(story?.CreatedTime.hourBetween() ?? "")
+                                    .font(.system(size:13))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        Spacer()
+                        Button(action:{
+                            withAnimation{
+                                self.storyModel.isShowStory = false
+                            }
+                        }){
+                            Image(systemName: "xmark")
+                                .imageScale(.medium)
                                 .foregroundColor(.white)
-                            
-                            Text(story?.CreatedTime.hourBetween() ?? "--")
-                                .font(.system(size:13))
-                                .foregroundColor(.white)
+                                .padding(5)
+                                .background(Color.black.cornerRadius(25))
                         }
                     }
+                    .padding()
+                    
                     Spacer()
-                    Button(action:{
-                        withAnimation{
-                            self.storyModel.isShowStory = false
-                        }
-                    }){
-                        Image(systemName: "xmark")
-                            .imageScale(.medium)
-                            .foregroundColor(.white)
-                            .padding(5)
-                            .background(Color.black.cornerRadius(25))
-                    }
                 }
-                
-                .padding()
+               
             } //the close button
             .overlay(alignment:.top,content: {
-                HStack(spacing:3){
-                    //MARK: Story Time line
-                    ForEach(self.friendInfo.stories_ids.indices,id:\.self){ index in
-                        GeometryReader{ reader in
-                            let width = reader.size.width
-                            
-                            let progress = timeProgress - CGFloat(index)
-                            let percent = min(max(progress,0),1) //progress between 0 and 1
-                            Capsule()
-                                .fill(.gray.opacity(0.5))
-                                .overlay(alignment:.leading,content: {
-                                    Capsule()
-                                        .fill(.white)
-                                        .frame(width:width * percent)
-                                })
+                VStack{
+                    HStack(spacing:3){
+                        //MARK: Story Time line
+                        ForEach(self.stories.indices,id:\.self){ index in
+                            GeometryReader{ reader in
+                                let width = reader.size.width
+
+                                let progress = timeProgress - CGFloat(index)
+                                let percent = min(max(progress,0),1) //progress between 0 and 1
+                                Capsule()
+                                    .fill(.gray.opacity(0.5))
+                                    .overlay(alignment:.leading,content: {
+                                        Capsule()
+                                            .fill(.white)
+                                            .frame(width:width * percent)
+                                    })
+                            }
+
+
                         }
-                        
-                        
                     }
+                    .frame(height: 3)
+                   
+                    
+                    Spacer()
+                    if !isStoryUnavaiable {
+                        HStack{
+                            VStack{
+                                TextField(text: $comment) {
+                                    Text("Reply to \(friendInfo.name)")
+                                        .foregroundColor(.white)
+                                }
+                                .foregroundColor(.white)
+                                .padding(8)
+                                .padding(.horizontal,5)
+                                .focused($isFocus)
+                                .onSubmit {
+                                    Task {
+                                        await replyStory()
+                                    }
+                                }
+                                
+                            }
+                            .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .stroke(.white, lineWidth: 1.5)
+                            ))
+                            
+                            
+                            Button(action:{
+                                //TODO: DO Nothing right now
+                            }){
+                                Image(systemName: "heart")
+                                    .imageScale(.large)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.white)
+                                    
+                            }
+                            
+                            
+                            Button(action:{
+                                //TODO: DO Nothing right now
+                            }){
+                                Image(systemName: "paperplane")
+                                    .imageScale(.large)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.white)
+                                    
+                            }
+                            
+                        }
+
+                    }
+
                 }
-                .frame(height: 2)
-                .padding(.horizontal)
+                .padding(.horizontal,10)
             })
             .rotation3DEffect(getAngle(proxy: reader), axis: (x:0,y:1,z:0),anchor: reader.frame(in: .global).minX > 0 ? .leading : .trailing,perspective: 2.5)
             .onReceive(self.timer){ t in
@@ -185,12 +229,13 @@ struct OtherStoryCardView: View {
                         friendInfo.is_seen = true
                     }
                     
-                    if self.timeProgress < CGFloat(friendInfo.stories_ids.count){
+                    if self.timeProgress < CGFloat(self.stories.count){
                         //TODO: for current section
                         self.timeProgress += 0.01
-                        self.index = min(Int(self.timeProgress), friendInfo.stories_ids.count - 1 )
+                        self.index = min(Int(self.timeProgress), self.stories.count - 1 )
                     } else {
-                        updateStory(isForward: true)
+//                        updateStory(isForward: true)
+                        //MARK: To dismiss
                     }
                 }
             }
@@ -200,23 +245,36 @@ struct OtherStoryCardView: View {
         }
         .onChange(of: self.index){ i in
             Task {
-                await self.getStoryInfo(storyID: UInt(friendInfo.stories_ids[i]))
+                self.isStoryUnavaiable = false
+                await self.getStoryInfo(storyID: UInt(self.stories[i]))
             }
         }
         .onAppear{
             Task {
-                await self.getStoryInfo(storyID: UInt(friendInfo.stories_ids.first!))
+                await self.getStoriesList(userId: friendInfo.id)
             }
         }
+        .wait(isLoading: $hub.isWaiting){
+            BenHubLoadingView(message: hub.message)
+        }
+        .alert(isAlert: $hub.isPresented){
+            switch hub.type{
+            case .normal,.system:
+                BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+            case .messge:
+                BenHubAlertWithMessage( message: hub.message,info: hub.info!)
+            }
+        }
+
     }
     
     private func replyStory() async{
-        if comment.isEmpty {
+        if comment.isEmpty || self.isStoryUnavaiable{
             return
         }
         
-        let sendMsg = WSMessage(messageID: UUID().uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.friendInfo.uuid, content: self.comment, contentType: 6, type: 4, messageType: 1, urlPath: self.story!.media_url, fileName: nil, fileSize: nil, storyAvailableTime: Int32(self.story!.create_at), replyMessageID: nil)
-      
+        let sendMsg = WSMessage(messageID: UUID().uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.friendInfo.uuid, content: self.comment, contentType: ContentType.story.rawValue, type: 4, messageType: 1, urlPath: self.story!.media_url, fileName: nil, fileSize: nil, storyAvailableTime: Int32(self.story!.create_at), replyMessageID: nil, storyId: Int16(self.story!.id))
+
         Websocket.shared.onSend(msg: sendMsg)
         Websocket.shared.handleMessage(event:.send,msg: sendMsg,isReplyComment: true)
         self.comment.removeAll()
@@ -224,12 +282,39 @@ struct OtherStoryCardView: View {
     }
     
     private func getStoryInfo(storyID : UInt) async {
+        print(storyID)
+        self.story = nil
         let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
         switch resp {
         case .success(let data):
             DispatchQueue.main.async {
                 self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at)
             }
+        case .failure(let err):
+            self.isStoryUnavaiable = true
+            print(err.localizedDescription)
+            
+        }
+    }
+    
+    private func getStoriesList(userId : UInt) async {
+        isLoadingStoriesList = true
+        self.stories = []
+        let resp = await ChatAppService.shared.GetUserStories(id: Int(userId))
+        switch resp {
+        case .success(let data):
+            DispatchQueue.main.async {
+                self.stories = data.story_ids
+                isLoadingStoriesList = false
+                Task{
+                    if data.story_ids.isEmpty {
+                        return
+                    }
+                    await self.getStoryInfo(storyID: data.story_ids.first!)
+                }
+                
+            }
+            print(data.story_ids)
         case .failure(let err):
             print(err.localizedDescription)
         }
@@ -271,7 +356,7 @@ struct OtherStoryCardView: View {
         
         
         //TODO: Check if the story is the last one(Forward)
-        if let last = self.friendInfo.stories_ids.last,last == self.friendInfo.stories_ids[index]{
+        if let last = self.stories.last,last == self.stories[index]{
             //TODO: if there is any other story section,move to the other stroy section else close the story view
             if let lastStory = self.storyModel.activeStories.last,lastStory.id == friendInfo.id{
                 withAnimation{
@@ -289,227 +374,3 @@ struct OtherStoryCardView: View {
     }
 }
 
-struct UserStoryCardView: View {
-    @State private var storyInfo : StoryInfo?
-    @EnvironmentObject private var userModel : UserViewModel
-    @EnvironmentObject private var userStory : UserStoryViewModel
-//    @State private var comment : String = ""
-    @State private var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-    @State private var timeProgress : CGFloat = 0
-
-    
-    var body: some View {
-        GeometryReader{ reader in
-            ZStack{
-                
-                AsyncImage(url: self.storyInfo?.MediaURL, content: { img in
-                    VStack{
-                        img
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .top)
-                            .clipped()
-                        
-                        HStack{
-                            
-                            Spacer()
-                            HStack{
-                                Image(systemName: "ellipsis")
-                                    .imageScale(.large)
-                                    .foregroundColor(.white)
-                                    .padding(8)
-    //                                .background(Color.black.cornerRadius(25))
-                                    .contextMenu{
-                                        Button {
-                                            Task{
-                                                if await self.userStory.deleteStory(storyID:self.userStory.currentStoryID){
-                                                    self.timeProgress = CGFloat(self.userStory.currentStoryIndex)
-                                                }
-                                            }
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                                
-                    
-                            }
-                            .padding(.horizontal,5)
-                                
-                        }
-                        .padding(.horizontal)
-                      
-                    }
-                }, placeholder: {
-                    ProgressView()
-                })
-                
-
-            }
-            .frame(maxWidth:.infinity,maxHeight: .infinity,alignment: .center)
-            .overlay{
-                HStack(spacing:0){
-                    //TODO: Tap on left -> moving backward
-                    Rectangle()
-                        .fill(.black.opacity(0.1))
-                        .onTapGesture {
-                            //move backward
-//                            print("back")
-                            if (self.timeProgress - 1) < 0 {
-                                withAnimation{
-                                    self.userStory.isShowStory = false
-                                }
-                            }else {
-                                //Move back to other story in current section
-                                self.timeProgress = CGFloat(Int(timeProgress) - 1)
-                                self.userStory.currentStoryIndex = self.userStory.currentStoryIndex - 1
-                                self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex]
-                            }
-                        }
-                    //TODO: Tap on right -> moving forward
-                    Rectangle()
-                        .fill(.black.opacity(0.1))
-                        .onTapGesture {
-                            //move forward
-//                            print("front")
-                            if (self.timeProgress + 1) > CGFloat(self.userStory.userStories.count) {
-                                //Move to other story section
-                                withAnimation{
-                                    self.userStory.isShowStory = false
-                                }
-                            }else {
-                                //Move to other story in current section
-                                self.timeProgress = CGFloat(Int(timeProgress) + 1)
-                                self.userStory.currentStoryIndex = self.userStory.currentStoryIndex + 1
-                                self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex]
-                            }
-                        }
-                }
-            }
-            .overlay(alignment:.topTrailing,content: {
-                
-                HStack{
-                    HStack{
-                        AsyncImage(url: userModel.profile!.AvatarURL, content: { img in
-                            img
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width:35,height:35)
-                                .clipShape(Circle())
-                            
-                        }, placeholder: {
-                            ProgressView()
-                                .frame(width:35,height:35)
-                                
-                        })
-                        
-                        VStack(alignment:.leading){
-                            Text(userModel.profile!.name)
-                                .font(.system(size:15))
-                                .bold()
-                                .foregroundColor(.white)
-                            
-                            Text(storyInfo?.CreatedTime.hourBetween() ?? "--")
-                                .font(.system(size:13))
-                                .foregroundColor(.white)
-                        }
-                    }
-                    Spacer()
-                    Button(action:{
-                        withAnimation{
-                            self.userStory.isShowStory = false
-                        }
-                    }){
-                        Image(systemName: "xmark")
-                            .imageScale(.medium)
-                            .foregroundColor(.white)
-                            .padding(5)
-                            .background(Color.black.cornerRadius(25))
-                    }
-                }
-                .padding()
-            }) //the close button
-            .overlay(alignment:.top,content: {
-                HStack(spacing:3){
-                    //MARK: Story Time line0p;
-                    ForEach(userStory.userStories.indices,id: \.self){ index in
-                        GeometryReader{ reader in
-                            let width = reader.size.width
-                            
-                            let progress = timeProgress - CGFloat(index)
-                            let percent = min(max(progress,0),1) //progress between 0 and 1
-                            Capsule()
-                                .fill(.gray.opacity(0.5))
-                                .overlay(alignment:.leading,content: {
-                                    Capsule()
-                                        .fill(.white)
-                                        .frame(width:width * percent)
-                                })
-                        }
-                        
-                        
-                    }
-                }
-                .frame(height: 2)
-                .padding(.horizontal)
-            })
-            .rotation3DEffect(getAngle(proxy: reader), axis: (x:0,y:1,z:0),anchor: reader.frame(in: .global).minX > 0 ? .leading : .trailing,perspective: 2.5)
-            .onReceive(self.timer){ t in
-                    //TODO: Update story state
-                    if !userStory.isSeen {
-                        userStory.isSeen = true
-                    }
-                    
-                    if self.timeProgress < CGFloat(userStory.userStories.count){
-                        //TODO: for current section
-                        self.timeProgress += 0.01
-                        self.userStory.currentStoryIndex = min(Int(self.timeProgress), self.userStory.userStories.count - 1 )
-                        self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex]
-                    } else {
-                        userStory.isShowStory = false
-                    }
-                
- 
-            }
-            .onAppear{
-                //TODO: Reset time progress
-                self.timeProgress = 0
-            }
-            .onChange(of: self.userStory.currentStoryID){ id in
-                Task{
-                    await getStoryInfo(storyID: id)
-                }
-            }
-        }
-        .onAppear{
-            self.userStory.currentStoryIndex = 0
-            self.userStory.currentStoryID = self.userStory.userStories.first!
-            Task {
-                await getStoryInfo(storyID: self.userStory.currentStoryID)
-            }
-        }
-
-    }
-    
-    private func getStoryInfo(storyID : UInt) async {
-        let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
-        switch resp {
-        case .success(let data):
-            self.storyInfo = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at)
-        case .failure(let err):
-            print(err.localizedDescription)
-        }
-    }
-    
-    private func getStoryIndex() -> Int {
-        return min(Int(self.timeProgress),self.userStory.userStories.count - 1)
-    }
-    private func getAngle(proxy : GeometryProxy) -> Angle{
-        let progress = proxy.frame(in: .global).minX / proxy.size.width
-//        print(progress)
-        let degree = CGFloat(45) * progress
-//        print("degree : \(degree)")
-        return Angle(degrees: Double(degree))
-    }
-    
-
-}

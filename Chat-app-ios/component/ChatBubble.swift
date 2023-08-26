@@ -182,50 +182,6 @@ struct ChatBubble<Content> : View where Content : View {
                         HStack(alignment: .bottom, spacing: 5){
                             content()
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-//                                .contextMenu{
-//
-//                                    if direction == .receiver {
-//                                        Button {
-//                                            DispatchQueue.main.async {
-//                                                withAnimation{
-//                                                    self.isReplyMessage = true
-//                                                    self.replyMessage = message
-//                                                }
-//                                            }
-//                                        } label: {
-//                                            Text("Reply")
-//                                        }
-//                                    }else if direction == .sender {
-//
-//                                        Button {
-//                                            DispatchQueue.main.async {
-//                                                withAnimation{
-//                                                    self.isReplyMessage = true
-//                                                    self.replyMessage = message
-//                                                }
-//                                            }
-//                                        } label: {
-//                                            Text("Reply")
-//                                        }
-//
-//                                        Button {
-//                                            print("Recall")
-//                                        } label: {
-//                                            Text("Recall")
-//                                        }
-//
-//                                    }
-//
-//
-//                                    if messageStatus == .notAck {
-//                                        Button {
-//                                            print("resent")
-//                                        } label: {
-//                                            Text("Resend")
-//                                        }
-//                                    }
-//
-//                                }
 //
                             if direction == .receiver && sentTime != nil{
                                 Text(sentTime!.sendTimeString())

@@ -163,8 +163,7 @@ struct ProfileView: View {
                         withAnimation{
                             self.loginState = true
                         }
-                        Websocket.shared.disconnect()
-                       
+
                         UserDefaults.standard.removeObject(forKey: "token")
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1){

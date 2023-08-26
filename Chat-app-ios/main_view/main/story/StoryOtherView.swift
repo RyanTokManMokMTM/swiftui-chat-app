@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StoryOtherView: View {
     @EnvironmentObject private var storyModel : StoryViewModel
+    @EnvironmentObject private var userModel : UserViewModel
     var body: some View {
         if self.storyModel.isShowStory {
             TabView(selection: $storyModel.currentStory){
@@ -16,6 +17,7 @@ struct StoryOtherView: View {
                     OtherStoryCardView(friendInfo: info)
                         .tag(info.id)
                         .environmentObject(storyModel)
+                        .environmentObject(userModel)
                         .onAppear{
                             print(info)
                         }
@@ -23,30 +25,11 @@ struct StoryOtherView: View {
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .edgesIgnoringSafeArea(.all)
-//            .frame(maxWidth:.infinity,maxHeight: .infinity)
+            .frame(maxWidth:.infinity,maxHeight: .infinity)
             .background(Color.black)
             .transition(.move(edge: .bottom))
             
 
         }
-    }
-}
-
-struct StoryUserView: View {
-    @EnvironmentObject private var userModel : UserViewModel
-    @EnvironmentObject private var userStory : UserStoryViewModel
-    var body: some View {
-        TabView{
-            UserStoryCardView()
-                .environmentObject(userModel)
-                .environmentObject(userStory)
-            
-        }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        .edgesIgnoringSafeArea(.all)
-        .background(Color.black)
-        .transition(.move(edge: .bottom))
-        
-        
     }
 }

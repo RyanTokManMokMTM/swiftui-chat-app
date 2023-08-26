@@ -274,6 +274,21 @@ class ChatAppService : APIService {
         return await self.AsyncFetchAndDecode(request: request)
     }
     
+    func GetFriendInfo(friendUUID : String) async -> Result<GetFriendInfoResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetFriendInfo.rawValue + friendUUID) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        print(url.absoluteString)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
+    
     func CreateGroup(req : CreateGroupReq) async -> Result<CreateGroupResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.CreateGroup.rawValue) else {
             return .failure(APIError.badUrl)
@@ -565,8 +580,8 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
-    func GetUserStories() async  -> Result<GetUserStoriesResp,Error> {
-        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetUserStories.rawValue) else {
+    func GetUserStories(id : Int) async  -> Result<GetUserStoriesResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetUserStories.rawValue + "\(id)") else {
             return .failure(APIError.badUrl)
         }
         

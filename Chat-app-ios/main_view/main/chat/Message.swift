@@ -26,23 +26,23 @@ struct Message: View {
     var body: some View {
         
         List{
-
             ScrollView(.horizontal,showsIndicators: false){
                 HStack(spacing: 12){
-
+                    
                     AddActiveItme()
-
                     ForEach($storyModel.activeStories, id: \.id) { data in
                         StoryProfileView(story: data)
                             .environmentObject(storyModel)
                             .padding(.vertical,5)
                     }
+                    
                 }
                 .padding(.horizontal)
                 .padding(.vertical,5)
+                
             }
             .listRowInsets(EdgeInsets())
-
+            
             if UDM.info != nil {
                 ForEach($UDM.rooms){ data in
                     NavigationLink(value: data.wrappedValue) {

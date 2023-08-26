@@ -118,6 +118,28 @@ struct GetFriendListResp : Decodable {
     let friends : [UserProfile]
 }
 
+struct GetFriendInfoResp : Decodable {
+    let code : UInt
+    let friend_info  : FriendInfo
+}
+
+struct FriendInfo : Decodable {
+    let id : UInt
+    let uuid : String
+    var name : String
+    var avatar : String
+
+    var UserUUID : UUID {
+        return UUID(uuidString: self.uuid)!
+    }
+    
+    var AvatarURL : URL {
+        return URL(string: RESOURCES_HOST  + self.avatar)!
+    }
+
+}
+
+
 struct CreateGroupReq : Encodable {
     let group_name : String
     let members : [UInt]
@@ -334,7 +356,7 @@ struct FriendStory : Decodable,Identifiable{
     let name : String
     let avatar : String
     var is_seen : Bool
-    let stories_ids : [UInt]
+//    var stories_ids : [UInt]
     
     var AvatarURL : URL {
         return URL(string: RESOURCES_HOST + self.avatar)!
@@ -346,4 +368,19 @@ struct GetStickerGroupResp : Decodable {
     let code : UInt
     let sticker_id : String
     let resources_path : [String]
+}
+
+
+struct StoryInfo : Identifiable {
+    let id : UInt
+    let media_url : String
+    let create_at : UInt
+    
+    var MediaURL : URL {
+        return URL(string: RESOURCES_HOST + self.media_url)!
+    }
+                    
+    var CreatedTime : Date {
+        return Date(timeIntervalSince1970: TimeInterval(self.create_at))
+    }
 }

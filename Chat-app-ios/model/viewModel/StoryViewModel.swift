@@ -13,6 +13,12 @@ class StoryViewModel : ObservableObject {
     @Published var isShowStory : Bool = false
     @Published var currentStory : UInt = 0
     
+    func reset(){
+        self.activeStories = []
+        self.isShowStory = false
+        self.currentStory = 0
+    }
+    
     func GetActiveStory() async {
         let resp = await ChatAppService.shared.GetActiveStories()
         switch resp {
@@ -37,8 +43,16 @@ class UserStoryViewModel : ObservableObject {
     @Published var currentStoryIndex = 0
     @Published var currentStoryID : UInt = 0
     
-    func GetUserStories() async{
-        let resp = await ChatAppService.shared.GetUserStories()
+    func reset(){
+        self.userStories = []
+        self.isShowStory = false
+        self.isSeen = false
+        self.currentStoryID = 0
+        self.currentStoryIndex = 0
+    }
+    
+    func GetUserStories(userId : Int) async{
+        let resp = await ChatAppService.shared.GetUserStories(id: userId)
         switch resp {
         case.success(let data):
             DispatchQueue.main.async {

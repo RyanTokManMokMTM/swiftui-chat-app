@@ -7,10 +7,6 @@
 import SwiftUI
 import AVFoundation
 
-class SearchState : ObservableObject {
-    @Published var isChatFromProfile : Bool = false
-    @Published var chatUser : UserProfile? = nil
-}
 struct ContentView: View {
     @StateObject var state = SearchState()
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
@@ -37,15 +33,29 @@ struct ContentView: View {
                     .environmentObject(userStory)
                 
             }
- 
-          
             .accentColor(.green)
             .zIndex(1)
             .fullScreenCover(isPresented: $isShowProfile){
                 ProfileView(isShowSetting: $isShowProfile,loginState: $loginSate)
                     .environmentObject(userModel)
-   
-                
+            }
+            .fullScreenCover(isPresented: $isAddStory){
+                StoryPhototView(isAddStory: $isAddStory)
+                    .environmentObject(userModel)
+                    .environmentObject(userStory)
+            }
+            .fullScreenCover(isPresented: $storyModel.isShowStory){
+                StoryOtherView()
+                    .environmentObject(storyModel)
+                    .environmentObject(userModel)
+                    .onDisappear{
+                        self.storyModel.currentStory = 0
+                    }
+            }
+            .fullScreenCover(isPresented: $userStory.isShowStory){
+                StoryUserView()
+                    .environmentObject(userModel)
+                    .environmentObject(userStory)
             }
             .fullScreenCover(isPresented: $isAddStory){
                 StoryPhototView(isAddStory: $isAddStory)
@@ -147,9 +157,19 @@ struct ContentView: View {
                 BenHubAlertWithMessage( message: hub.message,info: hub.info!)
             }
         }
-      
 
-
+    }
+    
+    private func resetAll(){
+        DispatchQueue.main.async {
+            self.hub.reset()
+            self.storyModel.reset()
+            self.userModel.reset()
+            self.userStory.reset()
+            self.state.reset()
+            self.UDM.reset()
+            Websocket.shared.reset()
+        }
     }
 }
 

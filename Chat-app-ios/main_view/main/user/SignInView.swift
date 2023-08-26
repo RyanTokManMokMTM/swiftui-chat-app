@@ -161,7 +161,7 @@ struct SignInView: View {
                 Websocket.shared.userModel = userViewModel
 //                Webcoket.shared.userData = UDM
                 Task{
-                    await self.userStory.GetUserStories()
+                    await self.userStory.GetUserStories(userId: Int(data.user_info.id))
                     await self.storyModel.GetActiveStory()
                 }
                 break

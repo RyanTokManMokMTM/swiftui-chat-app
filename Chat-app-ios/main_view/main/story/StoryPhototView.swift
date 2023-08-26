@@ -7,62 +7,6 @@
 
 import SwiftUI
 import PhotosUI
-//
-//struct StoryPhototView: View {
-//    @EnvironmentObject private var userStory : UserStoryViewModel
-//    @StateObject private var svm = StoryPostModel()
-//    @State private var selectedData : PhotosPickerItem? = nil
-//    @State private var selecteImage : Data? = nil
-//    @State private var isSelected = false
-//
-//    @Binding var isAddStory : Bool
-//    var body: some View {
-//        NavigationStack{
-////            if self.selecteImage != nil {
-//            NavigationLink(destination:postStoryImageView(isCreatePost: $isAddStory).environmentObject(self.svm).environmentObject(userStory),isActive: self.$svm.isSelected){
-//                PhotosPicker(selection: $selectedData, matching: .images) {
-//                    Label("Select a photo", systemImage: "photo")
-//
-//                }
-//                .tint(.purple)
-//                .controlSize(.large)
-//                .buttonStyle(.borderedProminent)
-//
-//
-//
-//            }
-//            .frame(maxWidth:.infinity,maxHeight: .infinity)
-//            .overlay(alignment:.topLeading){
-//                Button(action:{
-//                    withAnimation{
-//                        self.isAddStory = false
-//                    }
-//                }){
-//                    HStack{
-//                        Image(systemName: "xmark")
-//                            .imageScale(.large)
-//                    }
-//
-//                }
-//                .padding(.horizontal)
-//            }
-////            }
-//
-//        }
-//        .padding(.horizontal)
-//        .onChange(of: self.selectedData){ newItem in
-//            Task {
-//                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-//                    self.svm.imageData = data
-//                    self.svm.isSelected = true
-//                }
-//            }
-//        }
-//
-//    }
-//}
-//
-
 
 struct StoryPhototView: View {
     @EnvironmentObject private var userStory : UserStoryViewModel
@@ -74,14 +18,11 @@ struct StoryPhototView: View {
     @Binding var isAddStory : Bool
     var body: some View {
         ZStack {
-//            NavigationStack{
-            //            if self.selecteImage != nil {
-            
             PhotosPicker(selection: $selectedPickerItem, matching: .images) {
                 Label("Select a photo", systemImage: "photo")
                   
             }  
-            .tint(.purple)
+            .tint(.green)
             .controlSize(.large)
             .buttonStyle(.borderedProminent)
             .frame(maxWidth:.infinity,maxHeight: .infinity)
@@ -100,6 +41,7 @@ struct StoryPhototView: View {
                 .padding(.horizontal)
             }
             
+            
             if self.drawVM.isSelected {
                 DrawingScreen(isAddStory:$isAddStory).environmentObject(self.drawVM)
                     .environmentObject(self.drawVM)
@@ -112,27 +54,29 @@ struct StoryPhototView: View {
             if self.drawVM.isAddText {
                 Color.black.opacity(0.75).edgesIgnoringSafeArea(.all)
                 
-                
-                TextField("Type Here",text: $drawVM.textBox[drawVM.currentIndex].text)
+                TextField("Type Here",text: $drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text)
                     .font(.system(size:25))
-                    .fontWeight(self.drawVM.textBox[drawVM.currentIndex].isBold ? .bold : .none)
+                    .fontWeight(self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBold ? .bold : .none)
                     .colorScheme(.dark)
-                    .foregroundColor(drawVM.textBox[drawVM.currentIndex].textColor)
+                    .foregroundColor(drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textColor)
                     .padding()
                     .focused($isFocus)
+                    
                 
+            
                 HStack{
                     Spacer()
                     Button(action:{
                         //add a text box
-                        if self.drawVM.textBox[self.drawVM.currentIndex].text.isEmpty {
+                        self.drawVM.textEditIndex = -1
+                        if self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text.isEmpty {
                             self.drawVM.closeTextView()
+                            self.drawVM.textEditIndex = -1
                             self.drawVM.currentIndex -= 1
                             return
                         }
                         self.drawVM.toolPicker.setVisible(false, forFirstResponder: self.drawVM.canvas)
                         self.drawVM.canvas.resignFirstResponder()
-                        
                         self.drawVM.isAddText = false
                     }){
                         Text("Done")
@@ -143,12 +87,26 @@ struct StoryPhototView: View {
                 }
                 .overlay{
                     HStack{
-                        ColorPicker(selection: $drawVM.textBox[drawVM.currentIndex].textColor, supportsOpacity: false){}
+                        ColorPicker(selection: $drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textColor, supportsOpacity: false){}
                             .labelsHidden()
+                        
                         
                         Button(action: {
                             withAnimation{
-                                self.drawVM.textBox[drawVM.currentIndex].isBold.toggle()
+                                drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBorder.toggle()
+                            }
+                        }){
+                            Image(systemName: "a.circle")
+                                .imageScale(.large)
+                                .padding(8)
+                                .background(BlurView().clipShape(Circle()))
+                                .foregroundColor(.white)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Button(action: {
+                            withAnimation{
+                                self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBold.toggle()
                             }
                         }){
                             Image(systemName: "bold")
@@ -157,8 +115,6 @@ struct StoryPhototView: View {
                                 .background(BlurView().clipShape(Circle()))
                                 .foregroundColor(self.drawVM.textBox[drawVM.currentIndex].isBold ? .black : .white)
                         }
-                        .buttonStyle(.plain)
-                        
                        
                     }
                 }
@@ -182,71 +138,6 @@ struct StoryPhototView: View {
                 }
             }
         }
-
-       
-
+        .accentColor(.black)
     }
-}
-
-
-
-//struct StoryPhototView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        StoryPhotot2View()
-//    }
-//}
-
-struct postStoryImageView : View {
-    @EnvironmentObject private var svm : StoryPostModel
-    @EnvironmentObject private var userStory : UserStoryViewModel
-    @StateObject private var hub = BenHubState.shared
-    @Binding var isCreatePost : Bool
-    var body: some View {
-        VStack{
-            if let data = self.svm.imageData {
-                Image(uiImage: UIImage(data: data)!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            }
-        }
-        .toolbar{
-            ToolbarItem(placement: .navigationBarTrailing){
-                Button(action: {
-                    print("Post a story")
-                    Task {
-                        await createStory()
-                    }
-                    withAnimation{
-                        self.isCreatePost = false
-                    }
-                }){
-                    Text("Post")
-                        .bold()
-                        .foregroundColor(.blue)
-                }
-            }
-            
-        }
-    
-    }
-    
-    private func createStory() async{
-  
-        let resp = await ChatAppService.shared.CreateStory(mediaData: self.svm.imageData!)
-        switch resp {
-        case .success(let data):
-            hub.AlertMessage(sysImg: "checkmark", message: "Posted")
-            DispatchQueue.main.async {
-                self.userStory.userStories.append(UInt(data.story_id))
-            }
-        case .failure(let err):
-            hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
-            print(err.localizedDescription)
-        }
-    }
-}
-
-final class StoryPostModel : ObservableObject {
-    @Published var imageData : Data?
-    @Published var isSelected = false
 }

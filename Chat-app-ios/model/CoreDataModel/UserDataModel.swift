@@ -13,14 +13,21 @@ import SwiftUI
 class UserDataModel : ObservableObject {
     static let shared = UserDataModel()
     let manager = PersistenceController.shared
-//    @Published var currentRoom : Int = -1
+    //    @Published var currentRoom : Int = -1
     @Published var currentRoom : ActiveRooms? = nil //or id???
     @Published var info : UserDatas?
-    @Published var rooms : [ActiveRooms] = [] 
+    @Published var rooms : [ActiveRooms] = []
     @Published var currentRoomMessage : [RoomMessages] = []
     @Published var previousTotalMessage : Int = 0 //for offset correctly
     private init(){}
-
+    
+    func reset(){
+        self.currentRoom = nil
+        self.info = nil
+        self.currentRoomMessage = []
+        self.previousTotalMessage = 0
+    }
+    
     //MARK: fetchUserData Fetch current user info from Cache
     func fetchUserData(id : Int16) -> Bool{
 //        print(id)
@@ -73,7 +80,7 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new messsge of the room to the cache
-    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus) -> RoomMessages {
+    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0) -> RoomMessages {
         
         //TODO: Check Sender Info exist?
         var sender : SenderInfo?
@@ -99,6 +106,7 @@ class UserDataModel : ObservableObject {
         newMessage.story_available_time = storyAvailabeTime
         newMessage.sender = sender
         newMessage.message_status = messageStatus.rawValue
+        newMessage.story_id = storyId
         room.addToMessages(newMessage)
         self.manager.save()
         
@@ -129,7 +137,7 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new message to Room
-    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus) -> RoomMessages {
+    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0) -> RoomMessages {
         
         var sender : SenderInfo?
         if content_type != 7{ //SYSTEM_MESSAGE - no need to create
@@ -152,6 +160,7 @@ class UserDataModel : ObservableObject {
         newMessage.story_available_time = storyAvailabeTime
         newMessage.url_path = fileURL
         newMessage.sender = sender
+        newMessage.story_id = storyId
         newMessage.message_status = messageStatus.rawValue
         self.manager.save()
         
@@ -287,6 +296,7 @@ class UserDataModel : ObservableObject {
         msg.file_name = nil
         msg.file_size = 0
         msg.content_type = ContentType.sys.rawValue
+        msg.story_id = 0
         self.manager.save()
     }
     

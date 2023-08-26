@@ -11,7 +11,12 @@ import Foundation
 class UserViewModel : ObservableObject {
     @Published var profile : UserProfile?
     @Published var friendsList : [UserProfile] = [UserProfile]()
-//    @Published var
+    
+    func reset(){
+        self.profile = nil
+        self.friendsList = []
+    }
+    
     func GetUserFriendList() async{
         DispatchQueue.main.async {
             BenHubState.shared.SetWait(message: "Loading...")
