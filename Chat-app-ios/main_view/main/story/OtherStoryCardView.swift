@@ -66,7 +66,6 @@ struct OtherStoryCardView: View {
                     Rectangle()
                         .fill(.black.opacity(0.1))
                         .onTapGesture {
-                            //move backward
                             if (self.timeProgress - 1) < 0 {
                                 //Move back to other story section
                                 updateStory(isForward: false)
@@ -80,8 +79,6 @@ struct OtherStoryCardView: View {
                     Rectangle()
                         .fill(.black.opacity(0.1))
                         .onTapGesture {
-                            //move forward
-                            
                             if (self.timeProgress + 1) > CGFloat(self.stories.count) {
                                 //Move to other story section
                                 updateStory(isForward: true)
@@ -90,6 +87,15 @@ struct OtherStoryCardView: View {
                                 self.timeProgress = CGFloat(Int(timeProgress) + 1)
                                 self.index = Int(self.timeProgress)
                             }
+                        }
+                }
+            }
+            .overlay{
+                if self.isFocus{
+                    Color.black.opacity(0.65).edgesIgnoringSafeArea(.all)
+                        .onTapGesture {
+                            self.isFocus = false
+                            self.comment.removeAll()
                         }
                 }
             }
@@ -166,55 +172,6 @@ struct OtherStoryCardView: View {
                    
                     
                     Spacer()
-                    if !isStoryUnavaiable {
-                        HStack{
-                            VStack{
-                                TextField(text: $comment) {
-                                    Text("Reply to \(friendInfo.name)")
-                                        .foregroundColor(.white)
-                                }
-                                .foregroundColor(.white)
-                                .padding(8)
-                                .padding(.horizontal,5)
-                                .focused($isFocus)
-                                .onSubmit {
-                                    Task {
-                                        await replyStory()
-                                    }
-                                }
-                                
-                            }
-                            .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .stroke(.white, lineWidth: 1.5)
-                            ))
-                            
-                            
-                            Button(action:{
-                                //TODO: DO Nothing right now
-                            }){
-                                Image(systemName: "heart")
-                                    .imageScale(.large)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.white)
-                                    
-                            }
-                            
-                            
-                            Button(action:{
-                                //TODO: DO Nothing right now
-                            }){
-                                Image(systemName: "paperplane")
-                                    .imageScale(.large)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.white)
-                                    
-                            }
-                            
-                        }
-
-                    }
-
                 }
                 .padding(.horizontal,10)
             })
@@ -234,7 +191,7 @@ struct OtherStoryCardView: View {
                         self.timeProgress += 0.01
                         self.index = min(Int(self.timeProgress), self.stories.count - 1 )
                     } else {
-//                        updateStory(isForward: true)
+                        updateStory(isForward: true)
                         //MARK: To dismiss
                     }
                 }
@@ -243,6 +200,58 @@ struct OtherStoryCardView: View {
                 self.timeProgress = 0
             }
         }
+        .overlay(alignment:.bottom){
+            if !isStoryUnavaiable {
+                HStack{
+                    VStack{
+                        TextField(text: $comment) {
+                            Text("Reply to \(friendInfo.name)")
+                                .foregroundColor(.white)
+                        }
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .padding(.horizontal,5)
+                        .focused($isFocus)
+                        .onSubmit {
+                            Task {
+                                await replyStory()
+                            }
+                        }
+                        
+                    }
+                    .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
+                        RoundedRectangle(cornerRadius: 25)
+                            .stroke(.gray, lineWidth: 1.5)
+                    ))
+                    
+                    
+                    Button(action:{
+                        //TODO: DO Nothing right now
+                    }){
+                        Image(systemName: "heart")
+                            .imageScale(.large)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                            
+                    }
+                    
+                    
+                    Button(action:{
+                        //TODO: DO Nothing right now
+                    }){
+                        Image(systemName: "paperplane")
+                            .imageScale(.large)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                            
+                    }
+                    
+                }
+                .padding(.horizontal,10)
+                .padding(.bottom,10)
+            }
+        }
+        
         .onChange(of: self.index){ i in
             Task {
                 self.isStoryUnavaiable = false
@@ -272,11 +281,25 @@ struct OtherStoryCardView: View {
         if comment.isEmpty || self.isStoryUnavaiable{
             return
         }
-        
-        let sendMsg = WSMessage(messageID: UUID().uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.friendInfo.uuid, content: self.comment, contentType: ContentType.story.rawValue, type: 4, messageType: 1, urlPath: self.story!.media_url, fileName: nil, fileSize: nil, storyAvailableTime: Int32(self.story!.create_at), replyMessageID: nil, storyId: Int16(self.story!.id))
-
-        Websocket.shared.onSend(msg: sendMsg)
+        let sendMsg = WSMessage(
+            messageID: UUID().uuidString,
+            avatar: self.userModel.profile!.avatar,
+            fromUserName: self.userModel.profile!.name,
+            fromUUID: self.userModel.profile!.uuid,
+            toUUID: self.friendInfo.uuid,
+            content: self.comment,
+            contentType: ContentType.story.rawValue,
+            type: 4,
+            messageType: 1,
+            urlPath: self.story!.media_url,
+            fileName: nil,
+            fileSize: nil,
+            storyAvailableTime: Int32(self.story!.create_at),
+            replyMessageID: nil,
+            storyId: Int16(self.story!.id))
         Websocket.shared.handleMessage(event:.send,msg: sendMsg,isReplyComment: true)
+        Websocket.shared.onSend(msg: sendMsg)
+        
         self.comment.removeAll()
         
     }

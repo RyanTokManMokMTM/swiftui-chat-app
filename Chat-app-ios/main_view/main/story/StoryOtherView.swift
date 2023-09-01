@@ -18,13 +18,10 @@ struct StoryOtherView: View {
                         .tag(info.id)
                         .environmentObject(storyModel)
                         .environmentObject(userModel)
-                        .onAppear{
-                            print(info)
-                        }
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .edgesIgnoringSafeArea(.all)
+//            .edgesIgnoringSafeArea(.all)
             .frame(maxWidth:.infinity,maxHeight: .infinity)
             .background(Color.black)
             .transition(.move(edge: .bottom))

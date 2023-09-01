@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 
+
 struct StoryPhototView: View {
     @EnvironmentObject private var userStory : UserStoryViewModel
     @EnvironmentObject private var userInfo : UserViewModel
@@ -53,30 +54,30 @@ struct StoryPhototView: View {
             
             if self.drawVM.isAddText {
                 Color.black.opacity(0.75).edgesIgnoringSafeArea(.all)
-                
-                TextField("Type Here",text: $drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text)
+
+                TextField("Type Here",text: $drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text,axis: .vertical)
+                    .focused($isFocus)
                     .font(.system(size:25))
                     .fontWeight(self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBold ? .bold : .none)
                     .colorScheme(.dark)
                     .foregroundColor(drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textColor)
                     .padding()
-                    .focused($isFocus)
-                    
-                
-            
+
                 HStack{
                     Spacer()
                     Button(action:{
                         //add a text box
-                        self.drawVM.textEditIndex = -1
                         if self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text.isEmpty {
                             self.drawVM.closeTextView()
                             self.drawVM.textEditIndex = -1
                             self.drawVM.currentIndex -= 1
                             return
                         }
-                        self.drawVM.toolPicker.setVisible(false, forFirstResponder: self.drawVM.canvas)
-                        self.drawVM.canvas.resignFirstResponder()
+                        self.drawVM.currentMaxOrder += 1
+                        self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].order =  self.drawVM.currentMaxOrder
+                        self.drawVM.textEditIndex = -1
+//                        self.drawVM.toolPicker.setVisible(false, forFirstResponder: self.drawVM.canvas)
+//                        self.drawVM.canvas.resignFirstResponder()
                         self.drawVM.isAddText = false
                     }){
                         Text("Done")

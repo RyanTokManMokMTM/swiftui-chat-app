@@ -7,6 +7,7 @@
 import SwiftUI
 import AVFoundation
 
+
 struct ContentView: View {
     @StateObject var state = SearchState()
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
@@ -23,7 +24,7 @@ struct ContentView: View {
     @State private var isAddStory : Bool = false
     @Namespace var namespace
     var body: some View {
-        
+
         ZStack{
             NavigationStack(path:$path.navigationRoomPath){
                 HomeView(isShowMenu: $isShowMenu,menuTab: $menuIndex, isAddStory: $isAddStory)
@@ -31,7 +32,7 @@ struct ContentView: View {
                     .environmentObject(UDM)
                     .environmentObject(storyModel)
                     .environmentObject(userStory)
-                
+
             }
             .accentColor(.green)
             .zIndex(1)
@@ -62,8 +63,8 @@ struct ContentView: View {
                     .environmentObject(userModel)
                     .environmentObject(userStory)
             }
-            
-            
+
+
             if isShowMenu {
                 NavigationStack(){
                     SideMenu(isShow: $isShowMenu, isShowProfile: $isShowProfile,isAddStory: $isAddStory,menuIndex: $menuIndex,isSearching: $isSearch){
@@ -73,7 +74,7 @@ struct ContentView: View {
                                     self.menuIndex = 0
                                 }
                             }
-                            
+
                             NavigationLink(destination: SearchView().environmentObject(state),isActive: $isSearch){
                                 menuRow(tagIndex:1,sysImg: "magnifyingglass", rowName: "Find Friends", selected: $menuIndex,namespace: namespace){
                                     withAnimation{
@@ -81,18 +82,18 @@ struct ContentView: View {
                                         self.isSearch = true
                                     }
                                 }
-                             
-                                
+
+
                             }
                             .onReceive(self.state.$isChatFromProfile) { toRoot in
                                 if toRoot  {
                                     self.state.isChatFromProfile = false
                                     var room : ActiveRooms
-                                    
+
                                     guard let profile = self.state.chatUser else {
                                         return
                                     }
-                                    
+
                                     if let userRoom = UserDataModel.shared.findOneRoom(uuid: profile.UserUUID){
                                         room = userRoom
                                     }else {
@@ -102,29 +103,29 @@ struct ContentView: View {
                                             print("failed to create a new room")
                                             return
                                         }
-                                        
+
                                     }
                                     self.isSearch = false
                                     self.isShowMenu = false
                                     self.menuIndex = 0
                                     NavigationState.shared.navigationRoomPath.append(room)
-                                  
+
                                 }
-                                
+
                             }
                             .buttonStyle(.plain)
 
-                            
+
                         }
                     }
                     .environmentObject(userModel)
-     
+
                     //                    .navigationTitle("")
                 }.accentColor(.black)
                     .zIndex(2)
-                    
+
             }
-            
+
             if self.loginSate {
                 SignInView(isLogin: $loginSate)
                     .environmentObject(userModel)
@@ -134,8 +135,8 @@ struct ContentView: View {
                     .transition(.move(edge: .bottom))
                     .background(.white)
                     .zIndex(3)
-                
-    
+
+
             }
         }
         .onChange(of: loginSate){ state in
@@ -159,7 +160,7 @@ struct ContentView: View {
         }
 
     }
-    
+
     private func resetAll(){
         DispatchQueue.main.async {
             self.hub.reset()
@@ -172,11 +173,3 @@ struct ContentView: View {
         }
     }
 }
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
-

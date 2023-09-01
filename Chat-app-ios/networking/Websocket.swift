@@ -213,7 +213,6 @@ class Websocket : ObservableObject {
     
     
     func onSend(msg : WSMessage) {
-//        print("send message : \(msg)")
         do {
             let req = try JSONEncoder().encode(msg)
             self.session?.send(.data(req)){ err in
@@ -236,9 +235,7 @@ class Websocket : ObservableObject {
     
     @MainActor
     func handleMessage(event : MessageEvent,msg : WSMessage ,isReplyComment : Bool = false){
-        print(msg)
         DispatchQueue.main.async { [self] in
-            //            print("receving a message / sending a message....")
             var roomID : UUID
             var GroupRoomName : String = ""
             var GroupRoomAvatar : String = ""
@@ -255,7 +252,6 @@ class Websocket : ObservableObject {
                     break
                 }
             }
-            
             let sentTime = Date.now
             let messageID = msg.messageID ?? UUID().uuidString
             if let room = UserDataModel.shared.findOneRoom(uuid: roomID) {
@@ -275,14 +271,12 @@ class Websocket : ObservableObject {
                         case .success(let data):
                             let roomName = data.name
                             let roomAvatar = data.avatar
-                            addNewRoomToCache(msg: msg, roomName: roomName, roomAvatar: roomAvatar, event: event, sentTime: sentTime, messageID: messageID, storyId: msg.storyId ?? 0)
+                            addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: roomName, roomAvatar: roomAvatar, event: event, sentTime: sentTime, messageID: messageID, storyId: msg.storyId ?? 0)
                         case .failure(let err):
                             print(err.localizedDescription)
                         }
                     }
                 }else {
-                    
-                    //if it is a group -> get data from API?
                     if msg.messageType == 2 {
                         Task{
                             let resp = await ChatAppService.shared.GetGroupInfoByUUID(uuid:roomID.uuidString.lowercased())
@@ -290,17 +284,18 @@ class Websocket : ObservableObject {
                             case .success(let data):
                                 GroupRoomName = data.result.name
                                 GroupRoomAvatar = data.result.avatar
-                                addNewRoomToCache(msg: msg, roomName: GroupRoomName, roomAvatar: GroupRoomAvatar, event: event, sentTime: sentTime, messageID: messageID, storyId:  msg.storyId ?? 0)
+                                addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: GroupRoomName, roomAvatar: GroupRoomAvatar, event: event, sentTime: sentTime, messageID: messageID, storyId:  msg.storyId ?? 0)
                             case .failure(let err):
                                 print(err.localizedDescription)
                                 return
                             }
                         }
                     }else {
-                        addNewRoomToCache(msg: msg, roomName: msg.fromUserName!, roomAvatar: msg.avatar!, event: event, sentTime: sentTime, messageID: messageID, storyId:  msg.storyId ?? 0)
+                        addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: msg.fromUserName!, roomAvatar: msg.avatar!, event: event, sentTime: sentTime, messageID: messageID, storyId:  msg.storyId ?? 0)
                     }
 
                 }
+
                 
             }
             
@@ -324,7 +319,7 @@ class Websocket : ObservableObject {
                         
                         BenHubState.shared.AlertMessageWithUserInfo(message: notifyMessage, avatarPath: msg.avatar!, name: msg.fromUserName!,type: .messge)
                     }else {
-                        if let index = UserDataModel.shared.findOneRoomWithIndex(uuid: roomID) {
+                        if UserDataModel.shared.findOneRoomWithIndex(uuid: roomID) != nil {
                             if msg.contentType == ContentType.text.rawValue {
                                 let notifyMessage = "\(msg.fromUserName!) : \(msg.content!)"
                                 
@@ -403,8 +398,8 @@ extension Websocket {
 
 extension Websocket {
     @MainActor
-    private func addNewRoomToCache(msg : WSMessage,roomName : String,roomAvatar : String ,event : MessageEvent,sentTime : Date,messageID : String,storyId : Int16){
-        if let room = UserDataModel.shared.addRoom(id: msg.fromUUID!, name: roomName, avatar: roomAvatar, message_type: msg.messageType!) {
+    private func addNewRoomToCache(roomUUID: UUID , msg : WSMessage,roomName : String,roomAvatar : String ,event : MessageEvent,sentTime : Date,messageID : String,storyId : Int16){
+        if let room = UserDataModel.shared.addRoom(id: roomUUID.uuidString, name: roomName, avatar: roomAvatar, message_type: msg.messageType!) {
             room.unread_message = event == .send ? 0 : 1
             room.last_message = (msg.contentType == ContentType.text.rawValue || msg.contentType == ContentType.msgReply.rawValue) ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
             room.last_sent_time = sentTime

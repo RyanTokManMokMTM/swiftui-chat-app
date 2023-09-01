@@ -1197,7 +1197,7 @@ extension ChattingView {
                 Text("Reply to a story")
                     .font(.footnote)
                     .fontWeight(.medium)
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.cyan)
 
                 VStack(alignment:.leading,spacing:8){
                     if message.sender!.id!.uuidString.lowercased() != userModel.profile!.uuid {

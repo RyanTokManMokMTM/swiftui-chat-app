@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import PencilKit
-
 struct TextBox : Identifiable {
     var id = UUID().uuidString
     var text : String = ""
@@ -19,16 +17,5 @@ struct TextBox : Identifiable {
     
     var textColor : Color = .white
     var isBorder : Bool = false
-}
-
-struct DragTextView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-struct DragTextView_Previews: PreviewProvider {
-    static var previews: some View {
-        DragTextView()
-    }
+    var order : Double = 1
 }

@@ -570,8 +570,8 @@
 		2094454929F79D2700BBD9A4 /* SubView */ = {
 			isa = PBXGroup;
 			children = (
-				20CE5D2A29A354D6001371A7 /* CallView.swift */,
 				2000E09E2A21E3F900F03480 /* drawView */,
+				20CE5D2A29A354D6001371A7 /* CallView.swift */,
 				20AF749C2A1DD30E00A07D12 /* AddContentView.swift */,
 			);
 			path = SubView;

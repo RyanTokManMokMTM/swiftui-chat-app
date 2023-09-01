@@ -60,6 +60,7 @@ final class BenHubState : ObservableObject {
     }
     
     func SetWait(message : String) {
+        reset()
         self.message = message
         withAnimation{
             self.isWaiting = true
@@ -69,6 +70,7 @@ final class BenHubState : ObservableObject {
 
     
     func AlertMessageWithUserInfo(message : String, avatarPath : String , name : String ,type : StateType = .normal){
+        reset()
         self.message = message
         self.info = Info(avatarPath: avatarPath, name: name)
         self.type = type

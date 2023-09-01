@@ -14,6 +14,7 @@ class DrawScreenViewModel : ObservableObject {
     
     @Published var  selecteImage : Data? = nil
     @Published var isSelected = false
+    @Published var currentMaxOrder : Double = 2
     
     @Published var canvas = PKCanvasView()
     @Published var toolPicker = PKToolPicker()
@@ -253,8 +254,8 @@ struct DrawingScreen: View {
                 
                 ForEach(self.drawVM.textBox,id:\.id) { box in
                     textItem(textItem: box, centerPos: center, viewHeight: viewHeight)
+                        .zIndex(box.order)
                 }
-                .zIndex(2)
             }
             .clipped()
             .overlay(alignment:.top){
@@ -338,14 +339,15 @@ struct DrawingScreen: View {
     
     @ViewBuilder
     private func textItem(textItem box : TextBox,centerPos : CGFloat,viewHeight : CGFloat) -> some View {
-        Text(drawVM.textBox[self.drawVM.currentIndex].id == box.id && self.drawVM.isAddText ? "" : box.text)
+        Text(self.drawVM.isAddText && self.drawVM.textBox[self.drawVM.textEditIndex != -1 ? self.drawVM.textEditIndex : self.drawVM.currentIndex].id == box.id ? ""  : box.text)
             .font(.system(size:20)) //TODO: Can be modify soon...
             .foregroundColor(box.textColor)
             .fontWeight(box.isBold ? .bold : .none)
             .padding(10)
             .background{
                 if box.isBorder {
-                    Color.black.opacity(0.65).cornerRadius(10)
+                   
+                    Color.black.opacity(self.drawVM.isAddText && self.drawVM.textBox[self.drawVM.textEditIndex != -1 ? self.drawVM.textEditIndex : self.drawVM.currentIndex].id == box.id ? 0 : 0.65).cornerRadius(10)
                 }else {
                     Color.clear
                 }
@@ -357,13 +359,19 @@ struct DrawingScreen: View {
                 if let idx = self.drawVM.textBox.firstIndex(where: {$0.id == box.id}){
                     self.drawVM.textEditIndex = idx
                     self.drawVM.isAddText = true
+                    print(self.drawVM.textEditIndex != -1 ? self.drawVM.textEditIndex : self.drawVM.currentIndex)
                 }
+                
             }
             .gesture(DragGesture().onChanged( { v in
+                if self.drawVM.textBox[getTextBoxIndex(box: box)].order < self.drawVM.currentMaxOrder {
+                    self.drawVM.currentMaxOrder += 1
+                    self.drawVM.textBox[getTextBoxIndex(box: box)].order = self.drawVM.currentMaxOrder
+                }
                 let cur = v.translation
                 let last = box.lastOffset
                 let new = CGSize(width: last.width + cur.width, height: last.height + cur.height)
-                drawVM.textBox[getTextBoxIndex(box: box)].offset = new
+                self.drawVM.textBox[getTextBoxIndex(box: box)].offset = new
                 
                 //                            print("is dragging....")
                 if !self.isDragging  {
