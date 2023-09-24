@@ -215,8 +215,10 @@ struct FullGroupInfo : Decodable {
     var avatar : String
     let members : UInt
     let created_at : UInt
+    var desc : String
     var is_joined : Bool
     let is_owner : Bool
+    let created_by : String
     
     var AvatarURL : URL {
         return URL(string:RESOURCES_HOST + self.avatar)!
@@ -229,7 +231,8 @@ struct FullGroupInfo : Decodable {
 
 struct UpdateGroupInfoReq : Encodable {
     let group_id : UInt
-    let group_name : String
+    var group_name : String
+    let group_desc : String
 }
 
 struct UpdateGroupInfoResp : Decodable {
@@ -326,6 +329,7 @@ struct CreateStoryResp : Decodable {
 struct GetUserStoriesResp : Decodable {
     let code : UInt
     let story_ids : [UInt]
+    let last_story_id : UInt
 }
 
 struct GetStoryInfoReq {
@@ -335,6 +339,7 @@ struct GetStoryInfoResp : Decodable {
     let code : UInt
     let story_id : UInt
     let media_url : String
+    let is_liked : Bool
     let create_at : UInt
 }
 
@@ -356,6 +361,7 @@ struct FriendStory : Decodable,Identifiable{
     let name : String
     let avatar : String
     var is_seen : Bool
+    let latest_story_time_stamp : UInt
 //    var stories_ids : [UInt]
     
     var AvatarURL : URL {
@@ -363,18 +369,42 @@ struct FriendStory : Decodable,Identifiable{
     }
 }
 
-
 struct GetStickerGroupResp : Decodable {
     let code : UInt
     let sticker_id : String
     let resources_path : [String]
 }
 
+struct UpdateUserStorySeenReq : Encodable {
+    let friend_id : UInt
+    let story_id : UInt
+}
+
+struct UpdateUserStorySeenResp : Decodable {
+    let code : UInt
+}
+
+struct CreateStoryLikeReq : Encodable {
+    let story_id : UInt
+}
+
+struct CreateStoryLikeResp : Decodable {
+    let code : UInt
+}
+
+struct DeleteStoryLikeReq : Encodable {
+    let story_id : UInt
+}
+
+struct DeleteStoryLikeResp : Decodable {
+    let code : UInt
+}
 
 struct StoryInfo : Identifiable {
     let id : UInt
     let media_url : String
     let create_at : UInt
+    var is_liked : Bool
     
     var MediaURL : URL {
         return URL(string: RESOURCES_HOST + self.media_url)!

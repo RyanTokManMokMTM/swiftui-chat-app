@@ -190,8 +190,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
+            startingLineNumber = "257"
+            endingLineNumber = "257"
             landmarkName = "handleMessage(event:msg:isReplyComment:)"
             landmarkType = "7">
             <Locations>
@@ -254,10 +254,10 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "397"
-            endingLineNumber = "397"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "398"
+            endingLineNumber = "398"
+            landmarkName = "playReceivedMessageSound()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -318,8 +318,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "302"
-            endingLineNumber = "302"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
             landmarkName = "handleMessage(event:msg:isReplyComment:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -338,6 +338,385 @@
             endingLineNumber = "429"
             landmarkName = "content(message:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4D4793D8-C628-46F1-AD3B-A5897A0FAB21"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "closeTextView(removeItem:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "4D4793D8-C628-46F1-AD3B-A5897A0FAB21 - ffea9e7819f02322"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.DrawScreenViewModel.removeTextBox(textBox: Chat_app_ios.TextBox) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "520">
+               </Location>
+               <Location
+                  uuid = "4D4793D8-C628-46F1-AD3B-A5897A0FAB21 - dfbf7e6387e2f7f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.DrawScreenViewModel.closeTextView() -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "136">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "192D21A8-791E-40C0-AE5B-51C20942224A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "reorderTextBoxs(itemToTop:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FC6C1FC1-738B-4F82-8FFD-68EDC1164DB9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "reorderTextBoxs(itemToTop:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "FC6C1FC1-738B-4F82-8FFD-68EDC1164DB9 - 82946090897d80e8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.DrawScreenViewModel.reorderTextBoxs(itemToTop: Chat_app_ios.TextBox) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "228">
+               </Location>
+               <Location
+                  uuid = "FC6C1FC1-738B-4F82-8FFD-68EDC1164DB9 - 82946090897d80e8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.DrawScreenViewModel.reorderTextBoxs(itemToTop: Chat_app_ios.TextBox) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "388">
+               </Location>
+               <Location
+                  uuid = "FC6C1FC1-738B-4F82-8FFD-68EDC1164DB9 - 56e23190dc7c3a3d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Chat_app_ios.TextBox) -&gt; Swift.Bool in Chat_app_ios.DrawScreenViewModel.reorderTextBoxs(itemToTop: Chat_app_ios.TextBox) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "61"
+                  endingLineNumber = "61"
+                  offsetFromSymbolStart = "44">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AEEEDADB-859E-49C4-BA7C-67B7E53524F0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "reorderTextBoxs(itemToTop:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "AEEEDADB-859E-49C4-BA7C-67B7E53524F0 - 3d7ed89386646392"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.CanvasView.init(canvas: SwiftUI.Binding&lt;__C.PKCanvasView&gt;, imageData: SwiftUI.Binding&lt;Swift.Optional&lt;Foundation.Data&gt;&gt;, toolPikcer: SwiftUI.Binding&lt;__C.PKToolPicker&gt;, rect: __C.CGSize) -&gt; Chat_app_ios.CanvasView"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "8">
+               </Location>
+               <Location
+                  uuid = "AEEEDADB-859E-49C4-BA7C-67B7E53524F0 - 82946090897d8087"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.DrawScreenViewModel.reorderTextBoxs(itemToTop: Chat_app_ios.TextBox) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "62"
+                  endingLineNumber = "62"
+                  offsetFromSymbolStart = "408">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ECB9846B-5B3B-4296-865D-E7432684B481"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "reorderTextBoxs(itemToTop:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "ECB9846B-5B3B-4296-865D-E7432684B481 - a7fb2c7370104bd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.CanvasView.canvas.getter : __C.PKCanvasView"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "196">
+               </Location>
+               <Location
+                  uuid = "ECB9846B-5B3B-4296-865D-E7432684B481 - ace9d6762e1264a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.CanvasView.canvas.setter : __C.PKCanvasView"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "152">
+               </Location>
+               <Location
+                  uuid = "ECB9846B-5B3B-4296-865D-E7432684B481 - b008b3751d4fccba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.CanvasView.canvas.modify : __C.PKCanvasView"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "232">
+               </Location>
+               <Location
+                  uuid = "ECB9846B-5B3B-4296-865D-E7432684B481 - 28a7054d1e6314a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.CanvasView.canvas.modify : __C.PKCanvasView with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "ECB9846B-5B3B-4296-865D-E7432684B481 - d7357b5ed48df471"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.CanvasView.$canvas.getter : SwiftUI.Binding&lt;__C.PKCanvasView&gt;"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "220">
+               </Location>
+               <Location
+                  uuid = "ECB9846B-5B3B-4296-865D-E7432684B481 - 82946090897d8345"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.DrawScreenViewModel.reorderTextBoxs(itemToTop: Chat_app_ios.TextBox) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "612">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "48F6AF65-4E50-4633-BCA6-796D21063EC5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "reorderTextBoxs(itemToTop:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "48F6AF65-4E50-4633-BCA6-796D21063EC5 - 3d7ed89386646392"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.CanvasView.init(canvas: SwiftUI.Binding&lt;__C.PKCanvasView&gt;, imageData: SwiftUI.Binding&lt;Swift.Optional&lt;Foundation.Data&gt;&gt;, toolPikcer: SwiftUI.Binding&lt;__C.PKToolPicker&gt;, rect: __C.CGSize) -&gt; Chat_app_ios.CanvasView"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "8">
+               </Location>
+               <Location
+                  uuid = "48F6AF65-4E50-4633-BCA6-796D21063EC5 - 82946090897d80a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.DrawScreenViewModel.reorderTextBoxs(itemToTop: Chat_app_ios.TextBox) -&gt; ()"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/SubView/drawView/DrawingScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "63"
+                  endingLineNumber = "63"
+                  offsetFromSymbolStart = "528">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "822C3CBC-BBEF-4706-8DB0-6FD02F6BECC2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/story/StoryPhototView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "822C3CBC-BBEF-4706-8DB0-6FD02F6BECC2 - 6027f3d470456a75"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.overlay&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(alignment: SwiftUI.Alignment, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.background&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(_: &#x3c4;_1_0, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.edgesIgnoringSafeArea(SwiftUI.Edge.Set) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0)&gt;&gt;)&gt; in Chat_app_ios.StoryPhototView.body.getter : some"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/story/StoryPhototView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "68"
+                  endingLineNumber = "68"
+                  offsetFromSymbolStart = "7636">
+               </Location>
+               <Location
+                  uuid = "822C3CBC-BBEF-4706-8DB0-6FD02F6BECC2 - 33a92bb853490cb2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.overlay&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(alignment: SwiftUI.Alignment, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.background&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(_: &#x3c4;_1_0, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.edgesIgnoringSafeArea(SwiftUI.Edge.Set) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.accentColor(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0)&gt;&gt;)&gt; in Chat_app_ios.StoryPhototView.body.getter : some"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/swiftui-chat-app/Chat-app-ios/main_view/main/story/StoryPhototView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "8568">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -1,13 +1,13 @@
 //
-//  TextItem.swift
+//  ImageItemView.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 3/9/2023.
+//  Created by Jackson.tmm on 10/9/2023.
 //
 
 import SwiftUI
 
-struct TextItem: View {
+struct ImageItemView: View {
     var box : StorySubItem
     var center : CGFloat
     var heigh : CGFloat
@@ -27,25 +27,12 @@ struct TextItem: View {
     @State private var currentItemSize : CGSize = .zero
     @EnvironmentObject private var drawVM : DrawScreenViewModel
     var body: some View {
-        Text(self.drawVM.isAddText && self.drawVM.storySubItems[self.drawVM.textEditIndex != -1 ? self.drawVM.textEditIndex : self.drawVM.currentIndex].id == box.id ? ""  : box.attributedString)
-            .multilineTextAlignment(box.textAlignment)
-            .font(.system(size:20)) //TODO: Can be modify soon...
-            .foregroundColor(box.textColor)
-            .fontWeight(box.isBold ? .bold : .none)
-            .scaleEffect(self.isInTransh && self.dragginItemId == box.id ? 0.4 : 1)
-            .rotationEffect(box.angle)
-            .scaleEffect(box.scaleFactor + box.lastScaleFactor )
-            .offset(box.offset)
-            .animation(.spring())
-            .onTapGesture {
-                if let idx = self.drawVM.storySubItems.firstIndex(where: {$0.id == box.id}){
-                    self.drawVM.textEditIndex = idx
-                    self.drawVM.isAddText = true
-                }
-
-            }
+        Image(uiImage: UIImage(data: box.imageData!)!)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .cornerRadius( box.isConer ? 10 : 0)
             .background{
-                GeometryReader{ proxy -> Color in
+                GeometryReader{ proxy  -> Color in
                     DispatchQueue.main.async {
                         self.currentItemSize = proxy.size
                         let newWidthAfterRotate1 = self.currentItemSize.height * sin(box.angle.radians)
@@ -61,8 +48,17 @@ struct TextItem: View {
                     return Color.clear
                 }
             }
-            .padding(10)
-            .frame(maxWidth: .infinity,alignment: box.alignment)
+            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.22, alignment: .center)
+            .rotationEffect( box.angle)
+            .scaleEffect( box.scaleFactor +  box.lastScaleFactor )
+            .offset( box.offset)
+//            .clipShape(box.itemShape)
+            .onTapGesture {
+//                withAnimation{
+                    self.drawVM.storySubItems[getTextBoxIndex(box: box)].isConer.toggle()
+                    self.drawVM.reorderTextBoxs(itemToTop: box)
+//                }
+            }
             .gesture(
                 MagnificationGesture().onChanged{v in
                     self.drawVM.storySubItems[getTextBoxIndex(box: box)].scaleFactor = v.magnitude - 1
@@ -93,11 +89,10 @@ struct TextItem: View {
 
                         let left = center - 25
                         let right = center + 25
-                        let top = heigh
-                        let bottom = heigh + 50
+                        let top = heigh - 50
+                        let bottom = heigh - 10
                         let location = v.location
-
-                        if (location.y - self.currentItemSize.height / 2) >= top && (location.y - self.currentItemSize.height / 2) <= bottom && location.x >= left && location.x <= right {
+                        if location.y >= top && location.y  <= bottom && location.x >= left && location.x <= right {
                             withAnimation{
                                 self.isInTransh = true
                             }
@@ -136,14 +131,13 @@ struct TextItem: View {
                 }.onEnded{ v in
                     self.drawVM.storySubItems[getTextBoxIndex(box: box)].lastAngle = .degrees(v.degrees)
                 })
-            .opacity(self.drawVM.isAddText && self.drawVM.storySubItems[self.drawVM.textEditIndex != -1 ? self.drawVM.textEditIndex : self.drawVM.currentIndex].id == box.id ? 0 : 1)
-            
     }
     
     private func getTextBoxIndex(box : StorySubItem) -> Int {
        let index = drawVM.storySubItems.firstIndex{$0.id == box.id} ?? 0
        return index
     }
+    
     
     private func leadingAlignmentChecking(proxyFrame : CGSize,newLocation : CGSize) -> CGSize {
         var location = newLocation

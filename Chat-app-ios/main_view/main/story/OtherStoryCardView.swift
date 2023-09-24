@@ -7,6 +7,47 @@
 
 import SwiftUI
 
+struct LoveTapModifier: ViewModifier {
+    
+    @State var time = 0.0
+    let duration = 3.0
+    
+    func body(content: Content) -> some View {
+        ZStack {
+            content
+                .foregroundColor(.red)
+                .modifier(LoveGeometryEffect(time: time))
+                .opacity(time == 3 ? 0 : 1)
+        }
+        
+        .onAppear {
+            withAnimation (.easeOut(duration: duration)) {
+                self.time = duration
+            }
+        }
+    }
+}
+
+
+struct LoveGeometryEffect : GeometryEffect {
+    var time : Double
+    var speed = 150.0
+    var xDirection = Double.random(in:  -0.1 ... 0.1)
+    var yDirection = Double.random(in: -Double.pi ...  0)
+    var animatableData: Double {
+        get { time }
+        set { time = newValue }
+    }
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let xTranslation = speed * xDirection
+        let yTranslation = speed * sin(yDirection) * time
+        let affineTranslation =  CGAffineTransform(translationX: xTranslation, y: yTranslation)
+        return ProjectionTransform(affineTranslation)
+    }
+}
+
+
 struct OtherStoryCardView: View {
     @Binding var friendInfo : FriendStory
     @State private var story : StoryInfo?
@@ -20,9 +61,12 @@ struct OtherStoryCardView: View {
     
     @State private var isLoadingStoriesList = false
     @State private var stories : [UInt] = []
-    
+//    @State private var isLiked : Bool = false
+    @State private var likeCount = 0
     @State private var isStoryUnavaiable : Bool = false
     @StateObject private var hub = BenHubState.shared
+    
+    @State private var isShareToFriend : Bool = false
     var body: some View {
         GeometryReader{ reader in
             ZStack{
@@ -66,6 +110,7 @@ struct OtherStoryCardView: View {
                     Rectangle()
                         .fill(.black.opacity(0.1))
                         .onTapGesture {
+//                            self.isLiked = false
                             if (self.timeProgress - 1) < 0 {
                                 //Move back to other story section
                                 updateStory(isForward: false)
@@ -73,6 +118,7 @@ struct OtherStoryCardView: View {
                                 //Move back to other story in current section
                                 self.timeProgress = CGFloat(Int(timeProgress) - 1)
                                 self.index = Int(self.timeProgress)
+                                
                             }
                         }
                     //TODO: Tap on right -> moving forward
@@ -86,6 +132,7 @@ struct OtherStoryCardView: View {
                                 //Move to other story in current section
                                 self.timeProgress = CGFloat(Int(timeProgress) + 1)
                                 self.index = Int(self.timeProgress)
+                               
                             }
                         }
                 }
@@ -97,6 +144,8 @@ struct OtherStoryCardView: View {
                             self.isFocus = false
                             self.comment.removeAll()
                         }
+                } else if isShareToFriend {
+                    Color.black.opacity(0.65).edgesIgnoringSafeArea(.all)
                 }
             }
             .overlay(alignment:.topTrailing) {
@@ -177,7 +226,7 @@ struct OtherStoryCardView: View {
             })
             .rotation3DEffect(getAngle(proxy: reader), axis: (x:0,y:1,z:0),anchor: reader.frame(in: .global).minX > 0 ? .leading : .trailing,perspective: 2.5)
             .onReceive(self.timer){ t in
-                if isFocus {
+                if isFocus || isShareToFriend{
                     return
                 }
                 if storyModel.currentStory == friendInfo.id {
@@ -196,9 +245,16 @@ struct OtherStoryCardView: View {
                     }
                 }
             }
+            
             .onAppear{
                 self.timeProgress = 0
             }
+        }
+        .sheet(isPresented: $isShareToFriend){
+            FriendContent()
+                .padding(.top)
+                .presentationDetents([.medium, .large])
+               
         }
         .overlay(alignment:.bottom){
             if !isStoryUnavaiable {
@@ -224,38 +280,68 @@ struct OtherStoryCardView: View {
                             .stroke(.gray, lineWidth: 1.5)
                     ))
                     
+//
                     
-                    Button(action:{
-                        //TODO: DO Nothing right now
-                    }){
-                        Image(systemName: "heart")
-                            .imageScale(.large)
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
+                    if !self.isFocus {
+                        ZStack{
+                            Button(action:{
+                                //TODO: DO Nothing right now
+                                if self.story != nil {
+                                    if !self.story!.is_liked {
+                                        Task{
+                                            await self.createStoryLike(storyId: self.story!.id)
+                                        }
+                                    }else{
+                                        Task{
+                                            await self.deleteStoryLike(storyId: self.story!.id)
+                                        }
+                                    }
+                                }
+                                
+                               
+                            }){
+                                Image(systemName: self.story?.is_liked ?? false  ? "heart.fill" : "heart")
+                                    .imageScale(.large)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(self.story?.is_liked ?? false ? .red : .white)
+                            }
                             
+                            ForEach(0..<self.likeCount,id:\.self){ _ in
+                                Image(systemName: "heart.fill")
+                                    .imageScale(.large)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.red)
+                                    .modifier(LoveTapModifier())
+                            }
+                        }
+                        
+                        Button(action:{
+                            //TODO: DO Nothing right now
+                            withAnimation{
+                                self.isShareToFriend = true
+                            }
+                        }){
+                            Image(systemName: "paperplane")
+                                .imageScale(.large)
+                                .fontWeight(.medium)
+                                .foregroundColor(.white)
+                                
+                        }
+                        
                     }
-                    
-                    
-                    Button(action:{
-                        //TODO: DO Nothing right now
-                    }){
-                        Image(systemName: "paperplane")
-                            .imageScale(.large)
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                            
-                    }
+                   
                     
                 }
                 .padding(.horizontal,10)
                 .padding(.bottom,10)
             }
         }
-        
         .onChange(of: self.index){ i in
             Task {
                 self.isStoryUnavaiable = false
                 await self.getStoryInfo(storyID: UInt(self.stories[i]))
+                await self.updateStorySeen(storyId: UInt(self.stories[i]))
+                
             }
         }
         .onAppear{
@@ -298,20 +384,26 @@ struct OtherStoryCardView: View {
             replyMessageID: nil,
             storyId: Int16(self.story!.id))
         Websocket.shared.handleMessage(event:.send,msg: sendMsg,isReplyComment: true)
-        Websocket.shared.onSend(msg: sendMsg)
+        Websocket.shared.onSend(msg: sendMsg){
+            hub.AlertMessage(sysImg: "checkmark", message: "Replied")
+        }
         
         self.comment.removeAll()
         
     }
     
     private func getStoryInfo(storyID : UInt) async {
-        print(storyID)
+//        print(storyID)
+        self.likeCount = 0
         self.story = nil
         let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
         switch resp {
         case .success(let data):
             DispatchQueue.main.async {
-                self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at)
+                self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked)
+                if data.is_liked {
+                    self.likeCount = 10
+                }
             }
         case .failure(let err):
             self.isStoryUnavaiable = true
@@ -330,14 +422,61 @@ struct OtherStoryCardView: View {
                 self.stories = data.story_ids
                 isLoadingStoriesList = false
                 Task{
+//                    print(data)
                     if data.story_ids.isEmpty {
                         return
                     }
-                    await self.getStoryInfo(storyID: data.story_ids.first!)
+                    
+                    if let foundIndex = data.story_ids.firstIndex(where: {$0 >= data.last_story_id}){
+                        self.index = min(foundIndex,data.story_ids.count - 1)
+                        self.timeProgress = CGFloat(min(foundIndex,data.story_ids.count - 1))
+                    }else if let foundIndex = data.story_ids.lastIndex(where: {$0 < data.last_story_id}){
+                        self.index = max(foundIndex,0)
+                        self.timeProgress = CGFloat(max(foundIndex,0))
+                    }
+                    if self.index == 0{
+                        await self.getStoryInfo(storyID: data.story_ids.first!)
+                        await self.updateStorySeen(storyId: data.story_ids.first!)
+                    }
                 }
                 
             }
-            print(data.story_ids)
+        case .failure(let err):
+            print(err.localizedDescription)
+        }
+    }
+    
+    private func createStoryLike(storyId : UInt) async {
+        let req = CreateStoryLikeReq(story_id: storyId)
+        let resp = await ChatAppService.shared.CreateStoryLike(req: req)
+        switch(resp){
+        case .success(_):
+            DispatchQueue.main.async {
+                if self.story != nil {
+                    withAnimation{
+                        self.story!.is_liked = true
+                        self.likeCount = 10
+                    }
+                }
+            }
+        case .failure(let err):
+            print(err.localizedDescription)
+        }
+    }
+    
+    private func deleteStoryLike(storyId : UInt) async {
+        let req = DeleteStoryLikeReq(story_id: storyId)
+        let resp = await ChatAppService.shared.DeleteStoryLike(req: req)
+        switch(resp){
+        case .success(_):
+            DispatchQueue.main.async {
+                if self.story != nil {
+                    withAnimation{
+                        self.story!.is_liked = false
+                        self.likeCount = 0
+                    }
+                }
+            }
         case .failure(let err):
             print(err.localizedDescription)
         }
@@ -346,6 +485,17 @@ struct OtherStoryCardView: View {
     private func getStoryIndex() -> Int {
         return min(Int(self.timeProgress),self.storyModel.activeStories.count - 1)
     }
+    
+    private func updateStorySeen(storyId : UInt) async{
+        let req = UpdateUserStorySeenReq(friend_id: self.friendInfo.id, story_id: storyId)
+        let resp = await ChatAppService.shared.UpdateStorySeen(req: req)
+        switch(resp){
+        case .success(_): break
+        case .failure(let err):
+            print(err.localizedDescription)
+        }
+    }
+    
     private func getAngle(proxy : GeometryProxy) -> Angle{
         let progress = proxy.frame(in: .global).minX / proxy.size.width
 //        print(progress)

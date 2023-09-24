@@ -22,7 +22,8 @@ struct StoryPhototView: View {
             PhotosPicker(selection: $selectedPickerItem, matching: .images) {
                 Label("Select a photo", systemImage: "photo")
                   
-            }  
+            }
+
             .tint(.green)
             .controlSize(.large)
             .buttonStyle(.borderedProminent)
@@ -50,35 +51,44 @@ struct StoryPhototView: View {
                     .environmentObject(self.userInfo)
                     .transition(.move(edge: .trailing))
                     .background(Color.white.edgesIgnoringSafeArea(.all))
+                    .onDisappear{
+                        self.drawVM.reset()
+                    }
             }
             
-            if self.drawVM.isAddText {
+            if self.drawVM.isAddText{
                 Color.black.opacity(0.75).edgesIgnoringSafeArea(.all)
-
-                TextField("Type Here",text: $drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text,axis: .vertical)
+                
+                
+                TextField("",text: $drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text,axis: .vertical)
                     .focused($isFocus)
                     .font(.system(size:25))
-                    .fontWeight(self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBold ? .bold : .none)
+                    .fontWeight(self.drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBold ? .bold : .none)
                     .colorScheme(.dark)
-                    .foregroundColor(drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textColor)
+                    .foregroundColor(drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textColor)
                     .padding()
-
+                    .multilineTextAlignment(drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textAlignment)
+                    .accentColor(.white)
+//
                 HStack{
                     Spacer()
                     Button(action:{
                         //add a text box
-                        if self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text.isEmpty {
-                            self.drawVM.closeTextView()
+                        DispatchQueue.main.async {
+                            self.drawVM.isAddText = false
+                            if self.drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].text.isEmpty {
+                                self.drawVM.needToRemoveItem = true
+                                return
+                            }
+                            
+                            self.drawVM.reorderTextBoxs(itemToTop:  self.drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex])
                             self.drawVM.textEditIndex = -1
-                            self.drawVM.currentIndex -= 1
-                            return
+                            
+                            //                        self.drawVM.toolPicker.setVisible(false, forFirstResponder: self.drawVM.canvas)
+                            //                        self.drawVM.canvas.resignFirstResponder()
+                           
                         }
-                        self.drawVM.currentMaxOrder += 1
-                        self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].order =  self.drawVM.currentMaxOrder
-                        self.drawVM.textEditIndex = -1
-//                        self.drawVM.toolPicker.setVisible(false, forFirstResponder: self.drawVM.canvas)
-//                        self.drawVM.canvas.resignFirstResponder()
-                        self.drawVM.isAddText = false
+                        
                     }){
                         Text("Done")
                             .fontWeight(.heavy)
@@ -88,55 +98,86 @@ struct StoryPhototView: View {
                 }
                 .overlay{
                     HStack{
-                        ColorPicker(selection: $drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textColor, supportsOpacity: false){}
+                        ColorPicker(selection: $drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textColor, supportsOpacity: false){}
                             .labelsHidden()
                         
                         
                         Button(action: {
                             withAnimation{
-                                drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBorder.toggle()
+                                switch(drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textAlignment){
+                                case .center:
+                                    drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textAlignment = .leading
+                                case .leading:
+                                    drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textAlignment = .trailing
+                                case .trailing:
+                                    drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].textAlignment = .center
+                                }
+                                
                             }
                         }){
-                            Image(systemName: "a.circle")
-                                .imageScale(.large)
+                            
+                            Image(systemName: "text.aligncenter")
+                                .imageScale(.medium)
                                 .padding(8)
                                 .background(BlurView().clipShape(Circle()))
                                 .foregroundColor(.white)
                         }
-                        .buttonStyle(.plain)
+//                        .buttonStyle(.)
                         
                         Button(action: {
                             withAnimation{
-                                self.drawVM.textBox[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBold.toggle()
+                                drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBorder.toggle()
+                            }
+                        }){
+                            Image(systemName: "a.circle")
+                                .imageScale(.medium)
+                                .padding(8)
+                                .background(BlurView().clipShape(Circle()))
+                                .foregroundColor(.white)
+                        }
+//                        .buttonStyle(.plain)
+                        
+                        Button(action: {
+                            withAnimation{
+                                self.drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex].isBold.toggle()
                             }
                         }){
                             Image(systemName: "bold")
-                                .imageScale(.large)
+                                .imageScale(.medium)
                                 .padding(8)
                                 .background(BlurView().clipShape(Circle()))
-                                .foregroundColor(self.drawVM.textBox[drawVM.currentIndex].isBold ? .black : .white)
+                                .foregroundColor(self.drawVM.storySubItems[drawVM.currentIndex].isBold ? .black : .white)
                         }
+//                        .buttonStyle(.plain)
                        
                     }
                 }
                 .frame(maxHeight: .infinity,alignment: .top)
-                .onChange(of: self.drawVM.isAddText){ v in
-                    if v {
-                        isFocus = true
-                    }else {
-                        isFocus = false
+                .onDisappear{
+                    if self.drawVM.needToRemoveItem {
+                        self.drawVM.closeTextView(removeItem: self.drawVM.storySubItems[drawVM.textEditIndex != -1 ? drawVM.textEditIndex : drawVM.currentIndex])
+                        self.drawVM.needToRemoveItem = false
                     }
                 }
                 
             }
+            
 
         }
         .onChange(of: self.selectedPickerItem){ newItem in
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    self.drawVM.storyMainItem = StoryMainImageItem(data: data)
                     self.drawVM.selecteImage = data
                     self.drawVM.isSelected = true
                 }
+            }
+        }
+        .onChange(of: self.drawVM.isAddText){ v in
+            if v {
+                isFocus = true
+            }else {
+                isFocus = false
             }
         }
         .accentColor(.black)

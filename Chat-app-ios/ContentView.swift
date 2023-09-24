@@ -7,7 +7,6 @@
 import SwiftUI
 import AVFoundation
 
-
 struct ContentView: View {
     @StateObject var state = SearchState()
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model

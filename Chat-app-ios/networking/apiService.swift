@@ -45,6 +45,9 @@ protocol APIService {
     func GetUserStories(id : Int) async  -> Result<GetUserStoriesResp,Error>
     func GetActiveStories() async  -> Result<GetActiveStoryResp,Error>
     func GetStoryInfo(storyID : UInt) async  -> Result<GetStoryInfoResp,Error>
+    func UpdateStorySeen(req : UpdateUserStorySeenReq) async -> Result<UpdateUserStorySeenResp,Error>
+    func CreateStoryLike(req : CreateStoryLikeReq) async -> Result<CreateStoryLikeResp,Error>
+    func DeleteStoryLike(req : DeleteStoryLikeReq) async -> Result<DeleteStoryLikeResp,Error>
     
     func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error>
     
@@ -121,6 +124,9 @@ enum APIEndPoint : String,CaseIterable {
     case GetUserStories
     case GetActiveStories
     case GetStoryInfo
+    case UpdateUserStorySeen
+    case CreateStoryLike
+    case DeleteStoryLike
     
     case GetStickerGroup
     
@@ -166,6 +172,9 @@ enum APIEndPoint : String,CaseIterable {
         case .GetUserStories: return "/stories/"
         case .GetActiveStories: return "/stories/active"
         case .GetStoryInfo: return "/story/"
+        case .UpdateUserStorySeen : return "/story/seen"
+        case .CreateStoryLike : return "/story/like"
+        case .DeleteStoryLike : return "/story/like"
             
         case .GetStickerGroup : return "/sticker/"
         }

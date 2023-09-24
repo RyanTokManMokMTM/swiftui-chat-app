@@ -25,7 +25,7 @@ struct GroupSearchView: View {
                 Text("No Result.")
             }else {
                 List(self.$searchModel.searchResponse,id:\.id){ data in
-                    NavigationLink(destination: GroupProfileView(info: data)
+                    NavigationLink(destination: SearchGroupProfileResultView(info: data)
                         .accentColor(.white))
                        {
                            GroupRow(data: data.wrappedValue)

@@ -613,6 +613,7 @@ class ChatAppService : APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
 
         return await self.AsyncFetchAndDecode(request: request)
     }
@@ -629,6 +630,59 @@ class ChatAppService : APIService {
         return await self.AsyncFetchAndDecode(request: request)
     }
     
+    func UpdateStorySeen(req : UpdateUserStorySeenReq) async -> Result<UpdateUserStorySeenResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.UpdateUserStorySeen.rawValue ) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        do {
+            let body = try Encoder.encode(req)
+            request.httpBody = body
+        }catch {
+            return .failure(APIError.badEncoding)
+        }
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func CreateStoryLike(req : CreateStoryLikeReq) async -> Result<CreateStoryLikeResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.CreateStoryLike.rawValue ) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        do {
+            let body = try Encoder.encode(req)
+            request.httpBody = body
+        }catch {
+            return .failure(APIError.badEncoding)
+        }
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func DeleteStoryLike(req : DeleteStoryLikeReq) async -> Result<DeleteStoryLikeResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.DeleteStoryLike.rawValue ) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        do {
+            let body = try Encoder.encode(req)
+            request.httpBody = body
+        }catch {
+            return .failure(APIError.badEncoding)
+        }
+        return await self.AsyncPostAndDecode(request: request)
+    }
     
     func DownloadTask(fileURL : URL) async -> Result<URL,Error>{
         return await AsyncDownload(url: fileURL)

@@ -6,16 +6,48 @@
 //
 
 import SwiftUI
-struct TextBox : Identifiable {
+
+enum StoryItemType {
+    case Image
+    case Text
+}
+
+struct StorySubItem : Identifiable {
     var id = UUID().uuidString
     var text : String = ""
     var isBold : Bool = false
-    
+    var type : StoryItemType = .Text
+    var imageData : Data? = nil
     var offset : CGSize = .zero
     var lastOffset : CGSize = .zero
-    //other...
+    var angle : Angle = .degrees(0)
+    var lastAngle : Angle = .degrees(0)
+    var scaleFactor : CGFloat = 0
+    var lastScaleFactor: CGFloat = 1
     
+    //other...
     var textColor : Color = .white
     var isBorder : Bool = false
-    var order : Double = 1
+    var textAlignment : TextAlignment = .center
+    var isConer : Bool = false
+
+    
+    var alignment : Alignment {
+        switch(self.textAlignment){
+        case .center:
+            return .center
+        case .leading:
+            return .leading
+        case .trailing :
+            return .trailing
+        }
+    }
+    
+    var attributedString : AttributedString {
+        var textStr = AttributedString(self.text)
+        textStr.foregroundColor = self.textColor
+        textStr.backgroundColor =  self.isBorder ? Color.black : Color.clear
+      
+        return textStr
+    }
 }

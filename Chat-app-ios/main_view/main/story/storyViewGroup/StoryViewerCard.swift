@@ -24,7 +24,7 @@ struct StoryViwerCard: View {
     @State private var index = 0
     @State private var isAction : Bool = false
     @State private var isStoryUnavaiable : Bool = false
-    
+    @State private var likeCount = 0
     var body: some View {
         GeometryReader{ reader in
             ZStack{
@@ -227,6 +227,24 @@ struct StoryViwerCard: View {
                 }
             }
         }
+        .overlay(alignment:.bottom){
+            HStack{
+                Spacer()
+                ZStack{
+                    EmptyView()
+                        .padding(.trailing,30)
+                    ForEach(0..<self.likeCount,id:\.self){ _ in
+                        Image(systemName: "heart.fill")
+                            .imageScale(.large)
+                            .fontWeight(.medium)
+                            .foregroundColor(.red)
+                            .modifier(LoveTapModifier())
+                    }
+                }
+            }
+            .padding(.horizontal,10)
+            .padding(.bottom,10)
+        }
         .onAppear{
             Task {
                 await self.getStoriesList(userId: friendInfo!.id)
@@ -253,7 +271,6 @@ struct StoryViwerCard: View {
         case .success(let data):
             DispatchQueue.main.async {
                 self.storyIds = data.story_ids
-                print(self.storyIds)
                 Task{
                     if data.story_ids.isEmpty {
                         return
@@ -262,7 +279,6 @@ struct StoryViwerCard: View {
                     if let idx = data.story_ids.firstIndex(where: {$0 == self.storyId}) {
                         self.timeProgress = CGFloat(Int(idx))
                         self.index = idx
-                        print(data.story_ids[idx])
                         await self.getStoryInfo(storyID: data.story_ids[idx])
                         
                     }
@@ -277,10 +293,14 @@ struct StoryViwerCard: View {
     }
     
     private func getStoryInfo(storyID : UInt) async {
+        self.likeCount = 0
         let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
         switch resp {
         case .success(let data):
-            self.storyInfo = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at)
+            self.storyInfo = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked)
+            if data.is_liked {
+                self.likeCount = 10
+            }
         case .failure(let err):
             print(err.localizedDescription)
         }

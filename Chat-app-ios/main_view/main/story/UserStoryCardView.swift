@@ -16,6 +16,7 @@ struct UserStoryCardView: View {
     @EnvironmentObject private var userStory : UserStoryViewModel
     @State private var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @State private var timeProgress : CGFloat = 0
+    @State private var likeCount = 0
     
     @State private var isAction : Bool = false
     var body: some View {
@@ -75,7 +76,7 @@ struct UserStoryCardView: View {
                 }
             }
             .overlay(alignment:.topTrailing,content: {
-                
+        
                 HStack{
                     HStack{
                         AsyncImage(url: userModel.profile!.AvatarURL, content: { img in
@@ -146,7 +147,7 @@ struct UserStoryCardView: View {
                     HStack{
                         Button(action:{
                             self.isAction = true
-                            hub.SetWait(message: "Removing...")
+                            hub.SetWait(message: "Deleting...")
                             Task{
                                 if await self.userStory.deleteStory(storyID:self.userStory.currentStoryID){
                                     hub.isWaiting = false
@@ -194,6 +195,7 @@ struct UserStoryCardView: View {
             }
             .onAppear{
                 //TODO: Reset time progress
+
                 self.timeProgress = 0
             }
             .onChange(of: self.userStory.currentStoryID){ id in
@@ -201,6 +203,24 @@ struct UserStoryCardView: View {
                     await getStoryInfo(storyID: id)
                 }
             }
+        }
+        .overlay(alignment:.bottom){
+            HStack{
+                Spacer()
+                ZStack{
+                    EmptyView()
+                        .padding(.trailing,30)
+                    ForEach(0..<self.likeCount,id:\.self){ _ in
+                        Image(systemName: "heart.fill")
+                            .imageScale(.large)
+                            .fontWeight(.medium)
+                            .foregroundColor(.red)
+                            .modifier(LoveTapModifier())
+                    }
+                }
+            }
+            .padding(.horizontal,10)
+            .padding(.bottom,10)
         }
         .onAppear{
             self.userStory.currentStoryIndex = 0
@@ -224,10 +244,14 @@ struct UserStoryCardView: View {
     }
     
     private func getStoryInfo(storyID : UInt) async {
+        self.likeCount = 0
         let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
         switch resp {
         case .success(let data):
-            self.storyInfo = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at)
+            self.storyInfo = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked)
+            if data.is_liked{
+                self.likeCount = 10
+            }
         case .failure(let err):
             print(err.localizedDescription)
         }

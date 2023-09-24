@@ -316,12 +316,12 @@ struct StoryProfileView : View {
                     .strokeBorder(LinearGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]), startPoint: .bottom, endPoint: .top),lineWidth: 3)
             }else {
                 Circle()
-                    .strokeBorder(Color(uiColor: .systemGray4),lineWidth: 3)
+                    .strokeBorder(Color(uiColor: .systemGray).opacity(0.4),lineWidth: 3)
             }
         }
         .onTapGesture {
             withAnimation{
-                self.story.is_seen = true
+//                self.story.is_seen = true
                 self.storyModel.isShowStory = true
                 self.storyModel.currentStory = self.story.id
             }

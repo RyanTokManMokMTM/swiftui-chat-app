@@ -103,7 +103,7 @@ struct ChattingView: View {
                 }else {
                     NavigationLink(
                         destination:
-                                    OtherGroupProfileView(uuid: self.chatUserData.id!.uuidString, isShowDetail: $isShowInfo)
+                                    GroupProfileView(uuid: self.chatUserData.id!.uuidString, isShowDetail: $isShowInfo)
                         .environmentObject(userModel)
                     ){
                         HStack(){

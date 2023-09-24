@@ -212,13 +212,14 @@ class Websocket : ObservableObject {
     }
     
     
-    func onSend(msg : WSMessage) {
+    func onSend(msg : WSMessage, onSucceed : (() -> ())? = nil) {
         do {
             let req = try JSONEncoder().encode(msg)
             self.session?.send(.data(req)){ err in
                 if let err = err {
                     print("send message err \(err.localizedDescription)")
-                    
+                }else {
+                    onSucceed?()
                 }
             }
         }catch (let err){

@@ -12,6 +12,7 @@ class UserViewModel : ObservableObject {
     @Published var profile : UserProfile?
     @Published var friendsList : [UserProfile] = [UserProfile]()
     
+    
     func reset(){
         self.profile = nil
         self.friendsList = []
@@ -21,7 +22,6 @@ class UserViewModel : ObservableObject {
         DispatchQueue.main.async {
             BenHubState.shared.SetWait(message: "Loading...")
         }
-
         let resp = await ChatAppService.shared.GetFriendList()
         DispatchQueue.main.async {
             switch resp{

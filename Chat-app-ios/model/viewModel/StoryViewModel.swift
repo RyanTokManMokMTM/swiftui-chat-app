@@ -24,9 +24,8 @@ class StoryViewModel : ObservableObject {
         switch resp {
         case .success(let data):
             DispatchQueue.main.async {
-//                print(data.active_stories)
                 withAnimation{
-                    self.activeStories = data.active_stories
+                    self.activeStories = data.active_stories.sorted(by: { !$0.is_seen && $1.is_seen})
                 }
             }
         case .failure(let err):
