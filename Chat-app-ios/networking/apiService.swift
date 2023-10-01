@@ -14,8 +14,8 @@ protocol APIService {
     func GetUserProfileInfo(req : GetUserProfileReq) async -> Result<GetUserProfileResp,Error>
     func UpdateUserInfo(req : UpdateUserInfoReq) async -> Result<UpdateUserInfoResp,Error>
     func UpdateStatusMessage(req : UpdateStatusReq) async -> Result<UpdateStatusResp,Error>
-    func UploadUserAvatar(imgData : Data) async -> Result<UploadAvatarResp,Error>
-    func UploadUserCover(imgData : Data) async -> Result<UploadCoverResp,Error>
+    func UploadUserAvatar(imgData : Data) async -> Result<UploadUserAvatarResp,Error>
+    func UploadUserCover(imgData : Data) async -> Result<UploadUserCoverResp,Error>
     func SearchUser(email : String) async -> Result<SearchUserResp,Error>
     
     func AddFriend(req : AddFriendReq) async -> Result<AddFriendResp,Error>
@@ -30,7 +30,7 @@ protocol APIService {
     func GetGroupMembers(req : GetGroupMemberReq) async -> Result<GetGroupMembersResp,Error>
     func UploadGroupAvatar(imgData : Data,req : UploadGroupAvatarReq) async -> Result<UploadGroupAvatarResp,Error>
     func UpdateGroupInfo(req : UpdateGroupInfoReq) async -> Result<UpdateGroupInfoResp,Error>
-    func GetUserGroups() async -> Result<GetUserGroups,Error>
+    func GetUserGroups() async -> Result<GetUserGroupsResp,Error>
     func SearchGroup(query : String) async -> Result<SearchGroupResp,Error>
     func GetGroupInfoByUUID(uuid : String) async -> Result<GetGroupInfoByUUIDResp,Error>
     
@@ -48,6 +48,7 @@ protocol APIService {
     func UpdateStorySeen(req : UpdateUserStorySeenReq) async -> Result<UpdateUserStorySeenResp,Error>
     func CreateStoryLike(req : CreateStoryLikeReq) async -> Result<CreateStoryLikeResp,Error>
     func DeleteStoryLike(req : DeleteStoryLikeReq) async -> Result<DeleteStoryLikeResp,Error>
+    func GetStorySeenList(storyId : UInt) async -> Result<GetStorySeenListResp,Error>
     
     func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error>
     
@@ -127,6 +128,7 @@ enum APIEndPoint : String,CaseIterable {
     case UpdateUserStorySeen
     case CreateStoryLike
     case DeleteStoryLike
+    case GetStorySeenList
     
     case GetStickerGroup
     
@@ -175,6 +177,7 @@ enum APIEndPoint : String,CaseIterable {
         case .UpdateUserStorySeen : return "/story/seen"
         case .CreateStoryLike : return "/story/like"
         case .DeleteStoryLike : return "/story/like"
+        case .GetStorySeenList : return "/story/seen/"
             
         case .GetStickerGroup : return "/sticker/"
         }

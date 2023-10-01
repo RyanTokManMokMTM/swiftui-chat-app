@@ -62,6 +62,11 @@
 		2076908D29B62F6700ACD532 /* CustomConer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2076908C29B62F6700ACD532 /* CustomConer.swift */; };
 		2085012929BCB17D00C3E4DD /* AddContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2085012829BCB17D00C3E4DD /* AddContent.swift */; };
 		208B4CBA29F3CA3F001F2EF1 /* UserProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208B4CB929F3CA3F001F2EF1 /* UserProfileEditView.swift */; };
+		208F45CF2AC7FAFB004A843E /* StoryShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208F45CE2AC7FAFB004A843E /* StoryShareView.swift */; };
+		208F45D12AC972E7004A843E /* StoryLikedUserBasicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208F45D02AC972E7004A843E /* StoryLikedUserBasicInfo.swift */; };
+		208F45D52AC973A3004A843E /* GetStorySeenListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208F45D42AC973A3004A843E /* GetStorySeenListResponse.swift */; };
+		208F45D72AC973B8004A843E /* StorySeenInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208F45D62AC973B8004A843E /* StorySeenInfo.swift */; };
+		208F45D92AC99AA7004A843E /* StorySeenListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208F45D82AC99AA7004A843E /* StorySeenListView.swift */; };
 		208F5DCD29F4E8A600549483 /* StatusMessageEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208F5DCC29F4E8A600549483 /* StatusMessageEditView.swift */; };
 		208FE8A629E4241C00D8A820 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208FE8A529E4241C00D8A820 /* StoryViewModel.swift */; };
 		208FE8A829E42BBE00D8A820 /* StoryOtherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208FE8A729E42BBE00D8A820 /* StoryOtherView.swift */; };
@@ -94,7 +99,6 @@
 		20A8895329C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8894D29C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift */; };
 		20A8AA3C29B49BCA00B0243E /* ChatAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8AA3B29B49BCA00B0243E /* ChatAppService.swift */; };
 		20A8AA4029B49CF500B0243E /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8AA3F29B49CF500B0243E /* Util.swift */; };
-		20A8AA4229B4B60700B0243E /* requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8AA4129B4B60700B0243E /* requests.swift */; };
 		20A8AA4429B4BD4E00B0243E /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8AA4329B4BD4E00B0243E /* Error.swift */; };
 		20A8AA4729B4C01B00B0243E /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8AA4629B4C01B00B0243E /* UserViewModel.swift */; };
 		20AC7C7229C19D9200C4E7F9 /* RoomManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AC7C7129C19D9200C4E7F9 /* RoomManager.swift */; };
@@ -102,6 +106,76 @@
 		20B1267C2A10E5E6009FF2AB /* VideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1267B2A10E5E6009FF2AB /* VideoCallView.swift */; };
 		20B1267E2A10F4A9009FF2AB /* RTCViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1267D2A10F4A9009FF2AB /* RTCViewModel.swift */; };
 		20BBAA4329A669BB00ED3245 /* VoiceCallingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */; };
+		20C86B702AC7C0C100A29661 /* SignUpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B6F2AC7C0C100A29661 /* SignUpRequest.swift */; };
+		20C86B722AC7C0F100A29661 /* SignUpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B712AC7C0F100A29661 /* SignUpResponse.swift */; };
+		20C86B742AC7C11600A29661 /* SignInRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B732AC7C11600A29661 /* SignInRequest.swift */; };
+		20C86B762AC7C14100A29661 /* SignInResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B752AC7C14100A29661 /* SignInResponse.swift */; };
+		20C86B782AC7C16500A29661 /* GetUserInfoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B772AC7C16500A29661 /* GetUserInfoRequest.swift */; };
+		20C86B7A2AC7C17600A29661 /* GetUserInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B792AC7C17600A29661 /* GetUserInfoResponse.swift */; };
+		20C86B7C2AC7C18B00A29661 /* GetUserProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B7B2AC7C18B00A29661 /* GetUserProfileRequest.swift */; };
+		20C86B7E2AC7C19B00A29661 /* GetUserProfileResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B7D2AC7C19B00A29661 /* GetUserProfileResponse.swift */; };
+		20C86B802AC7C1B200A29661 /* UpdateUserInfoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B7F2AC7C1B200A29661 /* UpdateUserInfoRequest.swift */; };
+		20C86B822AC7C1CA00A29661 /* UpdateUserInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B812AC7C1CA00A29661 /* UpdateUserInfoResponse.swift */; };
+		20C86B842AC7C20500A29661 /* UpdateUserStateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B832AC7C20500A29661 /* UpdateUserStateRequest.swift */; };
+		20C86B862AC7C21C00A29661 /* UpdateUserStateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B852AC7C21C00A29661 /* UpdateUserStateResponse.swift */; };
+		20C86B882AC7C22F00A29661 /* UpdateUserAvatarResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B872AC7C22F00A29661 /* UpdateUserAvatarResponse.swift */; };
+		20C86B8A2AC7C27200A29661 /* SearchUserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B892AC7C27200A29661 /* SearchUserResponse.swift */; };
+		20C86B8C2AC7C28300A29661 /* SearchUserResultResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B8B2AC7C28300A29661 /* SearchUserResultResponse.swift */; };
+		20C86B8F2AC7C2A100A29661 /* AddFriendRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B8E2AC7C2A100A29661 /* AddFriendRequest.swift */; };
+		20C86B922AC7C2B800A29661 /* AddFriendResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B912AC7C2B800A29661 /* AddFriendResponse.swift */; };
+		20C86B942AC7C2CA00A29661 /* DeleteFriendRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B932AC7C2CA00A29661 /* DeleteFriendRequest.swift */; };
+		20C86B962AC7C2E800A29661 /* DeleteFriendResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B952AC7C2E800A29661 /* DeleteFriendResponse.swift */; };
+		20C86B982AC7C30600A29661 /* GetFriendListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B972AC7C30600A29661 /* GetFriendListResponse.swift */; };
+		20C86B9A2AC7C31D00A29661 /* GetFriendInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B992AC7C31D00A29661 /* GetFriendInfoResponse.swift */; };
+		20C86B9D2AC7C33A00A29661 /* FriendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B9C2AC7C33A00A29661 /* FriendInfo.swift */; };
+		20C86BA02AC7C35200A29661 /* CreateGroupRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B9F2AC7C35200A29661 /* CreateGroupRequest.swift */; };
+		20C86BA32AC7C37600A29661 /* CreateGroupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BA22AC7C37600A29661 /* CreateGroupResponse.swift */; };
+		20C86BA52AC7C3D600A29661 /* JoinGroupRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BA42AC7C3D600A29661 /* JoinGroupRequest.swift */; };
+		20C86BA72AC7C3E200A29661 /* JoinGroupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BA62AC7C3E200A29661 /* JoinGroupResponse.swift */; };
+		20C86BA92AC7C40D00A29661 /* LeaveGroupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BA82AC7C40D00A29661 /* LeaveGroupResponse.swift */; };
+		20C86BAB2AC7C41900A29661 /* DeleteGroupRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BAA2AC7C41900A29661 /* DeleteGroupRequest.swift */; };
+		20C86BAD2AC7C42A00A29661 /* DeleteGroupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BAC2AC7C42A00A29661 /* DeleteGroupResponse.swift */; };
+		20C86BAF2AC7C43D00A29661 /* GetGroupMembersRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BAE2AC7C43D00A29661 /* GetGroupMembersRequest.swift */; };
+		20C86BB12AC7C45B00A29661 /* GetGroupMemberResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BB02AC7C45B00A29661 /* GetGroupMemberResponse.swift */; };
+		20C86BB32AC7C46F00A29661 /* SearchGroupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BB22AC7C46F00A29661 /* SearchGroupResponse.swift */; };
+		20C86BB52AC7C48600A29661 /* GetGroupInfoByUUIDResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BB42AC7C48600A29661 /* GetGroupInfoByUUIDResponse.swift */; };
+		20C86BB72AC7C49B00A29661 /* GroupMemberInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BB62AC7C49B00A29661 /* GroupMemberInfo.swift */; };
+		20C86BB92AC7C4AD00A29661 /* FullGroupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BB82AC7C4AD00A29661 /* FullGroupInfo.swift */; };
+		20C86BBB2AC7C4C000A29661 /* UpdateGroupInfoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BBA2AC7C4C000A29661 /* UpdateGroupInfoRequest.swift */; };
+		20C86BBD2AC7C4ED00A29661 /* UpdateGroupInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BBC2AC7C4ED00A29661 /* UpdateGroupInfoResponse.swift */; };
+		20C86BBF2AC7C60A00A29661 /* UploadGroupAvatarRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BBE2AC7C60A00A29661 /* UploadGroupAvatarRequest.swift */; };
+		20C86BC12AC7C62400A29661 /* UpdateGroupAvatarResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BC02AC7C62400A29661 /* UpdateGroupAvatarResponse.swift */; };
+		20C86BC42AC7C67D00A29661 /* GetUserGroupsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BC32AC7C67D00A29661 /* GetUserGroupsResponse.swift */; };
+		20C86BC62AC7C68900A29661 /* GroupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BC52AC7C68900A29661 /* GroupInfo.swift */; };
+		20C86BCA2AC7C6B300A29661 /* GetMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BC92AC7C6B300A29661 /* GetMessageRequest.swift */; };
+		20C86BCC2AC7C6CE00A29661 /* GetMessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BCB2AC7C6CE00A29661 /* GetMessageResponse.swift */; };
+		20C86BCE2AC7C6DE00A29661 /* MessageUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BCD2AC7C6DE00A29661 /* MessageUser.swift */; };
+		20C86BD02AC7C6E900A29661 /* DeleteMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BCF2AC7C6E900A29661 /* DeleteMessageRequest.swift */; };
+		20C86BD22AC7C6F900A29661 /* DeleteMessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BD12AC7C6F900A29661 /* DeleteMessageResponse.swift */; };
+		20C86BD52AC7C77300A29661 /* UploadImageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BD42AC7C77300A29661 /* UploadImageRequest.swift */; };
+		20C86BD82AC7C79200A29661 /* UploadImageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BD72AC7C79200A29661 /* UploadImageResponse.swift */; };
+		20C86BDA2AC7C81900A29661 /* UploadFileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BD92AC7C81900A29661 /* UploadFileRequest.swift */; };
+		20C86BDC2AC7C83E00A29661 /* UploadFileResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BDB2AC7C83E00A29661 /* UploadFileResponse.swift */; };
+		20C86BE02AC7C87F00A29661 /* CreateStoryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BDF2AC7C87F00A29661 /* CreateStoryResponse.swift */; };
+		20C86BE22AC7C8C200A29661 /* GetUserStoriesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BE12AC7C8C200A29661 /* GetUserStoriesResponse.swift */; };
+		20C86BE42AC7C8DA00A29661 /* GetStoryInfoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BE32AC7C8DA00A29661 /* GetStoryInfoRequest.swift */; };
+		20C86BE62AC7C8E900A29661 /* GetStoryInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BE52AC7C8E900A29661 /* GetStoryInfoResponse.swift */; };
+		20C86BE82AC7C8F800A29661 /* DeleteStoryRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BE72AC7C8F800A29661 /* DeleteStoryRequest.swift */; };
+		20C86BEA2AC7C90C00A29661 /* DeleteStoryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BE92AC7C90C00A29661 /* DeleteStoryResponse.swift */; };
+		20C86BEC2AC7C91900A29661 /* GetActiveStoryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BEB2AC7C91900A29661 /* GetActiveStoryResponse.swift */; };
+		20C86BEE2AC7C92700A29661 /* FriendStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BED2AC7C92700A29661 /* FriendStory.swift */; };
+		20C86BF12AC7C94A00A29661 /* GetStickerGroupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF02AC7C94A00A29661 /* GetStickerGroupResponse.swift */; };
+		20C86BF32AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF22AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift */; };
+		20C86BF52AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF42AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift */; };
+		20C86BF72AC7C98200A29661 /* CreateStoryLikeRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF62AC7C98200A29661 /* CreateStoryLikeRequest.swift */; };
+		20C86BF92AC7C99500A29661 /* CreateStoryLikeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF82AC7C99500A29661 /* CreateStoryLikeResponse.swift */; };
+		20C86BFB2AC7C9A600A29661 /* DeleteStoryLikeRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BFA2AC7C9A600A29661 /* DeleteStoryLikeRequest.swift */; };
+		20C86BFD2AC7C9B800A29661 /* DeleteStoryLikeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BFC2AC7C9B800A29661 /* DeleteStoryLikeResponse.swift */; };
+		20C86BFF2AC7C9C500A29661 /* StoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BFE2AC7C9C500A29661 /* StoryInfo.swift */; };
+		20C86C022AC7C9E900A29661 /* HealthCheckResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86C012AC7C9E900A29661 /* HealthCheckResponse.swift */; };
+		20C86C042AC7CBE100A29661 /* UpdateUserCoverResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86C032AC7CBE100A29661 /* UpdateUserCoverResponse.swift */; };
+		20C86C062AC7CC3A00A29661 /* LeaveGroupRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86C052AC7CC3A00A29661 /* LeaveGroupRequest.swift */; };
+		20C86C082AC7CE1100A29661 /* requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86C072AC7CE1100A29661 /* requests.swift */; };
 		20CE5D2529A352C9001371A7 /* FriendRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CE5D2429A352C9001371A7 /* FriendRow.swift */; };
 		20CE5D2729A3541C001371A7 /* CallRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CE5D2629A3541C001371A7 /* CallRow.swift */; };
 		20CE5D2B29A354D6001371A7 /* CallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CE5D2A29A354D6001371A7 /* CallView.swift */; };
@@ -170,6 +244,11 @@
 		2076908C29B62F6700ACD532 /* CustomConer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomConer.swift; sourceTree = "<group>"; };
 		2085012829BCB17D00C3E4DD /* AddContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContent.swift; sourceTree = "<group>"; };
 		208B4CB929F3CA3F001F2EF1 /* UserProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileEditView.swift; sourceTree = "<group>"; };
+		208F45CE2AC7FAFB004A843E /* StoryShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryShareView.swift; sourceTree = "<group>"; };
+		208F45D02AC972E7004A843E /* StoryLikedUserBasicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryLikedUserBasicInfo.swift; sourceTree = "<group>"; };
+		208F45D42AC973A3004A843E /* GetStorySeenListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStorySeenListResponse.swift; sourceTree = "<group>"; };
+		208F45D62AC973B8004A843E /* StorySeenInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorySeenInfo.swift; sourceTree = "<group>"; };
+		208F45D82AC99AA7004A843E /* StorySeenListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorySeenListView.swift; sourceTree = "<group>"; };
 		208F5DCC29F4E8A600549483 /* StatusMessageEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMessageEditView.swift; sourceTree = "<group>"; };
 		208FE8A529E4241C00D8A820 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
 		208FE8A729E42BBE00D8A820 /* StoryOtherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryOtherView.swift; sourceTree = "<group>"; };
@@ -204,7 +283,6 @@
 		20A8894D29C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDatas+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		20A8AA3B29B49BCA00B0243E /* ChatAppService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAppService.swift; sourceTree = "<group>"; };
 		20A8AA3F29B49CF500B0243E /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
-		20A8AA4129B4B60700B0243E /* requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = requests.swift; sourceTree = "<group>"; };
 		20A8AA4329B4BD4E00B0243E /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		20A8AA4629B4C01B00B0243E /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
 		20AC7C7129C19D9200C4E7F9 /* RoomManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomManager.swift; sourceTree = "<group>"; };
@@ -212,6 +290,76 @@
 		20B1267B2A10E5E6009FF2AB /* VideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallView.swift; sourceTree = "<group>"; };
 		20B1267D2A10F4A9009FF2AB /* RTCViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTCViewModel.swift; sourceTree = "<group>"; };
 		20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCallingView.swift; sourceTree = "<group>"; };
+		20C86B6F2AC7C0C100A29661 /* SignUpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpRequest.swift; sourceTree = "<group>"; };
+		20C86B712AC7C0F100A29661 /* SignUpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpResponse.swift; sourceTree = "<group>"; };
+		20C86B732AC7C11600A29661 /* SignInRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInRequest.swift; sourceTree = "<group>"; };
+		20C86B752AC7C14100A29661 /* SignInResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInResponse.swift; sourceTree = "<group>"; };
+		20C86B772AC7C16500A29661 /* GetUserInfoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserInfoRequest.swift; sourceTree = "<group>"; };
+		20C86B792AC7C17600A29661 /* GetUserInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserInfoResponse.swift; sourceTree = "<group>"; };
+		20C86B7B2AC7C18B00A29661 /* GetUserProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserProfileRequest.swift; sourceTree = "<group>"; };
+		20C86B7D2AC7C19B00A29661 /* GetUserProfileResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserProfileResponse.swift; sourceTree = "<group>"; };
+		20C86B7F2AC7C1B200A29661 /* UpdateUserInfoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserInfoRequest.swift; sourceTree = "<group>"; };
+		20C86B812AC7C1CA00A29661 /* UpdateUserInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserInfoResponse.swift; sourceTree = "<group>"; };
+		20C86B832AC7C20500A29661 /* UpdateUserStateRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserStateRequest.swift; sourceTree = "<group>"; };
+		20C86B852AC7C21C00A29661 /* UpdateUserStateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserStateResponse.swift; sourceTree = "<group>"; };
+		20C86B872AC7C22F00A29661 /* UpdateUserAvatarResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserAvatarResponse.swift; sourceTree = "<group>"; };
+		20C86B892AC7C27200A29661 /* SearchUserResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserResponse.swift; sourceTree = "<group>"; };
+		20C86B8B2AC7C28300A29661 /* SearchUserResultResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserResultResponse.swift; sourceTree = "<group>"; };
+		20C86B8E2AC7C2A100A29661 /* AddFriendRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendRequest.swift; sourceTree = "<group>"; };
+		20C86B912AC7C2B800A29661 /* AddFriendResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendResponse.swift; sourceTree = "<group>"; };
+		20C86B932AC7C2CA00A29661 /* DeleteFriendRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteFriendRequest.swift; sourceTree = "<group>"; };
+		20C86B952AC7C2E800A29661 /* DeleteFriendResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteFriendResponse.swift; sourceTree = "<group>"; };
+		20C86B972AC7C30600A29661 /* GetFriendListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetFriendListResponse.swift; sourceTree = "<group>"; };
+		20C86B992AC7C31D00A29661 /* GetFriendInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetFriendInfoResponse.swift; sourceTree = "<group>"; };
+		20C86B9C2AC7C33A00A29661 /* FriendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendInfo.swift; sourceTree = "<group>"; };
+		20C86B9F2AC7C35200A29661 /* CreateGroupRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupRequest.swift; sourceTree = "<group>"; };
+		20C86BA22AC7C37600A29661 /* CreateGroupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupResponse.swift; sourceTree = "<group>"; };
+		20C86BA42AC7C3D600A29661 /* JoinGroupRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGroupRequest.swift; sourceTree = "<group>"; };
+		20C86BA62AC7C3E200A29661 /* JoinGroupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGroupResponse.swift; sourceTree = "<group>"; };
+		20C86BA82AC7C40D00A29661 /* LeaveGroupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveGroupResponse.swift; sourceTree = "<group>"; };
+		20C86BAA2AC7C41900A29661 /* DeleteGroupRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteGroupRequest.swift; sourceTree = "<group>"; };
+		20C86BAC2AC7C42A00A29661 /* DeleteGroupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteGroupResponse.swift; sourceTree = "<group>"; };
+		20C86BAE2AC7C43D00A29661 /* GetGroupMembersRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGroupMembersRequest.swift; sourceTree = "<group>"; };
+		20C86BB02AC7C45B00A29661 /* GetGroupMemberResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGroupMemberResponse.swift; sourceTree = "<group>"; };
+		20C86BB22AC7C46F00A29661 /* SearchGroupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGroupResponse.swift; sourceTree = "<group>"; };
+		20C86BB42AC7C48600A29661 /* GetGroupInfoByUUIDResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGroupInfoByUUIDResponse.swift; sourceTree = "<group>"; };
+		20C86BB62AC7C49B00A29661 /* GroupMemberInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberInfo.swift; sourceTree = "<group>"; };
+		20C86BB82AC7C4AD00A29661 /* FullGroupInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullGroupInfo.swift; sourceTree = "<group>"; };
+		20C86BBA2AC7C4C000A29661 /* UpdateGroupInfoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateGroupInfoRequest.swift; sourceTree = "<group>"; };
+		20C86BBC2AC7C4ED00A29661 /* UpdateGroupInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateGroupInfoResponse.swift; sourceTree = "<group>"; };
+		20C86BBE2AC7C60A00A29661 /* UploadGroupAvatarRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadGroupAvatarRequest.swift; sourceTree = "<group>"; };
+		20C86BC02AC7C62400A29661 /* UpdateGroupAvatarResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateGroupAvatarResponse.swift; sourceTree = "<group>"; };
+		20C86BC32AC7C67D00A29661 /* GetUserGroupsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserGroupsResponse.swift; sourceTree = "<group>"; };
+		20C86BC52AC7C68900A29661 /* GroupInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupInfo.swift; sourceTree = "<group>"; };
+		20C86BC92AC7C6B300A29661 /* GetMessageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMessageRequest.swift; sourceTree = "<group>"; };
+		20C86BCB2AC7C6CE00A29661 /* GetMessageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMessageResponse.swift; sourceTree = "<group>"; };
+		20C86BCD2AC7C6DE00A29661 /* MessageUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUser.swift; sourceTree = "<group>"; };
+		20C86BCF2AC7C6E900A29661 /* DeleteMessageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteMessageRequest.swift; sourceTree = "<group>"; };
+		20C86BD12AC7C6F900A29661 /* DeleteMessageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteMessageResponse.swift; sourceTree = "<group>"; };
+		20C86BD42AC7C77300A29661 /* UploadImageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImageRequest.swift; sourceTree = "<group>"; };
+		20C86BD72AC7C79200A29661 /* UploadImageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImageResponse.swift; sourceTree = "<group>"; };
+		20C86BD92AC7C81900A29661 /* UploadFileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadFileRequest.swift; sourceTree = "<group>"; };
+		20C86BDB2AC7C83E00A29661 /* UploadFileResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadFileResponse.swift; sourceTree = "<group>"; };
+		20C86BDF2AC7C87F00A29661 /* CreateStoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateStoryResponse.swift; sourceTree = "<group>"; };
+		20C86BE12AC7C8C200A29661 /* GetUserStoriesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserStoriesResponse.swift; sourceTree = "<group>"; };
+		20C86BE32AC7C8DA00A29661 /* GetStoryInfoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStoryInfoRequest.swift; sourceTree = "<group>"; };
+		20C86BE52AC7C8E900A29661 /* GetStoryInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStoryInfoResponse.swift; sourceTree = "<group>"; };
+		20C86BE72AC7C8F800A29661 /* DeleteStoryRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteStoryRequest.swift; sourceTree = "<group>"; };
+		20C86BE92AC7C90C00A29661 /* DeleteStoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteStoryResponse.swift; sourceTree = "<group>"; };
+		20C86BEB2AC7C91900A29661 /* GetActiveStoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetActiveStoryResponse.swift; sourceTree = "<group>"; };
+		20C86BED2AC7C92700A29661 /* FriendStory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendStory.swift; sourceTree = "<group>"; };
+		20C86BF02AC7C94A00A29661 /* GetStickerGroupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStickerGroupResponse.swift; sourceTree = "<group>"; };
+		20C86BF22AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserStorySeenRequest.swift; sourceTree = "<group>"; };
+		20C86BF42AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserStorySeenResponse.swift; sourceTree = "<group>"; };
+		20C86BF62AC7C98200A29661 /* CreateStoryLikeRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateStoryLikeRequest.swift; sourceTree = "<group>"; };
+		20C86BF82AC7C99500A29661 /* CreateStoryLikeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateStoryLikeResponse.swift; sourceTree = "<group>"; };
+		20C86BFA2AC7C9A600A29661 /* DeleteStoryLikeRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteStoryLikeRequest.swift; sourceTree = "<group>"; };
+		20C86BFC2AC7C9B800A29661 /* DeleteStoryLikeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteStoryLikeResponse.swift; sourceTree = "<group>"; };
+		20C86BFE2AC7C9C500A29661 /* StoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryInfo.swift; sourceTree = "<group>"; };
+		20C86C012AC7C9E900A29661 /* HealthCheckResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCheckResponse.swift; sourceTree = "<group>"; };
+		20C86C032AC7CBE100A29661 /* UpdateUserCoverResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserCoverResponse.swift; sourceTree = "<group>"; };
+		20C86C052AC7CC3A00A29661 /* LeaveGroupRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveGroupRequest.swift; sourceTree = "<group>"; };
+		20C86C072AC7CE1100A29661 /* requests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = requests.swift; sourceTree = "<group>"; };
 		20CE5D2429A352C9001371A7 /* FriendRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRow.swift; sourceTree = "<group>"; };
 		20CE5D2629A3541C001371A7 /* CallRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallRow.swift; sourceTree = "<group>"; };
 		20CE5D2A29A354D6001371A7 /* CallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallView.swift; sourceTree = "<group>"; };
@@ -315,6 +463,8 @@
 				208FE8A729E42BBE00D8A820 /* StoryOtherView.swift */,
 				203D5DAB2A6BC983003E1A1A /* StoryUserView.swift */,
 				203D5DAD2A6BCA32003E1A1A /* UserStoryCardView.swift */,
+				208F45CE2AC7FAFB004A843E /* StoryShareView.swift */,
+				208F45D82AC99AA7004A843E /* StorySeenListView.swift */,
 			);
 			path = story;
 			sourceTree = "<group>";
@@ -534,6 +684,7 @@
 		2091E9CE299CED4300EB9A7C /* networking */ = {
 			isa = PBXGroup;
 			children = (
+				20C86C072AC7CE1100A29661 /* requests.swift */,
 				2091E9D3299FC04700EB9A7C /* types */,
 				2091E9D1299D1E2B00EB9A7C /* apiService.swift */,
 				20A8AA3B29B49BCA00B0243E /* ChatAppService.swift */,
@@ -554,7 +705,9 @@
 		2091E9D3299FC04700EB9A7C /* types */ = {
 			isa = PBXGroup;
 			children = (
-				20A8AA4129B4B60700B0243E /* requests.swift */,
+				20C86B9B2AC7C33100A29661 /* objects */,
+				20C86B6D2AC7C09900A29661 /* response */,
+				20C86B6B2AC7C05000A29661 /* request */,
 				20A8AA4329B4BD4E00B0243E /* Error.swift */,
 			);
 			path = types;
@@ -618,6 +771,211 @@
 				20A8894929C02EE100B5BED2 /* CoreDataModel */,
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		20C86B6B2AC7C05000A29661 /* request */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BDD2AC7C86000A29661 /* story */,
+				20C86BD32AC7C71700A29661 /* fileUpload */,
+				20C86BC72AC7C69900A29661 /* message */,
+				20C86B9E2AC7C34700A29661 /* group */,
+				20C86B8D2AC7C29100A29661 /* friend */,
+				20C86B6C2AC7C05A00A29661 /* user */,
+			);
+			path = request;
+			sourceTree = "<group>";
+		};
+		20C86B6C2AC7C05A00A29661 /* user */ = {
+			isa = PBXGroup;
+			children = (
+				20C86B6F2AC7C0C100A29661 /* SignUpRequest.swift */,
+				20C86B732AC7C11600A29661 /* SignInRequest.swift */,
+				20C86B772AC7C16500A29661 /* GetUserInfoRequest.swift */,
+				20C86B7B2AC7C18B00A29661 /* GetUserProfileRequest.swift */,
+				20C86B7F2AC7C1B200A29661 /* UpdateUserInfoRequest.swift */,
+				20C86B832AC7C20500A29661 /* UpdateUserStateRequest.swift */,
+			);
+			path = user;
+			sourceTree = "<group>";
+		};
+		20C86B6D2AC7C09900A29661 /* response */ = {
+			isa = PBXGroup;
+			children = (
+				20C86C002AC7C9D600A29661 /* healthCheck */,
+				20C86BEF2AC7C93D00A29661 /* sticket */,
+				20C86BDE2AC7C86D00A29661 /* story */,
+				20C86BD62AC7C77F00A29661 /* fileUpload */,
+				20C86BC82AC7C6A300A29661 /* message */,
+				20C86BA12AC7C36800A29661 /* group */,
+				20C86B902AC7C2B000A29661 /* friend */,
+				20C86B6E2AC7C0A300A29661 /* user */,
+			);
+			path = response;
+			sourceTree = "<group>";
+		};
+		20C86B6E2AC7C0A300A29661 /* user */ = {
+			isa = PBXGroup;
+			children = (
+				20C86B712AC7C0F100A29661 /* SignUpResponse.swift */,
+				20C86B752AC7C14100A29661 /* SignInResponse.swift */,
+				20C86B792AC7C17600A29661 /* GetUserInfoResponse.swift */,
+				20C86B7D2AC7C19B00A29661 /* GetUserProfileResponse.swift */,
+				20C86B812AC7C1CA00A29661 /* UpdateUserInfoResponse.swift */,
+				20C86B852AC7C21C00A29661 /* UpdateUserStateResponse.swift */,
+				20C86B872AC7C22F00A29661 /* UpdateUserAvatarResponse.swift */,
+				20C86B892AC7C27200A29661 /* SearchUserResponse.swift */,
+				20C86B8B2AC7C28300A29661 /* SearchUserResultResponse.swift */,
+				20C86C032AC7CBE100A29661 /* UpdateUserCoverResponse.swift */,
+			);
+			path = user;
+			sourceTree = "<group>";
+		};
+		20C86B8D2AC7C29100A29661 /* friend */ = {
+			isa = PBXGroup;
+			children = (
+				20C86B8E2AC7C2A100A29661 /* AddFriendRequest.swift */,
+				20C86B932AC7C2CA00A29661 /* DeleteFriendRequest.swift */,
+			);
+			path = friend;
+			sourceTree = "<group>";
+		};
+		20C86B902AC7C2B000A29661 /* friend */ = {
+			isa = PBXGroup;
+			children = (
+				20C86B912AC7C2B800A29661 /* AddFriendResponse.swift */,
+				20C86B952AC7C2E800A29661 /* DeleteFriendResponse.swift */,
+				20C86B972AC7C30600A29661 /* GetFriendListResponse.swift */,
+				20C86B992AC7C31D00A29661 /* GetFriendInfoResponse.swift */,
+			);
+			path = friend;
+			sourceTree = "<group>";
+		};
+		20C86B9B2AC7C33100A29661 /* objects */ = {
+			isa = PBXGroup;
+			children = (
+				20C86B9C2AC7C33A00A29661 /* FriendInfo.swift */,
+				20C86BB62AC7C49B00A29661 /* GroupMemberInfo.swift */,
+				20C86BB82AC7C4AD00A29661 /* FullGroupInfo.swift */,
+				20C86BC52AC7C68900A29661 /* GroupInfo.swift */,
+				20C86BCD2AC7C6DE00A29661 /* MessageUser.swift */,
+				20C86BED2AC7C92700A29661 /* FriendStory.swift */,
+				20C86BFE2AC7C9C500A29661 /* StoryInfo.swift */,
+				208F45D02AC972E7004A843E /* StoryLikedUserBasicInfo.swift */,
+				208F45D62AC973B8004A843E /* StorySeenInfo.swift */,
+			);
+			path = objects;
+			sourceTree = "<group>";
+		};
+		20C86B9E2AC7C34700A29661 /* group */ = {
+			isa = PBXGroup;
+			children = (
+				20C86B9F2AC7C35200A29661 /* CreateGroupRequest.swift */,
+				20C86BA42AC7C3D600A29661 /* JoinGroupRequest.swift */,
+				20C86BAA2AC7C41900A29661 /* DeleteGroupRequest.swift */,
+				20C86BAE2AC7C43D00A29661 /* GetGroupMembersRequest.swift */,
+				20C86BBA2AC7C4C000A29661 /* UpdateGroupInfoRequest.swift */,
+				20C86BBE2AC7C60A00A29661 /* UploadGroupAvatarRequest.swift */,
+				20C86C052AC7CC3A00A29661 /* LeaveGroupRequest.swift */,
+			);
+			path = group;
+			sourceTree = "<group>";
+		};
+		20C86BA12AC7C36800A29661 /* group */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BA22AC7C37600A29661 /* CreateGroupResponse.swift */,
+				20C86BA62AC7C3E200A29661 /* JoinGroupResponse.swift */,
+				20C86BA82AC7C40D00A29661 /* LeaveGroupResponse.swift */,
+				20C86BAC2AC7C42A00A29661 /* DeleteGroupResponse.swift */,
+				20C86BB02AC7C45B00A29661 /* GetGroupMemberResponse.swift */,
+				20C86BB22AC7C46F00A29661 /* SearchGroupResponse.swift */,
+				20C86BB42AC7C48600A29661 /* GetGroupInfoByUUIDResponse.swift */,
+				20C86BBC2AC7C4ED00A29661 /* UpdateGroupInfoResponse.swift */,
+				20C86BC02AC7C62400A29661 /* UpdateGroupAvatarResponse.swift */,
+				20C86BC32AC7C67D00A29661 /* GetUserGroupsResponse.swift */,
+			);
+			path = group;
+			sourceTree = "<group>";
+		};
+		20C86BC72AC7C69900A29661 /* message */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BC92AC7C6B300A29661 /* GetMessageRequest.swift */,
+				20C86BCF2AC7C6E900A29661 /* DeleteMessageRequest.swift */,
+			);
+			path = message;
+			sourceTree = "<group>";
+		};
+		20C86BC82AC7C6A300A29661 /* message */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BCB2AC7C6CE00A29661 /* GetMessageResponse.swift */,
+				20C86BD12AC7C6F900A29661 /* DeleteMessageResponse.swift */,
+			);
+			path = message;
+			sourceTree = "<group>";
+		};
+		20C86BD32AC7C71700A29661 /* fileUpload */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BD42AC7C77300A29661 /* UploadImageRequest.swift */,
+				20C86BD92AC7C81900A29661 /* UploadFileRequest.swift */,
+			);
+			path = fileUpload;
+			sourceTree = "<group>";
+		};
+		20C86BD62AC7C77F00A29661 /* fileUpload */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BD72AC7C79200A29661 /* UploadImageResponse.swift */,
+				20C86BDB2AC7C83E00A29661 /* UploadFileResponse.swift */,
+			);
+			path = fileUpload;
+			sourceTree = "<group>";
+		};
+		20C86BDD2AC7C86000A29661 /* story */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BE32AC7C8DA00A29661 /* GetStoryInfoRequest.swift */,
+				20C86BE72AC7C8F800A29661 /* DeleteStoryRequest.swift */,
+				20C86BF22AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift */,
+				20C86BF62AC7C98200A29661 /* CreateStoryLikeRequest.swift */,
+				20C86BFA2AC7C9A600A29661 /* DeleteStoryLikeRequest.swift */,
+			);
+			path = story;
+			sourceTree = "<group>";
+		};
+		20C86BDE2AC7C86D00A29661 /* story */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BDF2AC7C87F00A29661 /* CreateStoryResponse.swift */,
+				20C86BE12AC7C8C200A29661 /* GetUserStoriesResponse.swift */,
+				20C86BE52AC7C8E900A29661 /* GetStoryInfoResponse.swift */,
+				20C86BE92AC7C90C00A29661 /* DeleteStoryResponse.swift */,
+				20C86BEB2AC7C91900A29661 /* GetActiveStoryResponse.swift */,
+				20C86BF42AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift */,
+				20C86BF82AC7C99500A29661 /* CreateStoryLikeResponse.swift */,
+				20C86BFC2AC7C9B800A29661 /* DeleteStoryLikeResponse.swift */,
+				208F45D42AC973A3004A843E /* GetStorySeenListResponse.swift */,
+			);
+			path = story;
+			sourceTree = "<group>";
+		};
+		20C86BEF2AC7C93D00A29661 /* sticket */ = {
+			isa = PBXGroup;
+			children = (
+				20C86BF02AC7C94A00A29661 /* GetStickerGroupResponse.swift */,
+			);
+			path = sticket;
+			sourceTree = "<group>";
+		};
+		20C86C002AC7C9D600A29661 /* healthCheck */ = {
+			isa = PBXGroup;
+			children = (
+				20C86C012AC7C9E900A29661 /* HealthCheckResponse.swift */,
+			);
+			path = healthCheck;
 			sourceTree = "<group>";
 		};
 		20F47B2B29C598BD003D5CD0 /* uikit */ = {
@@ -708,40 +1066,80 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20C86BE02AC7C87F00A29661 /* CreateStoryResponse.swift in Sources */,
+				20C86BF92AC7C99500A29661 /* CreateStoryLikeResponse.swift in Sources */,
 				2091E9D2299D1E2B00EB9A7C /* apiService.swift in Sources */,
 				2099ACDE29BB02E1008CDFEA /* UserContentView.swift in Sources */,
+				20C86BEA2AC7C90C00A29661 /* DeleteStoryResponse.swift in Sources */,
+				20C86BD02AC7C6E900A29661 /* DeleteMessageRequest.swift in Sources */,
+				208F45D72AC973B8004A843E /* StorySeenInfo.swift in Sources */,
 				20EA19B82A174430006427F9 /* serverConfig.swift in Sources */,
+				20C86B722AC7C0F100A29661 /* SignUpResponse.swift in Sources */,
+				20C86BEE2AC7C92700A29661 /* FriendStory.swift in Sources */,
+				20C86B822AC7C1CA00A29661 /* UpdateUserInfoResponse.swift in Sources */,
 				206D250E29F41D59008E3727 /* EditView.swift in Sources */,
+				20C86B782AC7C16500A29661 /* GetUserInfoRequest.swift in Sources */,
 				204C4A4229B721A5007AA02E /* menuRow.swift in Sources */,
+				20C86B8C2AC7C28300A29661 /* SearchUserResultResponse.swift in Sources */,
+				20C86BCE2AC7C6DE00A29661 /* MessageUser.swift in Sources */,
 				20A8AA4729B4C01B00B0243E /* UserViewModel.swift in Sources */,
+				208F45D92AC99AA7004A843E /* StorySeenListView.swift in Sources */,
 				209F7ABD29BC41C3003701E8 /* AppDelegate.swift in Sources */,
+				20C86BF32AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift in Sources */,
 				200B79A429BDA78F00F1DB70 /* CreateGroup.swift in Sources */,
 				2076908D29B62F6700ACD532 /* CustomConer.swift in Sources */,
+				20C86BE82AC7C8F800A29661 /* DeleteStoryRequest.swift in Sources */,
+				20C86BBF2AC7C60A00A29661 /* UploadGroupAvatarRequest.swift in Sources */,
+				20C86BA02AC7C35200A29661 /* CreateGroupRequest.swift in Sources */,
+				20C86BB92AC7C4AD00A29661 /* FullGroupInfo.swift in Sources */,
 				209F33F72AAD98B100DF8371 /* UIImage.swift in Sources */,
 				2048A0952A1F646300050F4D /* RoomMessages+CoreDataProperties.swift in Sources */,
+				20C86BD52AC7C77300A29661 /* UploadImageRequest.swift in Sources */,
+				20C86BE62AC7C8E900A29661 /* GetStoryInfoResponse.swift in Sources */,
+				20C86B9A2AC7C31D00A29661 /* GetFriendInfoResponse.swift in Sources */,
 				2094454D29F8EE4300BBD9A4 /* ActiveRooms+CoreDataClass.swift in Sources */,
 				2073D67529A26CFA00AA29D9 /* Date.swift in Sources */,
 				20A8AA4429B4BD4E00B0243E /* Error.swift in Sources */,
 				201CB7AD29BED1D20036D181 /* Model.xcdatamodeld in Sources */,
+				20C86BDA2AC7C81900A29661 /* UploadFileRequest.swift in Sources */,
+				20C86B702AC7C0C100A29661 /* SignUpRequest.swift in Sources */,
+				20C86BC12AC7C62400A29661 /* UpdateGroupAvatarResponse.swift in Sources */,
+				20C86BE42AC7C8DA00A29661 /* GetStoryInfoRequest.swift in Sources */,
 				20CE5D2D29A354EA001371A7 /* dummyData.swift in Sources */,
 				2022AFA729C99F4B00C47383 /* URL.swift in Sources */,
 				20B1267C2A10E5E6009FF2AB /* VideoCallView.swift in Sources */,
+				20C86BD22AC7C6F900A29661 /* DeleteMessageResponse.swift in Sources */,
+				20C86BBB2AC7C4C000A29661 /* UpdateGroupInfoRequest.swift in Sources */,
 				20AF749D2A1DD30F00A07D12 /* AddContentView.swift in Sources */,
+				20C86BAF2AC7C43D00A29661 /* GetGroupMembersRequest.swift in Sources */,
+				20C86BFD2AC7C9B800A29661 /* DeleteStoryLikeResponse.swift in Sources */,
 				203D5DA52A62CD28003E1A1A /* SearchGroupProfileResultView.swift in Sources */,
 				20164E3D29BAE51700F61813 /* CustomSearchBar.swift in Sources */,
+				20C86B762AC7C14100A29661 /* SignInResponse.swift in Sources */,
 				2000E0A02A21E40C00F03480 /* DrawingScreen.swift in Sources */,
+				20C86BFF2AC7C9C500A29661 /* StoryInfo.swift in Sources */,
 				2073D66B29A250EF00AA29D9 /* HomeView.swift in Sources */,
+				20C86BCA2AC7C6B300A29661 /* GetMessageRequest.swift in Sources */,
 				2043305029F3ADD3004305C0 /* ListGourpMemberView.swift in Sources */,
+				20C86B8F2AC7C2A100A29661 /* AddFriendRequest.swift in Sources */,
 				203D5DAE2A6BCA32003E1A1A /* UserStoryCardView.swift in Sources */,
 				2035126D29F6827900139AD3 /* GroupProfileEditView.swift in Sources */,
+				20C86BFB2AC7C9A600A29661 /* DeleteStoryLikeRequest.swift in Sources */,
 				2048A0912A1F580B00050F4D /* LaunchScreenView.swift in Sources */,
 				20A8AA4029B49CF500B0243E /* Util.swift in Sources */,
 				2091E9C2299CECE400EB9A7C /* ContentView.swift in Sources */,
+				20C86B742AC7C11600A29661 /* SignInRequest.swift in Sources */,
+				20C86B7A2AC7C17600A29661 /* GetUserInfoResponse.swift in Sources */,
 				2085012929BCB17D00C3E4DD /* AddContent.swift in Sources */,
 				20962D7C29BB2B5400143AAF /* MessageViewModel.swift in Sources */,
 				209F7AC129BC42DC003701E8 /* PersistenceController.swift in Sources */,
 				2065B37B29B8A885004B6F2D /* SearchView.swift in Sources */,
+				20C86BA92AC7C40D00A29661 /* LeaveGroupResponse.swift in Sources */,
+				20C86B882AC7C22F00A29661 /* UpdateUserAvatarResponse.swift in Sources */,
+				20C86B982AC7C30600A29661 /* GetFriendListResponse.swift in Sources */,
+				20C86B962AC7C2E800A29661 /* DeleteFriendResponse.swift in Sources */,
 				204B945529B708D4009C251B /* BenHubState.swift in Sources */,
+				20C86B922AC7C2B800A29661 /* AddFriendResponse.swift in Sources */,
 				20198A252A500B3E00860018 /* View.swift in Sources */,
 				209F33F92AADD75800DF8371 /* ImageItemView.swift in Sources */,
 				203417DB2A091E980076C942 /* RTCVideoView.swift in Sources */,
@@ -755,56 +1153,90 @@
 				20164E3B29BADCDA00F61813 /* SearchUserViewModel.swift in Sources */,
 				201E9CC32A99DD500068429A /* StoryViewerCard.swift in Sources */,
 				20AC7C7229C19D9200C4E7F9 /* RoomManager.swift in Sources */,
+				20C86BAD2AC7C42A00A29661 /* DeleteGroupResponse.swift in Sources */,
 				201E9CC02A99DC910068429A /* StoryViewer.swift in Sources */,
 				2091E9DB299FC29200EB9A7C /* BlurView.swift in Sources */,
+				20C86C042AC7CBE100A29661 /* UpdateUserCoverResponse.swift in Sources */,
 				20E0966829FE766800B5EBA7 /* Doc.swift in Sources */,
+				20C86B862AC7C21C00A29661 /* UpdateUserStateResponse.swift in Sources */,
 				208B4CBA29F3CA3F001F2EF1 /* UserProfileEditView.swift in Sources */,
 				201140F629A49F7200015AD8 /* ChatBubble.swift in Sources */,
 				2076908929B5FCF100ACD532 /* SideMenu.swift in Sources */,
 				2073D67229A2539900AA29D9 /* ContentRow.swift in Sources */,
+				208F45D12AC972E7004A843E /* StoryLikedUserBasicInfo.swift in Sources */,
 				20A1B4F029F5252C0088FD6A /* OtherUserProfileView.swift in Sources */,
 				20A8894B29C02EF200B5BED2 /* UserDataModel.swift in Sources */,
+				20C86BB12AC7C45B00A29661 /* GetGroupMemberResponse.swift in Sources */,
+				20C86BEC2AC7C91900A29661 /* GetActiveStoryResponse.swift in Sources */,
+				208F45D52AC973A3004A843E /* GetStorySeenListResponse.swift in Sources */,
 				200B79A629BDAFEF00F1DB70 /* GroupViewModel.swift in Sources */,
+				20C86BBD2AC7C4ED00A29661 /* UpdateGroupInfoResponse.swift in Sources */,
 				2065B37929B88E86004B6F2D /* Websocket.swift in Sources */,
+				20C86BC42AC7C67D00A29661 /* GetUserGroupsResponse.swift in Sources */,
 				2091E9D7299FC14F00EB9A7C /* SignInView.swift in Sources */,
 				203417D42A08E79E0076C942 /* config.swift in Sources */,
+				20C86B8A2AC7C27200A29661 /* SearchUserResponse.swift in Sources */,
 				2090350129FD06FB00DE66AF /* VideoPlayerView.swift in Sources */,
 				204C4A4429B72A22007AA02E /* ProfileView.swift in Sources */,
 				203D5DAC2A6BC983003E1A1A /* StoryUserView.swift in Sources */,
+				20C86B802AC7C1B200A29661 /* UpdateUserInfoRequest.swift in Sources */,
 				208F5DCD29F4E8A600549483 /* StatusMessageEditView.swift in Sources */,
+				20C86C082AC7CE1100A29661 /* requests.swift in Sources */,
 				203417D12A08E2C10076C942 /* rtc.swift in Sources */,
+				20C86B7C2AC7C18B00A29661 /* GetUserProfileRequest.swift in Sources */,
 				201140F229A49A6600015AD8 /* ChattingView.swift in Sources */,
 				20B1267E2A10F4A9009FF2AB /* RTCViewModel.swift in Sources */,
 				20CE5D3129A35622001371A7 /* FriendContent.swift in Sources */,
 				20A8895229C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift in Sources */,
+				20C86BD82AC7C79200A29661 /* UploadImageResponse.swift in Sources */,
 				2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */,
+				20C86BA32AC7C37600A29661 /* CreateGroupResponse.swift in Sources */,
+				20C86C062AC7CC3A00A29661 /* LeaveGroupRequest.swift in Sources */,
+				20C86C022AC7C9E900A29661 /* HealthCheckResponse.swift in Sources */,
 				203D5DA82A6BBF86003E1A1A /* SearchState.swift in Sources */,
+				20C86BA52AC7C3D600A29661 /* JoinGroupRequest.swift in Sources */,
 				209F754C29FB928500F7501B /* AudioPlayerView.swift in Sources */,
 				209F754E29FBB8DD00F7501B /* DateComponentFormatter.swift in Sources */,
+				20C86B7E2AC7C19B00A29661 /* GetUserProfileResponse.swift in Sources */,
 				208FE8A829E42BBE00D8A820 /* StoryOtherView.swift in Sources */,
 				202F48972AA46DB3002AD538 /* TextItemView.swift in Sources */,
+				20C86BE22AC7C8C200A29661 /* GetUserStoriesResponse.swift in Sources */,
+				20C86BF72AC7C98200A29661 /* CreateStoryLikeRequest.swift in Sources */,
+				20C86BDC2AC7C83E00A29661 /* UploadFileResponse.swift in Sources */,
 				2000E0A32A21F06200F03480 /* DragTextView.swift in Sources */,
 				209034FD29FD04C000DE66AF /* helper.swift in Sources */,
 				2035126B29F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift in Sources */,
 				2073D66F29A252B800AA29D9 /* Message.swift in Sources */,
-				20A8AA4229B4B60700B0243E /* requests.swift in Sources */,
 				204B945729B708E2009C251B /* BenHubView.swift in Sources */,
 				201CB7B329BEEAFE0036D181 /* NavigationState.swift in Sources */,
+				20C86BF52AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift in Sources */,
+				20C86BCC2AC7C6CE00A29661 /* GetMessageResponse.swift in Sources */,
+				20C86B942AC7C2CA00A29661 /* DeleteFriendRequest.swift in Sources */,
+				20C86BA72AC7C3E200A29661 /* JoinGroupResponse.swift in Sources */,
 				208FE8AA29E430E300D8A820 /* OtherStoryCardView.swift in Sources */,
 				201140F029A48C9800015AD8 /* UserAvatarItem.swift in Sources */,
 				20DB4DC929F2756500FF4C8B /* GroupSearchView.swift in Sources */,
 				2091E9DD299FD10600EB9A7C /* SignUpView.swift in Sources */,
 				2094454E29F8EE4300BBD9A4 /* ActiveRooms+CoreDataProperties.swift in Sources */,
 				20F47B2D29C598D2003D5CD0 /* DocumentPicker.swift in Sources */,
+				20C86BB32AC7C46F00A29661 /* SearchGroupResponse.swift in Sources */,
 				200665BD29E699CC00A7C9E5 /* StoryPhototView.swift in Sources */,
+				208F45CF2AC7FAFB004A843E /* StoryShareView.swift in Sources */,
+				20C86BF12AC7C94A00A29661 /* GetStickerGroupResponse.swift in Sources */,
 				2076908B29B62CE400ACD532 /* Data.swift in Sources */,
+				20C86BC62AC7C68900A29661 /* GroupInfo.swift in Sources */,
 				20BBAA4329A669BB00ED3245 /* VoiceCallingView.swift in Sources */,
 				20A8895329C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift in Sources */,
+				20C86BAB2AC7C41900A29661 /* DeleteGroupRequest.swift in Sources */,
 				20A8AA3C29B49BCA00B0243E /* ChatAppService.swift in Sources */,
 				20CE5D2529A352C9001371A7 /* FriendRow.swift in Sources */,
+				20C86B9D2AC7C33A00A29661 /* FriendInfo.swift in Sources */,
+				20C86BB72AC7C49B00A29661 /* GroupMemberInfo.swift in Sources */,
 				208FE8A629E4241C00D8A820 /* StoryViewModel.swift in Sources */,
 				2091E9C0299CECE400EB9A7C /* Chat_app_iosApp.swift in Sources */,
 				203D5DAA2A6BBFB1003E1A1A /* SoundManager.swift in Sources */,
+				20C86B842AC7C20500A29661 /* UpdateUserStateRequest.swift in Sources */,
+				20C86BB52AC7C48600A29661 /* GetGroupInfoByUUIDResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

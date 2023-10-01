@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+struct ShareUserProfile  {
+    let profile : UserProfile
+    var isSelected : Bool = false
+}
 
 class StoryViewModel : ObservableObject {
     
@@ -13,8 +17,11 @@ class StoryViewModel : ObservableObject {
     @Published var isShowStory : Bool = false
     @Published var currentStory : UInt = 0
     
+    @Published var friendsList : [ShareUserProfile] = [ShareUserProfile]()
+    @Published var isLoading = false
     func reset(){
         self.activeStories = []
+        self.friendsList = []
         self.isShowStory = false
         self.currentStory = 0
     }
@@ -32,6 +39,65 @@ class StoryViewModel : ObservableObject {
             print(err.localizedDescription)
         }
     }
+    
+
+    func GetUserFriendList() async{
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
+        let resp = await ChatAppService.shared.GetFriendList()
+        DispatchQueue.main.async {
+            self.isLoading = false
+            switch resp{
+            case .success(let data):
+                BenHubState.shared.isWaiting = false
+                self.friendsList = data.friends.map{ info in
+                    ShareUserProfile(profile: info)
+                }
+                
+            case .failure(let err):
+                
+                BenHubState.shared.isWaiting = false
+                BenHubState.shared.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
+            }
+        }
+    }
+    
+    func GetSearchResult(keyword : String) async{
+        if keyword.isEmpty{
+            Task{
+                await GetUserFriendList()
+            }
+            return
+        }
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
+        let resp = await ChatAppService.shared.SearchUser(email: keyword)
+        DispatchQueue.main.async {
+            self.isLoading = false
+            switch resp {
+            case .success(let data):
+                if data.code == 200 {
+                    DispatchQueue.main.async {
+                        self.friendsList = data.results?.map{ info in
+                                  ShareUserProfile(profile: info.user_info)
+                            
+                        } ?? []
+                    }
+
+                }
+            case .failure(let err):
+                print(err.localizedDescription)
+            }
+        }
+
+        
+//        ChatAppService.shared
+    }
+    
+
+  
 }
 
 
@@ -41,6 +107,9 @@ class UserStoryViewModel : ObservableObject {
     @Published var isSeen : Bool = false
     @Published var currentStoryIndex = 0
     @Published var currentStoryID : UInt = 0
+    @Published var currentStorySeen : UInt = 0
+    @Published var storySeenList : [StorySeenInfo] = [StorySeenInfo]()
+    @Published var isLoading = false
     
     func reset(){
         self.userStories = []
@@ -48,6 +117,8 @@ class UserStoryViewModel : ObservableObject {
         self.isSeen = false
         self.currentStoryID = 0
         self.currentStoryIndex = 0
+        self.currentStorySeen = 0
+        self.storySeenList = []
     }
     
     func GetUserStories(userId : Int) async{
@@ -98,6 +169,26 @@ class UserStoryViewModel : ObservableObject {
         case .failure(let err):
             print(err.localizedDescription)
             return false
+        }
+    }
+    
+    func GetStorySeenList(storyID : UInt) async {
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
+        let resp = await ChatAppService.shared.GetStorySeenList(storyId: storyID)
+        DispatchQueue.main.async {
+            self.isLoading = false
+            
+            switch resp {
+            case .success(let data):
+                self.storySeenList = data.seen_list.sorted(by: {  $0.is_liked && !$1.is_liked})
+                self.currentStorySeen = data.total_seen
+            
+            case .failure(let err):
+                print(err.localizedDescription)
+                
+            }
         }
     }
     

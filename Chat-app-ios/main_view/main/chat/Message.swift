@@ -268,7 +268,7 @@ struct Message: View {
                         .strokeBorder(LinearGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]), startPoint: .bottom, endPoint: .top),lineWidth: 3)
                 }else {
                     Circle()
-                        .strokeBorder(Color(uiColor: .systemGray4),lineWidth: 3)
+                        .strokeBorder(Color(uiColor: .systemGray4),lineWidth: 1)
                 }
             }
         }

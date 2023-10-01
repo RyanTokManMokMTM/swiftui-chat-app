@@ -251,7 +251,14 @@ struct OtherStoryCardView: View {
             }
         }
         .sheet(isPresented: $isShareToFriend){
-            FriendContent()
+            StoryShareView(isActive: $isShareToFriend)
+                .onAppear{
+                    Task{
+                       await self.storyModel.GetUserFriendList()
+                    }
+                  
+                }
+                .environmentObject(storyModel)
                 .padding(.top)
                 .presentationDetents([.medium, .large])
                
@@ -400,7 +407,7 @@ struct OtherStoryCardView: View {
         switch resp {
         case .success(let data):
             DispatchQueue.main.async {
-                self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked)
+                self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
                 if data.is_liked {
                     self.likeCount = 10
                 }

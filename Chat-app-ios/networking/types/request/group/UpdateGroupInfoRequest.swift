@@ -1,0 +1,13 @@
+//
+//  UpdateGroupInfoRequest.swift
+//  Chat-app-ios
+//
+//  Created by Jackson.tmm on 30/9/2023.
+//
+
+import Foundation
+struct UpdateGroupInfoReq : Encodable {
+    let group_id : UInt
+    var group_name : String
+    let group_desc : String
+}

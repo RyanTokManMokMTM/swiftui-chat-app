@@ -151,7 +151,7 @@ class ChatAppService : APIService {
     }
     
     //TODO: Upload User Avatar
-    func UploadUserAvatar(imgData : Data) async -> Result<UploadAvatarResp,Error> {
+    func UploadUserAvatar(imgData : Data) async -> Result<UploadUserAvatarResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.UploadAvatar.rawValue) else {
             return .failure(APIError.badUrl)
         }
@@ -175,7 +175,7 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
-    func UploadUserCover(imgData : Data) async -> Result<UploadCoverResp,Error> {
+    func UploadUserCover(imgData : Data) async -> Result<UploadUserCoverResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.UploadCover.rawValue) else {
             return .failure(APIError.badUrl)
         }
@@ -429,7 +429,7 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
-    func GetUserGroups() async -> Result<GetUserGroups, Error> {
+    func GetUserGroups() async -> Result<GetUserGroupsResp, Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.GetUserGroups.rawValue) else {
             return .failure(APIError.badUrl)
         }
@@ -618,6 +618,8 @@ class ChatAppService : APIService {
         return await self.AsyncFetchAndDecode(request: request)
     }
     
+
+    
     func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStickerGroup.rawValue + stickerID.description) else {
             return .failure(APIError.badUrl)
@@ -682,6 +684,19 @@ class ChatAppService : APIService {
             return .failure(APIError.badEncoding)
         }
         return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func GetStorySeenList(storyId : UInt) async -> Result<GetStorySeenListResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStorySeenList.rawValue + storyId.description ) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+
+        return await self.AsyncFetchAndDecode(request: request)
     }
     
     func DownloadTask(fileURL : URL) async -> Result<URL,Error>{
