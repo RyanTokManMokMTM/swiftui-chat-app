@@ -69,127 +69,6 @@ struct Message: View {
                 await self.storyModel.GetActiveStory()
             }
         }
-//        .sheet(isPresented: $showSheet ){
-//            VStack{
-//                HStack{
-//                    TextField("Input candindate uuid", text: $toUUID)
-//                        .onSubmit {
-//                            self.videoCallVM.toUserUUID = self.toUUID
-//                            self.toUUID.removeAll()
-//                        }
-//
-//                }
-//                .padding()
-//                .background(Color.white)
-//                .cornerRadius(10)
-//
-//                VStack(alignment:.leading){
-//                    Text("Connection state: \(self.videoCallVM.isConnectd ? "Connected" : "Not Connected")")
-//                        .font(.title3)
-//                    Text("Local SDP: \(self.videoCallVM.isSetLoaclSDP ? "✅" : "❎")")
-//                        .font(.title3)
-//                    Text("Local candindate: \(self.videoCallVM.localCanindate)" )
-//                        .font(.title3)
-//
-//                    Text("Remote SDP: \(self.videoCallVM.isSetRemoteSDP ? "✅" : "❎")")
-//                        .font(.title3)
-//                    Text("Remote candindate: \(self.videoCallVM.remoteCanindate)" )
-//                        .font(.title3)
-//
-//
-//                }
-//                //TODO: For testing
-//
-//                Text(self.videoCallVM.connectionStatus.description.capitalized)
-//                    .foregroundColor(self.connectionState())
-//                    .font(.body)
-//                    .padding()
-//                Spacer()
-//
-//                Button("Send Message") {
-//                    isSendMessage.toggle()
-//                }
-//
-//                Button(action:{
-////                    if self.videoCallVM.toUserUUID == nil {
-////                        print("please input candindate uuid")
-////                        return
-////                    }
-////                    if self.videoCallVM.isConnectd && !self.videoCallVM.isSetRemoteSDP && !self.videoCallVM.isSetLoaclSDP {
-////                        //is connecte and not set remote and not set ans
-////                        videoCallVM.webRTCClient?.offer(){ sdp in
-////                            DispatchQueue.main.async {
-////                                self.videoCallVM.isSetLoaclSDP = true
-////                            }
-////
-////                            if let sdpData = sdp.JSONData() {
-////                                //send via websocket
-////                                self.videoCallVM.sendSingleMessage(sdpData)
-////                            }
-////                        }
-////                    }
-//                }){
-//                    Text("Send Offer")
-//                        .foregroundColor(.white)
-//                }
-//                .padding()
-//                .background(Color.blue)
-//                .cornerRadius(10)
-//
-//                Button(action:{
-////                    if self.videoCallVM.toUserUUID == nil {
-////                        print("please input candindate uuid")
-////                        return
-////                    }
-////                    if self.videoCallVM.isConnectd && self.videoCallVM.isSetRemoteSDP && !self.videoCallVM.isSetLoaclSDP{
-////                        videoCallVM.webRTCClient?.answer(){ sdp in
-////                            DispatchQueue.main.async {
-////                                self.videoCallVM.isSetLoaclSDP = true
-////                            }
-////
-////                            if let sdpData = sdp.JSONData() {
-////                                //send via websocket
-////                                self.videoCallVM.sendSingleMessage(sdpData)
-////                            }
-////                        }
-////                    }
-//
-//
-//                }){
-//                    Text("Send Answer")
-//                        .foregroundColor(.white)
-//                }
-//                .padding()
-//                .background(Color.blue)
-//                .cornerRadius(10)
-//
-//            }
-//            .alert(isPresented: self.$videoCallVM.IsReceivedMessage){
-//                Alert(title: Text("Message From WebRTC"),message: Text(self.videoCallVM.receivedMessage), dismissButton: .default(Text("Enter")))
-//            }
-//            .alert("Enter your message", isPresented: $isSendMessage) {
-//                TextField("Message", text: $message)
-//                Button("Send", action: {
-//                    guard let msg = self.message.data(using: .utf8) else {
-//                        return
-//                    }
-//                    self.videoCallVM.webRTCClient?.sendData(msg)
-//                    self.message.removeAll()
-//                    DispatchQueue.main.async {
-//                        self.isSendMessage = false
-//                    }
-//                })
-//                Button("Exit", action: {
-//                    DispatchQueue.main.async {
-//                        self.isSendMessage = false
-//                    }
-//                })
-//            } message: {
-//                Text("Xcode will print whatever you type.")
-//            }
-//
-//        }
-//
         .navigationDestination(for: ActiveRooms.self){data in
 //            if let index = UDM.findOneRoomWithIndex(uuid: data.id!){
                 ChattingView(chatUserData: data,messages: $UDM.currentRoomMessage)
@@ -316,7 +195,7 @@ struct StoryProfileView : View {
                     .strokeBorder(LinearGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]), startPoint: .bottom, endPoint: .top),lineWidth: 3)
             }else {
                 Circle()
-                    .strokeBorder(Color(uiColor: .systemGray).opacity(0.4),lineWidth: 3)
+                    .strokeBorder(Color(uiColor: .systemGray4),lineWidth: 1)
             }
         }
         .onTapGesture {

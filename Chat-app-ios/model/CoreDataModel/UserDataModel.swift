@@ -80,7 +80,7 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new messsge of the room to the cache
-    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0) -> RoomMessages {
+    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0, storyUserName : String? = nil, storyUserAvatar : String? = nil, storyUserUUID : String? = nil) -> RoomMessages {
         
         //TODO: Check Sender Info exist?
         var sender : SenderInfo?
@@ -107,6 +107,9 @@ class UserDataModel : ObservableObject {
         newMessage.sender = sender
         newMessage.message_status = messageStatus.rawValue
         newMessage.story_id = storyId
+        newMessage.story_user_name = storyUserName
+        newMessage.story_user_avatar = storyUserAvatar
+        newMessage.story_user_uuid = storyUserUUID
         room.addToMessages(newMessage)
         self.manager.save()
         
@@ -137,7 +140,7 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new message to Room
-    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0) -> RoomMessages {
+    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0,storyUserName : String? = nil,storyUserAvatar : String? = nil, storyUserUUID : String? = nil) -> RoomMessages {
         
         var sender : SenderInfo?
         if content_type != 7{ //SYSTEM_MESSAGE - no need to create
@@ -162,6 +165,9 @@ class UserDataModel : ObservableObject {
         newMessage.sender = sender
         newMessage.story_id = storyId
         newMessage.message_status = messageStatus.rawValue
+        newMessage.story_user_name = storyUserName
+        newMessage.story_user_avatar = storyUserAvatar
+        newMessage.story_user_uuid = storyUserUUID
         self.manager.save()
         
         return newMessage

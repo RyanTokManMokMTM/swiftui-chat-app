@@ -2,7 +2,7 @@
 //  RoomMessages+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 26/8/2023.
+//  Created by Jackson.tmm on 21/10/2023.
 //
 //
 
@@ -25,9 +25,12 @@ extension RoomMessages {
     @NSManaged public var message_status: Int16
     @NSManaged public var sent_at: Date?
     @NSManaged public var story_available_time: Int32
+    @NSManaged public var story_id: Int16
+    @NSManaged public var story_user_avatar: String?
+    @NSManaged public var story_user_name: String?
+    @NSManaged public var story_user_uuid: String?
     @NSManaged public var tempData: Data?
     @NSManaged public var url_path: String?
-    @NSManaged public var story_id: Int16
     @NSManaged public var replyMessage: RoomMessages?
     @NSManaged public var room: ActiveRooms?
     @NSManaged public var sender: SenderInfo?
@@ -51,6 +54,10 @@ extension RoomMessages : Identifiable {
     var isStoryAvailable : Bool{
         let distance = Date.now.distance(to: Date(timeIntervalSince1970: TimeInterval(self.story_available_time)))
         return abs(distance) <= 86400
+    }
+    
+    var StoryUserAvatarURL : URL {
+        return URL(string: RESOURCES_HOST  + (self.story_user_avatar ?? ""))!
     }
 
     var messageStatus : MessageStatus {
@@ -88,6 +95,9 @@ extension RoomMessages : Identifiable {
                 break
             case ContentType.story.rawValue:
                 message.append("[ story content ]")
+                break
+            case ContentType.share.rawValue:
+                message.append("[ story share content ]")
                 break
             default:
                 return ""

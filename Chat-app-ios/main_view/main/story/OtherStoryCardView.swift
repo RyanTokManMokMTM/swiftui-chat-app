@@ -251,16 +251,19 @@ struct OtherStoryCardView: View {
             }
         }
         .sheet(isPresented: $isShareToFriend){
-            StoryShareView(isActive: $isShareToFriend)
-                .onAppear{
-                    Task{
-                       await self.storyModel.GetUserFriendList()
+            if let storyInfo = self.story {
+                StoryShareView(isActive: $isShareToFriend,storyUserInfo: self.friendInfo, storyInfo: storyInfo)
+                    .onAppear{
+                        Task{
+                           await self.storyModel.GetUserFriendList()
+                        }
+                      
                     }
-                  
-                }
-                .environmentObject(storyModel)
-                .padding(.top)
-                .presentationDetents([.medium, .large])
+                    .environmentObject(storyModel)
+                    .padding(.top)
+                    .presentationDetents([.medium, .large])
+            }
+        
                
         }
         .overlay(alignment:.bottom){
@@ -270,6 +273,7 @@ struct OtherStoryCardView: View {
                         TextField(text: $comment) {
                             Text("Reply to \(friendInfo.name)")
                                 .foregroundColor(.white)
+                                .font(.system(size:14))
                         }
                         .foregroundColor(.white)
                         .padding(8)
@@ -284,7 +288,7 @@ struct OtherStoryCardView: View {
                     }
                     .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
                         RoundedRectangle(cornerRadius: 25)
-                            .stroke(.gray, lineWidth: 1.5)
+                            .stroke(.gray.opacity(0.8), lineWidth: 1.5)
                     ))
                     
 //
@@ -376,7 +380,7 @@ struct OtherStoryCardView: View {
         }
         let sendMsg = WSMessage(
             messageID: UUID().uuidString,
-            avatar: self.userModel.profile!.avatar,
+            replyMessageID: nil, avatar: self.userModel.profile!.avatar,
             fromUserName: self.userModel.profile!.name,
             fromUUID: self.userModel.profile!.uuid,
             toUUID: self.friendInfo.uuid,
@@ -388,12 +392,15 @@ struct OtherStoryCardView: View {
             fileName: nil,
             fileSize: nil,
             storyAvailableTime: Int32(self.story!.create_at),
-            replyMessageID: nil,
-            storyId: Int16(self.story!.id))
-        Websocket.shared.handleMessage(event:.send,msg: sendMsg,isReplyComment: true)
-        Websocket.shared.onSend(msg: sendMsg){
+            storyId: Int16(self.story!.id),
+            storyUserName: self.friendInfo.name,
+            storyUserAvatar: self.friendInfo.avatar,
+            storyUserUUID: self.friendInfo.uuid
+        )
+        Websocket.shared.handleMessage(event:.send,msg: sendMsg,isGetRoomUserInfo: true){
             hub.AlertMessage(sysImg: "checkmark", message: "Replied")
         }
+
         
         self.comment.removeAll()
         

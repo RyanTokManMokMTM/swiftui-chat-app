@@ -14,7 +14,7 @@ struct StoryViwerCard: View {
     var friendInfo : FriendInfo?
     
     @StateObject private var hub = BenHubState.shared
-    @State private var storyInfo : StoryInfo?
+    @State private var story : StoryInfo?
     @EnvironmentObject private var userModel : UserViewModel
     @State private var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @State private var timeProgress : CGFloat = 0
@@ -24,7 +24,10 @@ struct StoryViwerCard: View {
     @State private var index = 0
     @State private var isAction : Bool = false
     @State private var isStoryUnavaiable : Bool = false
-    @State private var likeCount = 0
+    @State private var likeCount = 10
+    
+    @State private var replyMessage : String = ""
+    @FocusState private var isFocus : Bool
     var body: some View {
         GeometryReader{ reader in
             ZStack{
@@ -44,7 +47,7 @@ struct StoryViwerCard: View {
                         .cornerRadius(10)
                         .clipped()
                 }else {
-                    AsyncImage(url: self.storyInfo?.MediaURL, content: { img in
+                    AsyncImage(url: self.story?.MediaURL, content: { img in
                         VStack{
                             img
                                 .resizable()
@@ -123,7 +126,7 @@ struct StoryViwerCard: View {
                                 .bold()
                                 .foregroundColor(.white)
                             
-                            Text(storyInfo?.CreatedTime.hourBetween() ?? "--")
+                            Text(story?.CreatedTime.hourBetween() ?? "--")
                                 .font(.system(size:13))
                                 .foregroundColor(.white)
                         }
@@ -167,6 +170,128 @@ struct StoryViwerCard: View {
                 .frame(height: 3)
                 .padding(.horizontal,10)
             })
+            .overlay(alignment:.bottom){
+                if let friend = friendInfo, let userInfo = self.userModel.profile{
+                    if friend.uuid == userInfo.uuid {
+                        
+                        HStack(alignment:.bottom){
+                            ZStack{
+                                Button(action:{
+                                    //TODO: DO Nothing right now
+                                    withAnimation{
+//                                        self.isShowSeenList = true
+                                    }
+                                }){
+                                    VStack {
+                                        if let seenList = self.story?.story_seen_list {
+                                            seenUserListView(seenList: seenList)
+                                            Text("Views")
+                                                .foregroundColor(.white)
+                                                .font(.system(size:12))
+                                                .fontWeight(.medium)
+                                               
+                                            
+                                        }
+                                    }
+                                }
+                                .frame(maxWidth: 70)
+                                
+                                ForEach(0..<self.likeCount,id:\.self){ _ in
+                                    Image(systemName: "heart.fill")
+                                        .imageScale(.large)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.red)
+                                        .modifier(LoveTapModifier())
+                                }
+                            }
+                            
+                            Spacer()
+//                            
+
+                        }
+                        .padding(.horizontal,5)
+                    }else {
+                        HStack{
+                            VStack{
+                                TextField(text: $replyMessage) {
+                                    Text("Reply to \(friendInfo?.name ?? "--")")
+                                        .foregroundColor(.white)
+                                        .font(.system(size:14))
+                                }
+                                .foregroundColor(.white)
+                                .padding(8)
+                                .padding(.horizontal,5)
+                                .focused($isFocus)
+                                .onSubmit {
+                                    Task {
+        //                                await replyStory()
+                                    }
+                                }
+                                
+                            }
+                            .background(Color.clear.clipShape(CustomConer(coners: .allCorners)).overlay(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .stroke(.gray.opacity(0.8), lineWidth: 1.5)
+                            ))
+                            
+        //
+                            
+                            if !self.isFocus {
+                                ZStack{
+                                    Button(action:{
+                                        //TODO: DO Nothing right now
+                                        if self.story != nil {
+                                            if !self.story!.is_liked {
+        //                                        Task{
+        //                                            await self.createStoryLike(storyId: self.story!.id)
+        //                                        }
+                                            }else{
+        //                                        Task{
+        //                                            await self.deleteStoryLike(storyId: self.story!.id)
+        //                                        }
+                                            }
+                                        }
+
+
+                                    }){
+                                        Image(systemName: self.story?.is_liked ?? false  ? "heart.fill" : "heart")
+                                            .imageScale(.large)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(self.story?.is_liked ?? false ? .red : .white)
+                                    }
+
+                                    ForEach(0..<self.likeCount,id:\.self){ _ in
+                                        Image(systemName: "heart.fill")
+                                            .imageScale(.large)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.red)
+                                            .modifier(LoveTapModifier())
+                                    }
+                                }
+
+                                Button(action:{
+                                    //TODO: DO Nothing right now
+                                    withAnimation{
+        //                                self.isShareToFriend = true
+                                    }
+                                }){
+                                    Image(systemName: "paperplane")
+                                        .imageScale(.large)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.white)
+
+                                }
+
+                            }
+        //
+        //
+                        }
+                        .padding(.horizontal,10)
+                        .padding(.bottom,10)
+                    }
+                }
+                
+            }
 //            .overlay(alignment:.bottomTrailing){
 //                HStack{
 //                    HStack{
@@ -227,24 +352,7 @@ struct StoryViwerCard: View {
                 }
             }
         }
-        .overlay(alignment:.bottom){
-            HStack{
-                Spacer()
-                ZStack{
-                    EmptyView()
-                        .padding(.trailing,30)
-                    ForEach(0..<self.likeCount,id:\.self){ _ in
-                        Image(systemName: "heart.fill")
-                            .imageScale(.large)
-                            .fontWeight(.medium)
-                            .foregroundColor(.red)
-                            .modifier(LoveTapModifier())
-                    }
-                }
-            }
-            .padding(.horizontal,10)
-            .padding(.bottom,10)
-        }
+
         .onAppear{
             Task {
                 await self.getStoriesList(userId: friendInfo!.id)
@@ -297,7 +405,7 @@ struct StoryViwerCard: View {
         let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
         switch resp {
         case .success(let data):
-            self.storyInfo = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
+            self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
             if data.is_liked {
                 self.likeCount = 10
             }
@@ -317,5 +425,48 @@ struct StoryViwerCard: View {
 //        print("degree : \(degree)")
         return Angle(degrees: Double(degree))
     }
-
+    
+    @ViewBuilder
+    private func seenUserView(info : StorySeenUserBasicInfo) -> some View {
+        HStack{
+            AsyncImage(url: info.AvatarURL, content: { img in
+                VStack{
+                    img
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width:25,height:25)
+                        .clipShape(Circle())
+                }
+            }, placeholder: {
+                ProgressView()
+                    .frame(width: 25,height: 25)
+            })
+        }
+        .frame(width:30,height:30)
+        .background(Color.black)
+        .clipShape(Circle())
+    }
+    
+    
+    @ViewBuilder
+    private func seenUserListView(seenList : [StorySeenUserBasicInfo]) -> some View {
+        var offestSize = 0
+        if seenList.count == 2{
+            offestSize = 30 - 18
+        } else if seenList.count == 3{
+            offestSize =  (30 - 18) * 2
+        }
+        let frameWidth = 30 * seenList.count - offestSize
+        return HStack{
+            ZStack{
+                ForEach(0..<seenList.count,id:\.self){ index in
+                    seenUserView(info: seenList[index])
+                        .offset(x : CGFloat(index * 18) ,y : CGFloat(seenList.count >= 3 && index == 1 ? -10 : 0 ))
+                        .zIndex(Double(seenList.count >= 3 && index == 1 ? 10 : index + 1))
+                }
+            }
+        }
+       .frame(width: CGFloat(frameWidth),alignment: .leading)
+        .padding(0)
+    }
 }

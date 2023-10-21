@@ -19,6 +19,10 @@ struct UserStoryCardView: View {
     @State private var likeCount = 0
     @State private var isShowSeenList = false
     @State private var isAction : Bool = false
+    
+    @State private var isSeenMessage : Bool = false
+    @State private var messageTarget : StorySeenInfo? = nil
+    @State private var  isAlert : Bool = false
     var body: some View {
         GeometryReader{ reader in
             ZStack{
@@ -179,18 +183,7 @@ struct UserStoryCardView: View {
                     
                     HStack{
                         Button(action:{
-                            self.isAction = true
-                            hub.SetWait(message: "Deleting...")
-                            Task{
-                                if await self.userStory.deleteStory(storyID:self.userStory.currentStoryID){
-                                    hub.isWaiting = false
-                                    hub.AlertMessage(sysImg: "checkmark", message: "Removed.")
-                                    self.timeProgress = CGFloat(self.userStory.currentStoryIndex)
-                                    self.isAction = false
-                                    
-                                    
-                                }
-                            }
+                            self.isAlert = true
                         }){
                             Image(systemName: "trash")
                                 .imageScale(.medium)
@@ -212,7 +205,7 @@ struct UserStoryCardView: View {
             }
             .rotation3DEffect(getAngle(proxy: reader), axis: (x:0,y:1,z:0),anchor: reader.frame(in: .global).minX > 0 ? .leading : .trailing,perspective: 2.5)
             .onReceive(self.timer){ t in
-                if self.isAction || self.isShowSeenList {
+                if self.isAction || self.isShowSeenList || self.isAlert {
                     return
                 }
                 //TODO: Update story state
@@ -241,63 +234,66 @@ struct UserStoryCardView: View {
                 }
             }
         }
-        .sheet(isPresented: $isShowSeenList){
-            StorySeenListView()
-                .environmentObject(userStory)
-                .onAppear{
-                    Task {
-                        await self.userStory.GetStorySeenList(storyID: self.userStory.currentStoryID)
+        .alert(isPresented:$isAlert) {
+            Alert(
+                title: Text("Delete this story?"),
+                message: Text("This will be permanently delete."),
+                primaryButton: .destructive(Text("Delete")) {
+                    self.isAction = true
+                    hub.SetWait(message: "Deleting...")
+                    Task{
+                        if await self.userStory.deleteStory(storyID:self.userStory.currentStoryID){
+                            hub.isWaiting = false
+                            hub.AlertMessage(sysImg: "checkmark", message: "Removed.")
+                            self.timeProgress = CGFloat(self.userStory.currentStoryIndex)
+                            self.isAction = false
+                            
+                            
+                        }
                     }
-                }
-                .padding(.top)
-                .presentationDetents([.large])
+                },
+                secondaryButton: .cancel()
+            )
         }
-//        .overlay(alignment:.bottom){
-//            HStack{
-//                ZStack{
-//                    Button(action:{
-//                        //TODO: DO Nothing right now
-//                        withAnimation{
-//
-//                        }
-//                    }){
-//                        Image(systemName: "eye")
-//                            .imageScale(.medium)
-//                            .fontWeight(.medium)
-//                            .foregroundColor(.white)
-//
-//                    }
-//                    ForEach(0..<self.likeCount,id:\.self){ _ in
-//                        Image(systemName: "heart.fill")
-//                            .imageScale(.large)
-//                            .fontWeight(.medium)
-//                            .foregroundColor(.red)
-//                            .modifier(LoveTapModifier())
-//                    }
-//                }
-//                Spacer()
-//            }
-//            .padding(.horizontal,10)
-//            .padding(.bottom,10)
-//        }
-//        .overlay(alignment:.bottom){
-//            HStack{
-//                Spacer()
-//                ZStack{
-//                    EmptyView()
-//                        .padding(.trailing,30)
-//                    ForEach(0..<self.likeCount,id:\.self){ _ in
-//                        Image(systemName: "heart.fill")
-//                            .imageScale(.large)
-//                            .fontWeight(.medium)
-//                            .foregroundColor(.red)
-//                            .modifier(LoveTapModifier())
-//                    }
-//                }
-//            }
-//            .padding(.horizontal,10)
-//            .padding(.bottom,10)
-//        }
+        .sheet(isPresented: $isShowSeenList){
+            ZStack {
+                
+                StorySeenListView(isShowSeenList:$isShowSeenList,isSendMessage: $isSeenMessage,messageTarget : $messageTarget, timeProgress: self.$timeProgress)
+                    .environmentObject(userStory)
+                    .environmentObject(userModel)
+                    .onAppear{
+                        Task {
+                            await self.userStory.GetStorySeenList(storyID: self.userStory.currentStoryID)
+                        }
+                    }
+                    .padding(.top)
+                    .presentationDetents([.large])
+                    .zIndex(0)
+                
+                ZStack(alignment: .bottom){
+                    if self.isSeenMessage {
+                        Color.black.opacity(0.5).edgesIgnoringSafeArea(.all)
+                            .onTapGesture{
+                                withAnimation{
+                                    self.isSeenMessage = false
+                                }
+                            }
+                        if let target = self.messageTarget {
+                            StoryMessageView(info:target, isAction: $isSeenMessage)
+                                .transition(.move(edge: .bottom))
+                        }
+                    }
+                        
+                }
+                 
+             
+                    
+            }
+            .animation(.default, value: isSeenMessage)
+
+   
+             
+        }
         .onAppear{
             self.userStory.currentStoryIndex = 0
             self.userStory.currentStoryID = self.userStory.userStories.first!
@@ -376,7 +372,6 @@ struct UserStoryCardView: View {
             offestSize =  (30 - 18) * 2
         }
         let frameWidth = 30 * seenList.count - offestSize
-        print(frameWidth)
         return HStack{
             ZStack{
                 ForEach(0..<seenList.count,id:\.self){ index in

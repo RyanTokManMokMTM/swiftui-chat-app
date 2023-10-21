@@ -62,6 +62,7 @@ struct ChattingView: View {
     @State private var isShowStoryViewer : Bool = false
     @State private var toShowStoryId : UInt = 0
     @State private var isGettingStoryInfo : Bool = false
+    @State private var friendUUID : String = ""
     
     var body: some View {
         VStack{
@@ -74,7 +75,7 @@ struct ChattingView: View {
             self.videoCallVM.toUserUUID = nil
         }
         .fullScreenCover(isPresented: $isShowStoryViewer){
-            StoryViewer(isShowStoryViewer:$isShowStoryViewer,storyId: self.toShowStoryId, friendUUID: chatUserData.id?.uuidString ?? "")
+            StoryViewer(isShowStoryViewer:$isShowStoryViewer,storyId: self.toShowStoryId, friendUUID: self.friendUUID)
         }
         .fullScreenCover(isPresented: $isPlayAudio){
             AudioPlayerView(isPlayingAudio: $isPlayAudio,fileName: self.audioInfo!.file_name!, path: self.audioInfo!.FileURL)
@@ -124,7 +125,6 @@ struct ChattingView: View {
                
             }
             
-            //TODO: NOT TO IMPLEMENT THIS NOW
             ToolbarItem(placement: .navigationBarTrailing){
                 if chatUserData.message_type == 1{
                     HStack{
@@ -334,6 +334,7 @@ struct ChattingView: View {
     
     private func checkMessage(messageID : String) async {
         //TODO: need to be optimized
+        print("acking?")
         do{
             try await Task.sleep(nanoseconds: 60_000_000_000)
         } catch (let err) {
@@ -414,7 +415,6 @@ struct ChattingView: View {
 
             }
 
-            
             if message.messageStatus == .notAck {
                 Button {
                     print("resent")
@@ -438,6 +438,7 @@ struct ChattingView: View {
                 .contextMenu{
                     commentContextMenu(message: message)
                 }
+                
         }else if message.content_type == ContentType.file.rawValue{
             FileContentTypeView(message: message)
                 .contextMenu{
@@ -514,7 +515,12 @@ struct ChattingView: View {
                 }
         } else if message.content_type == ContentType.sticker.rawValue {
             StickerContentTypeView(message: message)
-
+ 
+        } else if message.content_type == ContentType.share.rawValue {
+            StoryShareContentTypeView(message:message)
+                .contextMenu{
+                    commentContextMenu(message: message)
+                }
         }
     }
     
@@ -615,6 +621,7 @@ struct ChattingView: View {
                 }
 
             }
+            
             if self.isUseSticket {
                 StickerView(onSend: self.onSendSticker(stickerUri:))
             }
@@ -680,7 +687,6 @@ struct ChattingView: View {
         guard let replyMsg = self.replyMessage else {
             return ""
         }
-        print(replyMsg)
         var message : String = "\(replyMsg.sender?.name ?? "") : "
 
         switch replyMsg.content_type {
@@ -702,6 +708,10 @@ struct ChattingView: View {
         case ContentType.story.rawValue:
             message.append("[ story content ]")
             break
+        case ContentType.share.rawValue:
+            message.append("[ shared story content ]")
+            break
+            
             
         default:
             return ""
@@ -762,11 +772,11 @@ extension ChattingView {
         }
         let msgID = UUID().uuidString
         
-        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: nil, storyId: nil)
+        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,  storyUserAvatar: nil,
+                            storyUserUUID: nil)
+        playMessageSentSound()
         Websocket.shared.handleMessage(event:.send,msg: msg)
         
-        playMessageSentSound()
-        Websocket.shared.onSend(msg: msg)
         
         Task {
             await checkMessage(messageID: msgID)
@@ -778,11 +788,12 @@ extension ChattingView {
 //        print("sent sticker")
         let msgID = UUID().uuidString
 
-        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: nil, contentType: ContentType.sticker.rawValue, type: 4, messageType: self.chatUserData.message_type,urlPath: stickerUri,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: nil, storyId: nil)
-        Websocket.shared.handleMessage(event:.send,msg: msg)
+        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: nil, contentType: ContentType.sticker.rawValue, type: 4, messageType: self.chatUserData.message_type,urlPath: stickerUri,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
+                            storyUserUUID: nil)
 
         playMessageSentSound()
-        Websocket.shared.onSend(msg: msg)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
+
 
         Task {
             await checkMessage(messageID: msgID)
@@ -795,11 +806,12 @@ extension ChattingView {
         }
         let msgID = UUID().uuidString
         
-        let msg = WSMessage(messageID:msgID,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: self.replyMessage!.id!.uuidString, storyId: nil)
-        Websocket.shared.handleMessage(event:.send,msg: msg)
+        let msg = WSMessage(messageID:msgID,replyMessageID: self.replyMessage!.id!.uuidString, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
+                            storyUserUUID: nil)
+
         
         playMessageSentSound()
-        Websocket.shared.onSend(msg: msg)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
         
         Task {
             await checkMessage(messageID: msgID)
@@ -838,8 +850,9 @@ extension ChattingView {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: nil,fileSize: nil,storyAvailableTime: nil, replyMessageID: nil, storyId: nil)
-            Websocket.shared.onSend(msg: msg)
+            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
+                                storyUserUUID: nil)
+            Websocket.shared.onSendNormal(msg: msg)
             Task {
                 await checkMessage(messageID: message.id!.uuidString)
             }
@@ -891,8 +904,9 @@ extension ChattingView {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: fileName,fileSize: fileSize,storyAvailableTime: nil, replyMessageID: nil, storyId: nil)
-            Websocket.shared.onSend(msg: msg)
+            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: fileName,fileSize: fileSize,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
+                                storyUserUUID: nil)
+            Websocket.shared.onSendNormal(msg: msg)
             
             Task {
                 await checkMessage(messageID: message.id!.uuidString)
@@ -921,7 +935,7 @@ extension ChattingView {
         VStack(alignment:.leading){
             VStack(alignment:.leading){
                 Button(action:{
-                    print("Find The message")
+                    print("Find The message???")
                 }){
                     VStack(alignment:.leading,spacing:8){
                         Text("\(message.replyMessage?.sender?.name ?? "") \(message.replyMessage?.sent_at?.sendTimeString() ?? "")")
@@ -1195,18 +1209,26 @@ extension ChattingView {
         VStack(alignment:.leading){
             VStack(alignment:.leading){
                 Text("Reply to a story")
-                    .font(.footnote)
+                    .font(.system(size:14))
                     .fontWeight(.medium)
-                    .foregroundColor(Color.cyan)
+                    
+                    .foregroundColor(Color.white.opacity(0.6) )
 
                 VStack(alignment:.leading,spacing:8){
                     if message.sender!.id!.uuidString.lowercased() != userModel.profile!.uuid {
                         AsyncImage(url: message.FileURL, content: {img in
                             img
                                 .resizable()
+                                .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 3 / 1.22)
                                 .aspectRatio(contentMode: .fill)
                                 .cornerRadius(10)
-                                
+                                .onTapGesture {
+                                    if message.story_id != 0 {
+                                        self.toShowStoryId = UInt(message.story_id)
+                                        self.friendUUID = self.userModel.profile?.uuid ?? ""
+                                        self.isShowStoryViewer = true
+                                    }
+                                }
 
                         }, placeholder: {
                             ProgressView()
@@ -1221,12 +1243,14 @@ extension ChattingView {
                                 AsyncImage(url: message.FileURL, content: {img in
                                     img
                                         .resizable()
+                                        .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 3 / 1.22)
                                         .aspectRatio(contentMode: .fill)
                                         .cornerRadius(10)
                                         .onTapGesture {
-                                            print(chatUserData)
-                                            if message.story_id != 0{
+                                        
+                                            if message.story_id != 0 && chatUserData.id != nil{
                                                 self.toShowStoryId = UInt(message.story_id)
+                                                self.friendUUID = chatUserData.id?.uuidString ?? ""
                                                 self.isShowStoryViewer = true
                                             }
                                             //MARK: fetch all the story of this user
@@ -1264,6 +1288,89 @@ extension ChattingView {
             .padding(10)
         }
         .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color.blue : Color.green)
+    }
+    
+    @ViewBuilder
+    private func StoryShareContentTypeView(message : RoomMessages) -> some View {
+        let isSelf = isOwner(id: message.sender!.id!.uuidString.lowercased())
+       return VStack(alignment:.leading){
+            VStack(alignment: isSelf ?.trailing  : .leading){
+                Text("\(isSelf ? "Sent" : "Received") @\(message.story_user_name ?? "--")'s story")
+                    .font(.footnote)
+                    .fontWeight(.medium)
+                    .foregroundColor(Color.gray)
+                    .padding(.horizontal,10)
+                    .padding(.vertical,5)
+                
+                HStack{
+                    VStack(alignment:.leading,spacing:8){
+                        
+                        HStack{
+                            if message.isStoryAvailable {
+                                AsyncImage(url: message.FileURL, content: {img in
+                                        img
+                                            .resizable()
+                                            .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.height / 3 / 1.22)
+                                            .aspectRatio(contentMode: .fill)
+                                            .cornerRadius(10)
+                                            .onTapGesture {
+                                                if message.story_id != 0 && message.story_user_uuid != nil{
+                                                    self.toShowStoryId = UInt(message.story_id)
+                                                    self.friendUUID = message.story_user_uuid!
+                                                    self.isShowStoryViewer = true
+                                                }
+                                            }
+                                    
+                                  
+                                    
+                                }, placeholder: {
+                                    ProgressView()
+                                        .frame(width: 30,height: 30)
+                                    
+                                })
+                                .overlay(alignment:.topLeading){
+                                    HStack{
+                                        AsyncImage(url: message.StoryUserAvatarURL, content: {img in
+                                            img
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width:30,height:35)
+                                                .clipShape(Circle())
+                                        },placeholder: {
+                                            ProgressView()
+                                                .frame(width:30,height:35)
+                                            
+                                        })
+                                        
+                                        Text("\(message.story_user_name ?? "--")")
+                                            .font(.system(size:14))
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.white)
+                                            .lineLimit(1)
+                                        
+                                    }
+                                    .padding(10)
+                                }
+                            }else {
+                                Text("Story unavaiable.")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            
+                        }
+                    }
+                    .font(.system(size:13))
+                    .padding(.horizontal,10)
+                    .foregroundColor(.white)
+                }
+                
+                
+            }
+           //            .background(isOwner(id: message.sender!.id!.uuidString.lowercased()) ? Color("ReplySenderBlue").cornerRadius(10) : Color("ReplyReceiverGreen").cornerRadius(10))
+           //            .padding(10)
+       }
+
     }
     
     @ViewBuilder

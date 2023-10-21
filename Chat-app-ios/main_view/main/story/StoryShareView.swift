@@ -11,11 +11,14 @@ import SwiftUI
 
 struct StoryShareView: View {
     @EnvironmentObject private var storyModel : StoryViewModel
+    @EnvironmentObject private var userModel : UserViewModel
     @Binding var isActive : Bool
     @State private var searchText : String = ""
     @FocusState private var isFocus : Bool
     
-    @State private var toShareList : [UInt] = []
+    @State private var toShareList : [String] = []
+    var storyUserInfo : FriendStory
+    var storyInfo : StoryInfo
     var body: some View {
         VStack(spacing: 5) {
             HStack{
@@ -87,7 +90,8 @@ struct StoryShareView: View {
 
             HStack{
                 Button(action: {
-                    
+                    share()
+                    self.isActive = false
                 }){
                     HStack{
                         Spacer()
@@ -116,21 +120,57 @@ struct StoryShareView: View {
         }
     }
     
+    private func share(){
+        self.toShareList.forEach{ toUser in
+            Task {
+                await send(to: toUser)
+            }
+        }
+    }
+    
+    
+    private func send(to : String) async{
+        let sendMsg = WSMessage(
+            messageID: UUID().uuidString,
+            replyMessageID: nil, avatar: self.userModel.profile!.avatar,
+            fromUserName: self.userModel.profile!.name,
+            fromUUID: self.userModel.profile!.uuid,
+            toUUID: to,
+            content: nil,
+            contentType: ContentType.share.rawValue,
+            type: 4,
+            messageType: 1,
+            urlPath: storyInfo.media_url,
+            fileName: nil,
+            fileSize: nil,
+            storyAvailableTime: Int32(storyInfo.create_at),
+            storyId: Int16(storyInfo.id),
+            storyUserName: storyUserInfo.name,
+            storyUserAvatar: storyUserInfo.avatar,
+            storyUserUUID: storyUserInfo.uuid
+            
+        )
+        Websocket.shared.handleMessage(event:.send,msg: sendMsg,isGetRoomUserInfo: true){
+//            Websocket.shared.onSend(msg: sendMsg)
+        }
+    }
+    
+    
 }
 
 
 
 struct ShareFriendRow: View {
     @Binding var data : ShareUserProfile
-    @Binding var shareList : [UInt]
+    @Binding var shareList : [String]
     var body: some View {
         Button(action:{
             withAnimation{
                 self.data.isSelected.toggle()
                 if self.data.isSelected{
-                    self.shareList.append(data.profile.id)
+                    self.shareList.append(data.profile.uuid)
                 }else {
-                    if let index = self.shareList.firstIndex(where: { $0 == data.profile.id}) {
+                    if let index = self.shareList.firstIndex(where: { $0 == data.profile.uuid}) {
                         self.shareList.remove(at: Int(index))
                     }
                 }

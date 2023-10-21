@@ -23,9 +23,12 @@
         <attribute name="sent_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="story_available_time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="story_id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="story_user_avatar" optional="YES" attributeType="String"/>
+        <attribute name="story_user_name" optional="YES" attributeType="String"/>
+        <attribute name="story_user_uuid" optional="YES" attributeType="String"/>
         <attribute name="tempData" optional="YES" attributeType="Binary"/>
         <attribute name="url_path" optional="YES" attributeType="String"/>
-        <relationship name="replyMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RoomMessages"/>
+        <relationship name="replyMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RoomMessages" inverseName="replyMessage" inverseEntity="RoomMessages"/>
         <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActiveRooms" inverseName="messages" inverseEntity="ActiveRooms"/>
         <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SenderInfo" inverseName="roomMessage" inverseEntity="SenderInfo"/>
     </entity>
@@ -38,10 +41,11 @@
     <entity name="StickerResources" representedClassName="StickerResources" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="path" optional="YES" attributeType="String"/>
+        <relationship name="relationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Stickers" inverseName="resoucres" inverseEntity="Stickers"/>
     </entity>
     <entity name="Stickers" representedClassName="Stickers" syncable="YES" codeGenerationType="class">
         <attribute name="stickerID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="resoucres" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StickerResources"/>
+        <relationship name="resoucres" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StickerResources" inverseName="relationship" inverseEntity="StickerResources"/>
     </entity>
     <entity name="UserDatas" representedClassName="UserDatas" syncable="YES">
         <attribute name="avatar" optional="YES" attributeType="String"/>

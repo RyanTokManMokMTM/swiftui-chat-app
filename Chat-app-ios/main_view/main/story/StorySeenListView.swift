@@ -8,7 +8,16 @@
 import SwiftUI
 
 struct StorySeenListView: View {
+    @StateObject private var hub = BenHubState.shared
+    @Binding var isShowSeenList : Bool
+    @Binding var isSendMessage :Bool
+    @Binding var messageTarget : StorySeenInfo?
+    @Binding var timeProgress : CGFloat
+    
     @EnvironmentObject private var storyVM :UserStoryViewModel
+    
+    
+    @State private var  isAlert : Bool = false
     var body: some View {
         VStack{
             HStack{
@@ -22,8 +31,13 @@ struct StorySeenListView: View {
                 
                 Spacer()
                 
-                Image(systemName: "trash")
-                    .imageScale(.medium)
+                Button(action:{
+                    self.isAlert = true
+                }) {
+                    Image(systemName: "trash")
+                        .imageScale(.medium)
+                        .foregroundColor(.black)
+                }
                 
             }
             .padding(.horizontal)
@@ -47,7 +61,7 @@ struct StorySeenListView: View {
                         ForEach(self.storyVM.storySeenList, id :\.id) { info in
                             viewUserRow(info: info)
                                 .listRowSeparator(.hidden)
-                                
+                            
                         }
                     }
                 }
@@ -55,9 +69,37 @@ struct StorySeenListView: View {
                 
             }
             .padding(.horizontal,0)
-          
+            
         }
-        
+        .alert(isPresented:$isAlert) {
+            Alert(
+                title: Text("Delete this story?"),
+                message: Text("This will be permanently delete."),
+                primaryButton: .destructive(Text("Delete")) {
+                    hub.SetWait(message: "Deleting...")
+                    Task{
+                        if await self.storyVM.deleteStory(storyID:self.storyVM.currentStoryID){
+                            hub.isWaiting = false
+                            hub.AlertMessage(sysImg: "checkmark", message: "Removed.")
+                            self.timeProgress = CGFloat(self.storyVM.currentStoryIndex)
+                            self.isShowSeenList = false
+                        }
+                    }
+                },
+                secondaryButton: .cancel()
+            )
+        }
+        .wait(isLoading: $hub.isWaiting){
+            BenHubLoadingView(message: hub.message)
+        }
+        .alert(isAlert: $hub.isPresented){
+            switch hub.type{
+            case .normal,.system:
+                BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+            case .messge:
+                BenHubAlertWithMessage( message: hub.message,info: hub.info!)
+            }
+        }
     }
     
     @ViewBuilder
@@ -88,7 +130,10 @@ struct StorySeenListView: View {
             Spacer()
             
             Button(action:{
-                
+                self.messageTarget = info
+                withAnimation{
+                    self.isSendMessage = true
+                }
             }){
                 Image(systemName: "paperplane")
                     .imageScale(.large)

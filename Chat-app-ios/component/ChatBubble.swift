@@ -150,46 +150,43 @@ struct ChatBubble<Content> : View where Content : View {
                 
                 
                 HStack(alignment:.bottom,spacing:5){
-                    
-                    if direction == .sender {
-                        if messageStatus == .sending {
-                            Image(systemName: "arrow.up.left")
-                                .imageScale(.small)
-                                .foregroundColor(.gray)
-                                .font(.caption2)
-                        } else if messageStatus == .notAck {
-                            Image(systemName: "arrow.counterclockwisek")
-                                .imageScale(.small)
-                                .foregroundColor(.gray)
-                                .font(.caption2)
-                        }
-                    }
-                    
-                    if direction == .sender && sentTime != nil{
-                        Text(sentTime!.sendTimeString())
-                            .foregroundColor(.gray)
-                            .font(.caption2)
-                    }
-                    
                     VStack(alignment:.leading,spacing:5){
+                        //MARK: For group member
                         if messageType == 2 && direction == .receiver {
-                            
                             Text(self.userName)
                                 .font(.footnote)
                                 .bold()
                         }
                         
-                        HStack(alignment: .bottom, spacing: 5){
+                        VStack(alignment : direction == .sender ?  .trailing : .leading ,spacing: 5){
                             content()
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
 //
-                            if direction == .receiver && sentTime != nil{
-                                Text(sentTime!.sendTimeString())
-                                    .foregroundColor(.gray)
-                                    .font(.caption2)
+                            
+                            HStack{
+                                if direction == .sender {
+                                    if messageStatus == .sending {
+                                        Image(systemName: "arrow.up.left")
+                                            .imageScale(.small)
+                                            .foregroundColor(.gray)
+                                            .font(.caption2)
+                                    } else if messageStatus == .notAck {
+                                        Image(systemName: "arrow.counterclockwisek")
+                                            .imageScale(.small)
+                                            .foregroundColor(.gray)
+                                            .font(.caption2)
+                                    }
+                                }
+                                
+                                if sentTime != nil{
+                                    Text(sentTime!.sendTimeString())
+                                        .foregroundColor(.gray)
+                                        .font(.caption2)
+                                }
                             }
+                            
                         }
-                       
+                        
                         //                            .clipShape(TextBubbleShape(direction: direction))
                         
                     }
