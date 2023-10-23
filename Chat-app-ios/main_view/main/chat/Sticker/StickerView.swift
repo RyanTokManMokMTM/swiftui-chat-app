@@ -14,8 +14,6 @@ struct Sticker : Identifiable{
 
 let stickers : [Sticker] = [
     Sticker(id: "9480a1ee-3ea7-4a0b-a14e-b436e050a997", thrumb: "9480a1ee-3ea7-4a0b-a14e-b436e050a997"),
-    Sticker(id: "a0234e3b-df42-4524-bc30-bf9832ae2e6d", thrumb: "a0234e3b-df42-4524-bc30-bf9832ae2e6d"),
-    Sticker(id: "a69dedcc-51ec-4887-b9a4-12a7774356c3", thrumb: "a69dedcc-51ec-4887-b9a4-12a7774356c3")
 ]
 
 struct StickerPaths : Identifiable{
@@ -30,6 +28,7 @@ struct StickerView: View {
     @State private var index = 0
     @State private var paths : [StickerPaths] = []
     @State private var isFecthing : Bool = false
+    @State private var isOpenStickerShop = false
     @Namespace private var namespace
     
     var onSend : (String) -> Void
@@ -37,27 +36,37 @@ struct StickerView: View {
     
     var body: some View {
         VStack{
-            ScrollView(.horizontal,showsIndicators: false){
-                HStack(spacing:0){
-                    ForEach(0..<stickers.count, id: \.self) { i in
-                        Image(stickers[i].thrumb)
-                            .resizable()
-                            .frame(width: 30,height: 30)
-                            .aspectRatio(contentMode: .fill)
-                            .padding(5)
-                            .onTapGesture {
-                                withAnimation{
-                                    self.index = i
-                                    Task {
-                                        await GetSticker()
+            HStack{
+                Button(action:{
+                    
+                }){
+                    Image(systemName: "plus.circle")
+                        .imageScale(.medium)
+                        .foregroundColor(.green)
+                        .fontWeight(.medium)
+                }
+                ScrollView(.horizontal,showsIndicators: false){
+                    HStack(spacing:0){
+                        ForEach(0..<stickers.count, id: \.self) { i in
+                            Image(stickers[i].thrumb)
+                                .resizable()
+                                .frame(width: 30,height: 30)
+                                .aspectRatio(contentMode: .fill)
+                                .padding(5)
+                                .onTapGesture {
+                                    withAnimation{
+                                        self.index = i
+                                        Task {
+                                            await GetSticker()
+                                        }
                                     }
                                 }
-                            }
-//                            .matchedGeometryEffect(id: "sticker", in: namespace)
-                            .background(BlurView(style: .systemUltraThinMaterialLight).opacity(self.index == i ? 1:0).cornerRadius(10))
+    //                            .matchedGeometryEffect(id: "sticker", in: namespace)
+                                .background(BlurView(style: .systemUltraThinMaterialLight).opacity(self.index == i ? 1:0).cornerRadius(10))
+                        }
                     }
+                    .padding(.horizontal,5)
                 }
-                .padding(.horizontal)
             }
             ScrollView {
                 if self.isFecthing {
@@ -120,6 +129,9 @@ struct StickerView: View {
                 }
             }
             .frame(maxHeight:UIScreen.main.bounds.height / 2.5)
+        }
+        .fullScreenCover(isPresented: $isOpenStickerShop){
+            StickerListView()
         }
         .onAppear{
             Task{

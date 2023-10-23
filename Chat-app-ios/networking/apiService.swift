@@ -51,6 +51,7 @@ protocol APIService {
     func GetStorySeenList(storyId : UInt) async -> Result<GetStorySeenListResp,Error>
     
     func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error>
+    func GetStickerGroupList() async -> Result<GetStickerGroupListResp,Error>
     
     func DownloadTask(fileURL : URL) async -> Result<URL,Error>
 }
@@ -131,6 +132,7 @@ enum APIEndPoint : String,CaseIterable {
     case GetStorySeenList
     
     case GetStickerGroup
+    case GetStickerGroupList
     
     var rawValue: String {
         switch self {
@@ -180,6 +182,7 @@ enum APIEndPoint : String,CaseIterable {
         case .GetStorySeenList : return "/story/seen/"
             
         case .GetStickerGroup : return "/sticker/"
+        case .GetStickerGroupList : return "/sticker/list"
         }
     }
 }
