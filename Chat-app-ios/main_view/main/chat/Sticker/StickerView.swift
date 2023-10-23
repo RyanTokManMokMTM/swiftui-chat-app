@@ -13,7 +13,7 @@ struct Sticker : Identifiable{
 }
 
 let stickers : [Sticker] = [
-    Sticker(id: "9480a1ee-3ea7-4a0b-a14e-b436e050a997", thrumb: "9480a1ee-3ea7-4a0b-a14e-b436e050a997"),
+    Sticker(id: "d87b9eb9-8c77-4886-82af-87535f75ed59", thrumb: "d87b9eb9-8c77-4886-82af-87535f75ed59"),
 ]
 
 struct StickerPaths : Identifiable{
@@ -26,9 +26,6 @@ struct StickerPaths : Identifiable{
 
 struct StickerView: View {
     @State private var index = 0
-    @State private var paths : [StickerPaths] = []
-    @State private var isFecthing : Bool = false
-    @State private var isOpenStickerShop = false
     @Namespace private var namespace
     
     var onSend : (String) -> Void
@@ -41,10 +38,12 @@ struct StickerView: View {
                     
                 }){
                     Image(systemName: "plus.circle")
-                        .imageScale(.medium)
-                        .foregroundColor(.green)
-                        .fontWeight(.medium)
+                        .imageScale(.large)
+                        .frame(width: 30,height: 30)
+                        .bold()
                 }
+                .foregroundColor(.green)
+                
                 ScrollView(.horizontal,showsIndicators: false){
                     HStack(spacing:0){
                         ForEach(0..<stickers.count, id: \.self) { i in
@@ -53,105 +52,119 @@ struct StickerView: View {
                                 .frame(width: 30,height: 30)
                                 .aspectRatio(contentMode: .fill)
                                 .padding(5)
-                                .onTapGesture {
-                                    withAnimation{
-                                        self.index = i
-                                        Task {
-                                            await GetSticker()
-                                        }
-                                    }
-                                }
-    //                            .matchedGeometryEffect(id: "sticker", in: namespace)
                                 .background(BlurView(style: .systemUltraThinMaterialLight).opacity(self.index == i ? 1:0).cornerRadius(10))
                         }
                     }
+                    .frame(width: 30,height: 30)
                     .padding(.horizontal,5)
                 }
             }
-            ScrollView {
-                if self.isFecthing {
+            
+            
+            StickerSubView(stickerId: stickers[index].id,onSend: onSend)
+        }
+    }
+
+}
+
+
+struct StickerSubView: View {
+    var stickerId : String
+//    @State private var isStickerExisted : Bool = false
+    @State private var isDownloading : Bool = false
+    @State private var stickerGroup : StickerGroup? = nil
+    @Namespace private var namespace
+    
+    var onSend : (String) -> Void
+    let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 4)
+    
+    var body: some View {
+        VStack{
+            if self.isDownloading {
+                HStack{
+                    Spacer()
                     ProgressView()
-                }else {
-                    LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(self.paths, id: \.id) { sticker in
-                            AsyncImage(url: sticker.StickerURL) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image
+                    Text("Downloading...")
+                        .font(.system(size:14))
+                        .foregroundColor(.gray)
+                        .padding(.horizontal,5)
+                    Spacer()
+                }
+            }else {
+                if let sticker = self.stickerGroup {
+                    
+                    ScrollView {
+    //                    if let resource = sticker.re
+                        if let resources  = sticker.resoucres?.allObjects as? [StickerGroupResources] {
+                            LazyVGrid(columns: columns, spacing: 20) {
+                                ForEach(resources, id: \.id) { sticker in
+                                    Image(uiImage: UIImage(data: sticker.imageData!)!) //need safty checking..
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .onTapGesture {
-                                            print("sending sticker \(sticker.path)")
-                                            onSend(sticker.path)
+                                            if let path = sticker.path {
+                                                onSend(path)
+                                            }
                                         }
-                                    
-                                case .failure:
-                                    
-                                    //Call the AsynchImage 2nd time - when there is a failure. (I think you can also check NSURLErrorCancelled = -999)
-                                    AsyncImage(url: sticker.StickerURL) { phase in
-                                        if let image = phase.image {
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .onTapGesture {
-                                                    print("sending sticker \(sticker.path)")
-                                                    onSend(sticker.path)
-                                                }
-                                        } else{
-                                            Image(systemName: "xmark.octagon")
-                                        }
-                                    }
-                                    
-                                case .empty:
-                                    ProgressView()
-                                @unknown default:
-                                    ProgressView()
+
                                 }
-                                
-                                 
-                             }
-                            
-//
-//                            AsyncImage(url: sticker.StickerURL, content: { img in
-//                                img
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fit)
-//                                    .onTapGesture {
-//                                        print("sending sticker \(sticker.path)")
-//                                        onSend(sticker.path)
-//                                    }
-//                            }, placeholder: {
-//                                ProgressView()
-//                            })
+                            }
                         }
+                       
                     }
-                    .padding(.horizontal)
+                    
+                }else {
+                    HStack{
+                        Spacer()
+                        Button(action: {
+                            Task{
+                                await GetSticker()
+                            }
+                        }){
+                            Text("Download the sticker.")
+                                .font(.system(size:14))
+                                .fontWeight(.medium)
+                                .foregroundColor(.white)
+                        }
+                        .padding(10)
+                        .background(Color.blue.cornerRadius(10))
+                        Spacer()
+                    }
+                    
                 }
             }
-            .frame(maxHeight:UIScreen.main.bounds.height / 2.5)
+
         }
-        .fullScreenCover(isPresented: $isOpenStickerShop){
-            StickerListView()
-        }
+        .frame(maxHeight:UIScreen.main.bounds.height / 2.5)
         .onAppear{
-            Task{
-                await GetSticker()
-            }
+            isStickerGroupExist(id: stickerId)
         }
     }
     
+    @MainActor
+    private func isStickerGroupExist(id : String) {
+        if let sticker = UserDataModel.shared.findStickerGroup(stickerId: UUID(uuidString: id)!){
+            stickerGroup = sticker
+        }
+    }
+
     private func GetSticker() async {
-        self.isFecthing = true
-        let resp = await  ChatAppService.shared.GetStickerGroup(stickerID: stickers[self.index].id)
-        
-        self.isFecthing = false
+        self.isDownloading = true
+        let resp = await  ChatAppService.shared.GetStickerGroup(stickerID: stickerId)
         switch resp {
         case.success(let data):
             DispatchQueue.main.async {
-                var resources : [StickerPaths] = []
-                data.resources_path.forEach{ resources.append(StickerPaths(path: $0)) }
-//                print(resources)
-                self.paths = resources
+                Task {
+                    do{
+                        let sticker = try await UserDataModel.shared.createStickerGroup(stickerId: data.stickerUUID, resources: data.resources_path)
+                        self.stickerGroup = sticker
+                    } catch(let err){
+                        print(err.localizedDescription)
+                    }
+                   
+                    self.isDownloading = false
+                }
+
             }
         case .failure(let err):
             print(err.localizedDescription)

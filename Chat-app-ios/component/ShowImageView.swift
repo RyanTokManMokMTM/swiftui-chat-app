@@ -20,13 +20,9 @@ struct ShowImageView: View {
                     .contextMenu{
                         
                         Button {
-                            print("save image")
                             let render = ImageRenderer(content: img)
                             if let uiImage = render.uiImage {
-                                Task {
-                                    await imageSaver.writeImageToAlbum(image: uiImage)
-                                    print("done")
-                                }
+                                imageSaver.writeImageToAlbum(image: uiImage)
       
                             }
                             
@@ -68,8 +64,8 @@ struct ShowImageView: View {
 
 
 class ImageSaver : NSObject {
-    func writeImageToAlbum(image : UIImage) async{
-       await UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveCompleted),nil)
+    func writeImageToAlbum(image : UIImage) {
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveCompleted),nil)
     }
     
     

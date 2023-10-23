@@ -712,11 +712,15 @@ class ChatAppService : APIService {
         return await self.AsyncFetchAndDecode(request: request)
     }
     
-    func DownloadTask(fileURL : URL) async -> Result<URL,Error>{
-        return await AsyncDownload(url: fileURL)
+    func DownloadTaskFile(fileURL : URL) async -> Result<URL,Error>{
+        return await AsyncDownloadFile(url: fileURL)
     }
     
-    private func AsyncDownload(url : URL) async -> Result<URL,Error> {
+    func DownloadTaskData(fileURL : URL) async -> Result<Data,Error>{
+        return await AsyncDownloadData(url: fileURL)
+    }
+    
+    private func AsyncDownloadFile(url : URL) async -> Result<URL,Error> {
         do {
             let (file,response) = try await self.Client.download(from: url)
             guard let statusCode = response as? HTTPURLResponse,200..<300 ~= statusCode.statusCode else{
@@ -728,6 +732,20 @@ class ChatAppService : APIService {
             return .failure(error)
         }
     }
+    
+    private func AsyncDownloadData(url : URL) async -> Result<Data,Error> {
+        do {
+            let (file,response) = try await self.Client.data(from: url)
+            guard let statusCode = response as? HTTPURLResponse,200..<300 ~= statusCode.statusCode else{
+                return .failure(APIError.badResponse)
+            }
+            return .success(file)
+        } catch {
+           
+            return .failure(error)
+        }
+    }
+    
     
     private func AsyncFetchAndDecode<ResponseType : Decodable>(request : URLRequest) async -> Result<ResponseType,Error>{
         

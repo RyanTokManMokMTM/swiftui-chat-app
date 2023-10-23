@@ -469,7 +469,7 @@ struct ChattingView: View {
                         hub.SetWait(message: "Downloading and saving...")
                         Task {
                             
-                            let resp = await ChatAppService.shared.DownloadTask(fileURL: message.FileURL)
+                            let resp = await ChatAppService.shared.DownloadTaskFile(fileURL: message.FileURL)
                             hub.isWaiting = false
                             switch resp {
                             case .success(let fileURL):
@@ -736,7 +736,7 @@ extension ChattingView {
     private func downloadAndSave(message : RoomMessages)  async{
         hub.SetWait(message: "Downloading and saving...")
         
-        let resp = await ChatAppService.shared.DownloadTask(fileURL: message.FileURL)
+        let resp = await ChatAppService.shared.DownloadTaskFile(fileURL: message.FileURL)
         hub.isWaiting = false
         switch resp {
         case .success(let fileURL):
@@ -1397,7 +1397,7 @@ extension ChattingView {
     @ViewBuilder
     private func StickerContentTypeView(message : RoomMessages) -> some View {
         VStack{
-            AsyncImage(url: message.FileURL, content: {img in
+            AsyncImage(url: message.StickerURL, content: {img in
                 img
                     .resizable()
                     .scaledToFit()

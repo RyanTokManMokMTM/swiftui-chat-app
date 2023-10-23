@@ -44,6 +44,12 @@ extension RoomMessages : Identifiable {
         return URL(string: RESOURCES_HOST+encodedURL)!
     }
     
+    var StickerURL : URL{
+        let url = self.url_path!
+        let encodedURL = url.addingPercentEncoding(withAllowedCharacters:.urlPathAllowed) ?? ""
+        return URL(string: RESOURCES_HOST+"/sticker"+encodedURL)!
+    }
+    
     var FileSizeInMB : Double {
         if self.file_size == 0 {
             return 0

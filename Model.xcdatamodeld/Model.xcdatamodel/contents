@@ -38,14 +38,16 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="roomMessage" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RoomMessages" inverseName="sender" inverseEntity="RoomMessages"/>
     </entity>
-    <entity name="StickerResources" representedClassName="StickerResources" syncable="YES" codeGenerationType="class">
+    <entity name="StickerGroup" representedClassName=".StickerGroup" syncable="YES">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="path" optional="YES" attributeType="String"/>
-        <relationship name="relationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Stickers" inverseName="resoucres" inverseEntity="Stickers"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="resoucres" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StickerGroupResources" inverseName="relationship" inverseEntity="StickerGroupResources"/>
     </entity>
-    <entity name="Stickers" representedClassName="Stickers" syncable="YES" codeGenerationType="class">
-        <attribute name="stickerID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="resoucres" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StickerResources" inverseName="relationship" inverseEntity="StickerResources"/>
+    <entity name="StickerGroupResources" representedClassName=".StickerGroupResources" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <attribute name="path" optional="YES" attributeType="String"/>
+        <relationship name="relationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StickerGroup" inverseName="resoucres" inverseEntity="StickerGroup"/>
     </entity>
     <entity name="UserDatas" representedClassName="UserDatas" syncable="YES">
         <attribute name="avatar" optional="YES" attributeType="String"/>

@@ -307,6 +307,57 @@ class UserDataModel : ObservableObject {
     }
     
     
+    func findStickerGroup(stickerId : UUID) -> StickerGroup? {
+        let request : NSFetchRequest<StickerGroup> = StickerGroup.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@", "id", stickerId as CVarArg)
+        request.fetchLimit = 1
+        guard let sticker = try? self.manager.context.fetch(request) else {
+            return nil
+        }
+        return sticker.first
+    }
+    
+    func createStickerGroup(stickerId: UUID, resources: [String]) async throws -> StickerGroup?{
+        let sticker = StickerGroup(context: self.manager.context)
+        sticker.id = stickerId
+        
+        do {
+            try await resources.asyncForEach{ path in
+                if let url = URL(string: RESOURCES_HOST + "/sticker/" + path){
+                    let resp = await ChatAppService.shared.DownloadTaskData(fileURL: url)
+                    switch(resp){
+                    case.success(let data):
+                        let resource = StickerGroupResources(context: self.manager.context)
+                        resource.id = UUID()
+                        resource.imageData = data
+                        resource.path = path
+                        
+                        sticker.addToResoucres(resource)
+                        
+                    case .failure(let err):
+                        throw err
+                    }
+                }
+                
+            }
+        } catch(let err){
+            throw err
+        }
+        
+        
+        self.manager.save()
+        return sticker
+    }
+    
     
 }
 
+extension Sequence {
+    func asyncForEach(
+        _ operation: (Element) async throws -> Void
+    ) async rethrows {
+        for element in self {
+            try await operation(element)
+        }
+    }
+}

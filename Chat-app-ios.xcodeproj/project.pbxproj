@@ -187,6 +187,10 @@
 		20D3984F2AE667B800DE66FC /* AddStickerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3984D2AE667B800DE66FC /* AddStickerListView.swift */; };
 		20D398502AE667B800DE66FC /* StickerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3984E2AE667B800DE66FC /* StickerListView.swift */; };
 		20D398522AE675AA00DE66FC /* StickerShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D398512AE675AA00DE66FC /* StickerShopViewModel.swift */; };
+		20D3985F2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3985B2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift */; };
+		20D398602AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3985C2AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift */; };
+		20D398612AE67C4100DE66FC /* StickerGroup+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3985D2AE67C4100DE66FC /* StickerGroup+CoreDataClass.swift */; };
+		20D398622AE67C4100DE66FC /* StickerGroup+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3985E2AE67C4100DE66FC /* StickerGroup+CoreDataProperties.swift */; };
 		20DB4DC929F2756500FF4C8B /* GroupSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DB4DC829F2756400FF4C8B /* GroupSearchView.swift */; };
 		20E0966829FE766800B5EBA7 /* Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E0966729FE766800B5EBA7 /* Doc.swift */; };
 		20EA19B82A174430006427F9 /* serverConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EA19B72A174430006427F9 /* serverConfig.swift */; };
@@ -377,6 +381,10 @@
 		20D3984D2AE667B800DE66FC /* AddStickerListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddStickerListView.swift; sourceTree = "<group>"; };
 		20D3984E2AE667B800DE66FC /* StickerListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StickerListView.swift; sourceTree = "<group>"; };
 		20D398512AE675AA00DE66FC /* StickerShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerShopViewModel.swift; sourceTree = "<group>"; };
+		20D3985B2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StickerGroupResources+CoreDataClass.swift"; sourceTree = "<group>"; };
+		20D3985C2AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StickerGroupResources+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		20D3985D2AE67C4100DE66FC /* StickerGroup+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StickerGroup+CoreDataClass.swift"; sourceTree = "<group>"; };
+		20D3985E2AE67C4100DE66FC /* StickerGroup+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StickerGroup+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		20DB4DC829F2756400FF4C8B /* GroupSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSearchView.swift; sourceTree = "<group>"; };
 		20E0966729FE766800B5EBA7 /* Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Doc.swift; sourceTree = "<group>"; };
 		20EA19B72A174430006427F9 /* serverConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serverConfig.swift; sourceTree = "<group>"; };
@@ -625,6 +633,10 @@
 		2091E9B3299CECE400EB9A7C = {
 			isa = PBXGroup;
 			children = (
+				20D3985B2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift */,
+				20D3985C2AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift */,
+				20D3985D2AE67C4100DE66FC /* StickerGroup+CoreDataClass.swift */,
+				20D3985E2AE67C4100DE66FC /* StickerGroup+CoreDataProperties.swift */,
 				2048A0922A1F646300050F4D /* RoomMessages+CoreDataClass.swift */,
 				2048A0932A1F646300050F4D /* RoomMessages+CoreDataProperties.swift */,
 				206BF1812A18B04900535F79 /* ringing.mp3 */,
@@ -1174,6 +1186,7 @@
 				20CE5D2B29A354D6001371A7 /* CallView.swift in Sources */,
 				20061B782ACA52DC0097D72F /* StoryMessageView.swift in Sources */,
 				2048A0942A1F646300050F4D /* RoomMessages+CoreDataClass.swift in Sources */,
+				20D398612AE67C4100DE66FC /* StickerGroup+CoreDataClass.swift in Sources */,
 				2035126A29F6637C00139AD3 /* SenderInfo+CoreDataClass.swift in Sources */,
 				2095A2772A1CE2DE00824DEC /* StickerView.swift in Sources */,
 				20008A732A0E03FB00BFC758 /* VoiceCallView.swift in Sources */,
@@ -1188,7 +1201,9 @@
 				20C86C042AC7CBE100A29661 /* UpdateUserCoverResponse.swift in Sources */,
 				20E0966829FE766800B5EBA7 /* Doc.swift in Sources */,
 				20C86B862AC7C21C00A29661 /* UpdateUserStateResponse.swift in Sources */,
+				20D398602AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift in Sources */,
 				208B4CBA29F3CA3F001F2EF1 /* UserProfileEditView.swift in Sources */,
+				20D3985F2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift in Sources */,
 				201140F629A49F7200015AD8 /* ChatBubble.swift in Sources */,
 				2076908929B5FCF100ACD532 /* SideMenu.swift in Sources */,
 				2073D67229A2539900AA29D9 /* ContentRow.swift in Sources */,
@@ -1238,6 +1253,7 @@
 				2000E0A32A21F06200F03480 /* DragTextView.swift in Sources */,
 				209034FD29FD04C000DE66AF /* helper.swift in Sources */,
 				2035126B29F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift in Sources */,
+				20D398622AE67C4100DE66FC /* StickerGroup+CoreDataProperties.swift in Sources */,
 				2073D66F29A252B800AA29D9 /* Message.swift in Sources */,
 				204B945729B708E2009C251B /* BenHubView.swift in Sources */,
 				201CB7B329BEEAFE0036D181 /* NavigationState.swift in Sources */,

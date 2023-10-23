@@ -53,7 +53,8 @@ protocol APIService {
     func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error>
     func GetStickerGroupList() async -> Result<GetStickerGroupListResp,Error>
     
-    func DownloadTask(fileURL : URL) async -> Result<URL,Error>
+    func DownloadTaskFile(fileURL : URL) async -> Result<URL,Error>
+    func DownloadTaskData(fileURL : URL) async -> Result<Data,Error>
 }
 
 enum APIError : Error, CustomNSError{

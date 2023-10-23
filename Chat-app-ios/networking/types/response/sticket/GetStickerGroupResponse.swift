@@ -10,4 +10,8 @@ struct GetStickerGroupResp : Decodable {
     let code : UInt
     let sticker_id : String
     let resources_path : [String]
+    
+    var stickerUUID : UUID {
+        return UUID(uuidString: self.sticker_id)!
+    }
 }
