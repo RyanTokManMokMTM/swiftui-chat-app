@@ -8,11 +8,14 @@
 import Foundation
 class StickerShopViewModel : ObservableObject {
     @Published var stickerList : [StickerInfo] = []
-    @Published var selectedStickerInfo : StickerInfo? = nil
+    @Published var selectStickerInfoId : String = ""
     @Published var isLoading = false
     
     func GetStickerList() async {
-        self.isLoading = true
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
+
         let resp = await ChatAppService.shared.GetStickerGroupList()
         DispatchQueue.main.async {
             self.isLoading = false

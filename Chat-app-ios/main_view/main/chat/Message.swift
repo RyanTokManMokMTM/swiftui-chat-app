@@ -14,6 +14,7 @@ struct Message: View {
     @StateObject private var messageModel = MessageViewModel()
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
+    @EnvironmentObject var stickerShopVM : StickerShopViewModel
     @Binding var isActive : Bool
     @Binding var isAddStory : Bool
     @State private var isChat = false
@@ -75,6 +76,7 @@ struct Message: View {
                     .environmentObject(userModel)
                     .environmentObject(UDM)
                     .environmentObject(videoCallVM)
+                    .environmentObject(stickerShopVM)
                     .onAppear{
                         DispatchQueue.main.async{
 //                            self.UDM.currentRoom = index

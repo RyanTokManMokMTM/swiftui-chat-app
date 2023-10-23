@@ -334,8 +334,8 @@
             filePath = "Chat-app-ios/main_view/main/chat/ChattingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "429"
-            endingLineNumber = "429"
+            startingLineNumber = "430"
+            endingLineNumber = "430"
             landmarkName = "content(message:)"
             landmarkType = "7">
          </BreakpointContent>

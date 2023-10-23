@@ -25,8 +25,11 @@ struct StickerPaths : Identifiable{
 }
 
 struct StickerView: View {
+    @EnvironmentObject var stickerShopVM : StickerShopViewModel
     @State private var index = 0
+    @State private var isOpenShop = false
     @Namespace private var namespace
+    
     
     var onSend : (String) -> Void
     let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 4)
@@ -35,7 +38,10 @@ struct StickerView: View {
         VStack{
             HStack{
                 Button(action:{
-                    
+                    self.isOpenShop = true
+                    Task{
+                       await self.stickerShopVM.GetStickerList()
+                    }
                 }){
                     Image(systemName: "plus.circle")
                         .imageScale(.large)
@@ -62,6 +68,10 @@ struct StickerView: View {
             
             
             StickerSubView(stickerId: stickers[index].id,onSend: onSend)
+        }
+        .fullScreenCover(isPresented: $isOpenShop){
+            StickerShopView()
+                .environmentObject(stickerShopVM)
         }
     }
 

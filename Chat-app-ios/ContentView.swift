@@ -11,6 +11,7 @@ import AVFoundation
 
 struct ContentView: View {
     @StateObject var state = SearchState()
+    @StateObject var stickerShopVM = StickerShopViewModel()
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
     @StateObject var storyModel = StoryViewModel()
     @StateObject var hub = BenHubState.shared
@@ -33,6 +34,7 @@ struct ContentView: View {
                     .environmentObject(UDM)
                     .environmentObject(storyModel)
                     .environmentObject(userStory)
+                    .environmentObject(stickerShopVM)
 
             }
             .accentColor(.green)

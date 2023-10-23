@@ -27,6 +27,7 @@ struct ChattingView: View {
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
+    
     let chatUserData : ActiveRooms
     @Binding var messages : [RoomMessages]
     @StateObject private var hub = BenHubState.shared

@@ -20,6 +20,7 @@ struct AddStickerListView: View {
             stickerHeader()
             Spacer()
             Divider()
+                .padding(.horizontal,10)
                 
             stickerList()
         }

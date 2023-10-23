@@ -12,27 +12,45 @@ let temp : [StickerInfo] = [
     StickerInfo(sticker_id: "d87b9eb9-8c77-4886-82af-87535f75ed59", sticker_name: "Sticker B", sticker_thum: "/079ef2e6-fb25-47a5-8f23-8da4efd2d5de/f6c8b708-b57b-4008-98a2-2caf114e9a57.png"),
 ]
 
-struct StickerListView: View {
+struct StickerShopView: View {
+    @EnvironmentObject var stickerShopVM : StickerShopViewModel
     
+    @Environment(\.presentationMode) var presentation
     var body: some View {
         NavigationStack{
             VStack{
-                List{
-                    ForEach(temp, id :\.id){ info in
-                        NavigationLink(value: info) {
-                            stickerRow(info: info)
-                        }
-                      
+                if self.stickerShopVM.isLoading{
+                    HStack{
+                        ProgressView()
+                        Text("Loading...")
+                            .font(.system(size:14))
+                            .fontWeight(.medium)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal,5)
                     }
+                    .padding(.top,25)
+                }else {
+                    List{
+                        ForEach(self.stickerShopVM.stickerList, id :\.id){ info in
+                            NavigationLink(value: info) {
+                                stickerRow(info: info)
+                                    .onTapGesture {
+                                        self.stickerShopVM.selectStickerInfoId = info.id
+                                    }
+                            }
+                          
+                        }
+                    }
+                    .listStyle(.plain)
                 }
-                .listStyle(.plain)
+              
             }
-            .navigationTitle("Sticker Shoe")
+            .navigationTitle("Sticker Shop")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action:{
-                        
+                        presentation.wrappedValue.dismiss()
                     }){
                         Image(systemName: "xmark")
                             .imageScale(.medium)
@@ -40,9 +58,7 @@ struct StickerListView: View {
                 }
             }
             .navigationDestination(for: StickerInfo.self){data in
-    //            if let index = UDM.findOneRoomWithIndex(uuid: data.id!){
                 AddStickerListView(info: data)
-               
             }
         }
         .accentColor(.green)

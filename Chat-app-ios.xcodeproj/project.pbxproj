@@ -185,7 +185,7 @@
 		20D398492AE666C300DE66FC /* GetStickerGroupListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D398482AE666C300DE66FC /* GetStickerGroupListResponse.swift */; };
 		20D3984B2AE666E600DE66FC /* StickerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3984A2AE666E600DE66FC /* StickerInfo.swift */; };
 		20D3984F2AE667B800DE66FC /* AddStickerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3984D2AE667B800DE66FC /* AddStickerListView.swift */; };
-		20D398502AE667B800DE66FC /* StickerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3984E2AE667B800DE66FC /* StickerListView.swift */; };
+		20D398502AE667B800DE66FC /* StickerShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3984E2AE667B800DE66FC /* StickerShopView.swift */; };
 		20D398522AE675AA00DE66FC /* StickerShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D398512AE675AA00DE66FC /* StickerShopViewModel.swift */; };
 		20D3985F2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3985B2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift */; };
 		20D398602AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D3985C2AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift */; };
@@ -379,7 +379,7 @@
 		20D398482AE666C300DE66FC /* GetStickerGroupListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStickerGroupListResponse.swift; sourceTree = "<group>"; };
 		20D3984A2AE666E600DE66FC /* StickerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerInfo.swift; sourceTree = "<group>"; };
 		20D3984D2AE667B800DE66FC /* AddStickerListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddStickerListView.swift; sourceTree = "<group>"; };
-		20D3984E2AE667B800DE66FC /* StickerListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StickerListView.swift; sourceTree = "<group>"; };
+		20D3984E2AE667B800DE66FC /* StickerShopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StickerShopView.swift; sourceTree = "<group>"; };
 		20D398512AE675AA00DE66FC /* StickerShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerShopViewModel.swift; sourceTree = "<group>"; };
 		20D3985B2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StickerGroupResources+CoreDataClass.swift"; sourceTree = "<group>"; };
 		20D3985C2AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StickerGroupResources+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -1010,7 +1010,7 @@
 			isa = PBXGroup;
 			children = (
 				20D3984D2AE667B800DE66FC /* AddStickerListView.swift */,
-				20D3984E2AE667B800DE66FC /* StickerListView.swift */,
+				20D3984E2AE667B800DE66FC /* StickerShopView.swift */,
 				2095A2762A1CE2DE00824DEC /* StickerView.swift */,
 			);
 			path = Sticker;
@@ -1216,7 +1216,7 @@
 				208F45D52AC973A3004A843E /* GetStorySeenListResponse.swift in Sources */,
 				200B79A629BDAFEF00F1DB70 /* GroupViewModel.swift in Sources */,
 				20D398522AE675AA00DE66FC /* StickerShopViewModel.swift in Sources */,
-				20D398502AE667B800DE66FC /* StickerListView.swift in Sources */,
+				20D398502AE667B800DE66FC /* StickerShopView.swift in Sources */,
 				20C86BBD2AC7C4ED00A29661 /* UpdateGroupInfoResponse.swift in Sources */,
 				2065B37929B88E86004B6F2D /* Websocket.swift in Sources */,
 				20C86BC42AC7C67D00A29661 /* GetUserGroupsResponse.swift in Sources */,
