@@ -17,7 +17,7 @@ protocol APIService {
     func UploadUserAvatar(imgData : Data) async -> Result<UploadUserAvatarResp,Error>
     func UploadUserCover(imgData : Data) async -> Result<UploadUserCoverResp,Error>
     func SearchUser(email : String) async -> Result<SearchUserResp,Error>
-    
+
     func AddFriend(req : AddFriendReq) async -> Result<AddFriendResp,Error>
     func DeleteFriend(req : DeleteFriendReq) async -> Result<DeleteFriendResp,Error>
     func GetFriendList() async -> Result<GetFriendListResp,Error>
@@ -33,6 +33,12 @@ protocol APIService {
     func GetUserGroups() async -> Result<GetUserGroupsResp,Error>
     func SearchGroup(query : String) async -> Result<SearchGroupResp,Error>
     func GetGroupInfoByUUID(uuid : String) async -> Result<GetGroupInfoByUUIDResp,Error>
+    
+    //User Sticker Feature
+    func AddUserSticker(req : AddUserStickerReq) async -> Result<AddUserStickerResp,Error>
+    func DeleteUserSticker(req : DeleteUserStickerReq) async -> Result<DeleteUserStickerResp,Error>
+    func IsUserStikcerExist(sticker_id : String) async -> Result<IsUserStickerExistResp,Error>
+    func GetUserStickerList() async -> Result<GetUserStickerListResp,Error>
     
     func GetMessages(req : GetMessageReq) async -> Result<GetMessageResp,Error>
     func DeleteMessage(req : DeleteMessageReq) async -> Result<DeleteFriendResp,Error>
@@ -100,6 +106,11 @@ enum APIEndPoint : String,CaseIterable {
     case UploadCover
     case SearchUser
     
+    case AddUserSticker
+    case DeleteUserSticker
+    case IsUserStickerExist
+    case GetUserStickerList
+    
     case AddFriend
     case DeleteFriend
     case GetFriendList
@@ -147,6 +158,11 @@ enum APIEndPoint : String,CaseIterable {
         case .UploadCover : return "/user/cover"
         case .SearchUser : return "/user/search"
         case .GetUserInfo : return "/user/info"
+            
+        case .AddUserSticker : return "/user/sticker"
+        case .DeleteUserSticker : return "/user/sticker"
+        case .IsUserStickerExist : return "/user/sticker/"
+        case .GetUserStickerList : return "/user/sticker/list"
         
         case .AddFriend : return "/user/friend"
         case .DeleteFriend : return "/user/friend"

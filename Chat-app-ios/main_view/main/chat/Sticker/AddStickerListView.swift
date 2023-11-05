@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct AddStickerListView: View {
+    @StateObject private var hub = BenHubState.shared
+    @EnvironmentObject private var userVM : UserViewModel
     var info : StickerInfo
 //    var stickerPath : []
     @State private var isLoading = false
+    @State private var isExist : Bool = false
     @State private var resources : [String] = []
     
     let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 4)
@@ -23,15 +26,29 @@ struct AddStickerListView: View {
                 .padding(.horizontal,10)
                 
             stickerList()
+                
         }
         .onAppear{
+            self.isLoading = true
             Task{
-                await GetSticker()
+                do {
+                    try await GetSticker()
+                    try await IsUserStickerExist()
+                    DispatchQueue.main.async {
+                        self.isLoading = false
+                    }
+                } catch(let err){
+                    print(err)
+                }
+//                await GetSticker()
+               
             }
         }
+
     }
     
     @ViewBuilder
+    
     private func stickerHeader() -> some View {
         AsyncImage(url: info.thumURL, content: { img in
             img
@@ -39,6 +56,7 @@ struct AddStickerListView: View {
                 .scaledToFit()
                 .frame(width:120,height: 120)
                 .aspectRatio(contentMode: .fit)
+                .redacted(reason: self.isLoading ? .placeholder : [])
             
             
         }, placeholder: {
@@ -53,23 +71,32 @@ struct AddStickerListView: View {
             .fontWeight(.bold)
             .multilineTextAlignment(.center)
             .lineLimit(2)
+            .redacted(reason: self.isLoading ? .placeholder : [])
         
         HStack{
+            
             Button(action: {
-                
+                Task{
+                    if isExist{
+                        await self.DeleteSticker()
+                    }else {
+                        await self.AddSticker()
+                    }
+                }
             }){
                 HStack{
                     Spacer()
-                    Text("Add")
+                    Text(self.isExist ? "Remove from my sticker": "Add to my sticker")
                         .font(.system(size:14))
                         .fontWeight(.medium)
                         .foregroundColor(.white)
                         .padding(.vertical,15)
                     Spacer()
                 }
-                .background(Color.green)
+                .background(self.isExist ? Color.red : Color.green)
                 .cornerRadius(10)
                 .padding(.horizontal,5)
+                .redacted(reason: self.isLoading ? .placeholder : [])
             }
            
         
@@ -116,43 +143,78 @@ struct AddStickerListView: View {
                             
                             
                         }
+                        .redacted(reason: self.isLoading ? .placeholder : [])
                     }
                 }
                 .padding(10)
-                
-                
-                
-//                LazyVGrid(columns: columns, spacing: 20) {
-//                    ForEach(self.resources, id: \.self) { sticker in
-//
-//                        AsyncImage(url: URL(string: RESOURCES_HOST + "/sticker/" + sticker)!, content: { img in
-//                            img
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fit)
-//
-//
-//                        }, placeholder: {
-//                            ProgressView()
-//                        })
-//                    }
-//                }
-//                .padding(10)
             }
         }
       
     }
     
-    private func GetSticker() async {
-        self.isLoading = true
+    private func GetSticker() async throws {
+//        self.isLoading = true
         let resp = await  ChatAppService.shared.GetStickerGroup(stickerID: info.id)
         switch resp {
         case.success(let data):
             DispatchQueue.main.async {
                 self.resources = data.resources_path
-                self.isLoading = false
+//                self.isLoading = false
             }
         case .failure(let err):
             print(err.localizedDescription)
+            throw err
+        }
+    }
+    
+    private func IsUserStickerExist() async throws {
+        let resp = await  ChatAppService.shared.IsUserStikcerExist(sticker_id: info.id)
+        switch resp {
+        case.success(let data):
+            DispatchQueue.main.async {
+                self.isExist = data.is_exist
+            }
+        case .failure(let err):
+            print(err.localizedDescription)
+            throw err
+        }
+    }
+    
+    private func AddSticker() async{
+        hub.SetWait(message: "Adding to your sticker...")
+        let req = AddUserStickerReq(sticker_id: info.id)
+        let resp = await  ChatAppService.shared.AddUserSticker(req: req)
+        switch resp {
+        case.success(_):
+            DispatchQueue.main.async {
+                self.isExist = true
+            }
+            await self.userVM.GetUserUserStickerList()
+            hub.isWaiting = false
+            hub.AlertMessage(sysImg: "checkmark", message: "Sticker added.")
+        case .failure(let err):
+            print(err.localizedDescription)
+            hub.isWaiting = false
+            hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
+        }
+    }
+    
+    private func DeleteSticker() async{
+        hub.SetWait(message: "Removing from your sticker...")
+        let req = DeleteUserStickerReq(sticker_id: info.id)
+        let resp = await  ChatAppService.shared.DeleteUserSticker(req: req)
+        switch resp {
+        case.success(_):
+            DispatchQueue.main.async {
+                self.isExist = false
+            }
+            await self.userVM.GetUserUserStickerList()
+            hub.isWaiting = false
+            hub.AlertMessage(sysImg: "checkmark", message: "Sticker added.")
+        case .failure(let err):
+            print(err.localizedDescription)
+            hub.isWaiting = false
+            hub.AlertMessage(sysImg: "xmark", message: err.localizedDescription)
         }
     }
 }

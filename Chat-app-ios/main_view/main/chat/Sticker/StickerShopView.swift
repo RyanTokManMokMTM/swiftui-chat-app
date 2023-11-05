@@ -7,13 +7,11 @@
 
 import SwiftUI
 
-let temp : [StickerInfo] = [
-    StickerInfo(sticker_id: "e58f10c0-46c1-49f8-8133-d5ad6d445b0b", sticker_name: "Sticker A", sticker_thum: "/079ef2e6-fb25-47a5-8f23-8da4efd2d5de/f862fb46-437d-4bd1-97d8-cf9cfdde43dd.png"),
-    StickerInfo(sticker_id: "d87b9eb9-8c77-4886-82af-87535f75ed59", sticker_name: "Sticker B", sticker_thum: "/079ef2e6-fb25-47a5-8f23-8da4efd2d5de/f6c8b708-b57b-4008-98a2-2caf114e9a57.png"),
-]
 
 struct StickerShopView: View {
+    @StateObject private var hub = BenHubState.shared
     @EnvironmentObject var stickerShopVM : StickerShopViewModel
+    @EnvironmentObject var userVM : UserViewModel
     
     @Environment(\.presentationMode) var presentation
     var body: some View {
@@ -62,6 +60,14 @@ struct StickerShopView: View {
             }
         }
         .accentColor(.green)
+        .alert(isAlert: $hub.isPresented){
+            switch hub.type{
+            case .normal,.system:
+                BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+            case .messge:
+                BenHubAlertWithMessage( message: hub.message,info: hub.info!)
+            }
+        }
       
         
     }

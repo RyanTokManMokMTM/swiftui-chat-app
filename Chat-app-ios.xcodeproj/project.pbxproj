@@ -47,6 +47,12 @@
 		204B945729B708E2009C251B /* BenHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204B945629B708E2009C251B /* BenHubView.swift */; };
 		204C4A4229B721A5007AA02E /* menuRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C4A4129B721A5007AA02E /* menuRow.swift */; };
 		204C4A4429B72A22007AA02E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C4A4329B72A22007AA02E /* ProfileView.swift */; };
+		205888E02AF5DF3B002C5086 /* AddUserStickerRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888DF2AF5DF3B002C5086 /* AddUserStickerRequest.swift */; };
+		205888E22AF5DF71002C5086 /* AddUserStickerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888E12AF5DF71002C5086 /* AddUserStickerResponse.swift */; };
+		205888E42AF5DFA3002C5086 /* DeleteStickerRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888E32AF5DFA3002C5086 /* DeleteStickerRequest.swift */; };
+		205888E62AF5DFD4002C5086 /* DeleteUserStickerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888E52AF5DFD4002C5086 /* DeleteUserStickerResponse.swift */; };
+		205888EA2AF5E01E002C5086 /* IsUserStickerExistResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888E92AF5E01E002C5086 /* IsUserStickerExistResponse.swift */; };
+		205888EC2AF5E062002C5086 /* GetUserStickerListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888EB2AF5E062002C5086 /* GetUserStickerListResponse.swift */; };
 		2065B37929B88E86004B6F2D /* Websocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2065B37829B88E86004B6F2D /* Websocket.swift */; };
 		2065B37B29B8A885004B6F2D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2065B37A29B8A885004B6F2D /* SearchView.swift */; };
 		2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2069095329F2AB15000EB157 /* GroupContentView.swift */; };
@@ -239,6 +245,12 @@
 		204B945629B708E2009C251B /* BenHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenHubView.swift; sourceTree = "<group>"; };
 		204C4A4129B721A5007AA02E /* menuRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = menuRow.swift; sourceTree = "<group>"; };
 		204C4A4329B72A22007AA02E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		205888DF2AF5DF3B002C5086 /* AddUserStickerRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserStickerRequest.swift; sourceTree = "<group>"; };
+		205888E12AF5DF71002C5086 /* AddUserStickerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserStickerResponse.swift; sourceTree = "<group>"; };
+		205888E32AF5DFA3002C5086 /* DeleteStickerRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteStickerRequest.swift; sourceTree = "<group>"; };
+		205888E52AF5DFD4002C5086 /* DeleteUserStickerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteUserStickerResponse.swift; sourceTree = "<group>"; };
+		205888E92AF5E01E002C5086 /* IsUserStickerExistResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsUserStickerExistResponse.swift; sourceTree = "<group>"; };
+		205888EB2AF5E062002C5086 /* GetUserStickerListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserStickerListResponse.swift; sourceTree = "<group>"; };
 		2065B37829B88E86004B6F2D /* Websocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Websocket.swift; sourceTree = "<group>"; };
 		2065B37A29B8A885004B6F2D /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		2069095329F2AB15000EB157 /* GroupContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupContentView.swift; sourceTree = "<group>"; };
@@ -821,6 +833,8 @@
 				20C86B7B2AC7C18B00A29661 /* GetUserProfileRequest.swift */,
 				20C86B7F2AC7C1B200A29661 /* UpdateUserInfoRequest.swift */,
 				20C86B832AC7C20500A29661 /* UpdateUserStateRequest.swift */,
+				205888DF2AF5DF3B002C5086 /* AddUserStickerRequest.swift */,
+				205888E32AF5DFA3002C5086 /* DeleteStickerRequest.swift */,
 			);
 			path = user;
 			sourceTree = "<group>";
@@ -853,6 +867,10 @@
 				20C86B892AC7C27200A29661 /* SearchUserResponse.swift */,
 				20C86B8B2AC7C28300A29661 /* SearchUserResultResponse.swift */,
 				20C86C032AC7CBE100A29661 /* UpdateUserCoverResponse.swift */,
+				205888E12AF5DF71002C5086 /* AddUserStickerResponse.swift */,
+				205888E52AF5DFD4002C5086 /* DeleteUserStickerResponse.swift */,
+				205888E92AF5E01E002C5086 /* IsUserStickerExistResponse.swift */,
+				205888EB2AF5E062002C5086 /* GetUserStickerListResponse.swift */,
 			);
 			path = user;
 			sourceTree = "<group>";
@@ -1104,6 +1122,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				205888E02AF5DF3B002C5086 /* AddUserStickerRequest.swift in Sources */,
 				20C86BE02AC7C87F00A29661 /* CreateStoryResponse.swift in Sources */,
 				20C86BF92AC7C99500A29661 /* CreateStoryLikeResponse.swift in Sources */,
 				2091E9D2299D1E2B00EB9A7C /* apiService.swift in Sources */,
@@ -1125,6 +1144,7 @@
 				209F7ABD29BC41C3003701E8 /* AppDelegate.swift in Sources */,
 				20C86BF32AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift in Sources */,
 				200B79A429BDA78F00F1DB70 /* CreateGroup.swift in Sources */,
+				205888E22AF5DF71002C5086 /* AddUserStickerResponse.swift in Sources */,
 				2076908D29B62F6700ACD532 /* CustomConer.swift in Sources */,
 				20C86BE82AC7C8F800A29661 /* DeleteStoryRequest.swift in Sources */,
 				20C86BBF2AC7C60A00A29661 /* UploadGroupAvatarRequest.swift in Sources */,
@@ -1132,6 +1152,7 @@
 				20C86BB92AC7C4AD00A29661 /* FullGroupInfo.swift in Sources */,
 				209F33F72AAD98B100DF8371 /* UIImage.swift in Sources */,
 				2048A0952A1F646300050F4D /* RoomMessages+CoreDataProperties.swift in Sources */,
+				205888E42AF5DFA3002C5086 /* DeleteStickerRequest.swift in Sources */,
 				20C86BD52AC7C77300A29661 /* UploadImageRequest.swift in Sources */,
 				20C86BE62AC7C8E900A29661 /* GetStoryInfoResponse.swift in Sources */,
 				20C86B9A2AC7C31D00A29661 /* GetFriendInfoResponse.swift in Sources */,
@@ -1173,6 +1194,7 @@
 				2085012929BCB17D00C3E4DD /* AddContent.swift in Sources */,
 				20962D7C29BB2B5400143AAF /* MessageViewModel.swift in Sources */,
 				209F7AC129BC42DC003701E8 /* PersistenceController.swift in Sources */,
+				205888EC2AF5E062002C5086 /* GetUserStickerListResponse.swift in Sources */,
 				2065B37B29B8A885004B6F2D /* SearchView.swift in Sources */,
 				20C86BA92AC7C40D00A29661 /* LeaveGroupResponse.swift in Sources */,
 				20C86B882AC7C22F00A29661 /* UpdateUserAvatarResponse.swift in Sources */,
@@ -1234,10 +1256,12 @@
 				201140F229A49A6600015AD8 /* ChattingView.swift in Sources */,
 				20B1267E2A10F4A9009FF2AB /* RTCViewModel.swift in Sources */,
 				20CE5D3129A35622001371A7 /* FriendContent.swift in Sources */,
+				205888E62AF5DFD4002C5086 /* DeleteUserStickerResponse.swift in Sources */,
 				20A8895229C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift in Sources */,
 				20C86BD82AC7C79200A29661 /* UploadImageResponse.swift in Sources */,
 				2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */,
 				20C86BA32AC7C37600A29661 /* CreateGroupResponse.swift in Sources */,
+				205888EA2AF5E01E002C5086 /* IsUserStickerExistResponse.swift in Sources */,
 				20C86C062AC7CC3A00A29661 /* LeaveGroupRequest.swift in Sources */,
 				20C86C022AC7C9E900A29661 /* HealthCheckResponse.swift in Sources */,
 				203D5DA82A6BBF86003E1A1A /* SearchState.swift in Sources */,

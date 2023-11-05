@@ -25,8 +25,8 @@ struct StickerPaths : Identifiable{
 }
 
 struct StickerView: View {
+    @EnvironmentObject var userVM : UserViewModel
     @EnvironmentObject var stickerShopVM : StickerShopViewModel
-    @State private var index = 0
     @State private var isOpenShop = false
     @Namespace private var namespace
     
@@ -40,7 +40,7 @@ struct StickerView: View {
                 Button(action:{
                     self.isOpenShop = true
                     Task{
-                       await self.stickerShopVM.GetStickerList()
+                        await self.stickerShopVM.GetStickerList()
                     }
                 }){
                     Image(systemName: "plus.circle")
@@ -52,26 +52,44 @@ struct StickerView: View {
                 
                 ScrollView(.horizontal,showsIndicators: false){
                     HStack(spacing:0){
-                        ForEach(0..<stickers.count, id: \.self) { i in
-                            Image(stickers[i].thrumb)
-                                .resizable()
-                                .frame(width: 30,height: 30)
-                                .aspectRatio(contentMode: .fill)
-                                .padding(5)
-                                .background(BlurView(style: .systemUltraThinMaterialLight).opacity(self.index == i ? 1:0).cornerRadius(10))
+                        ForEach(0..<self.userVM.userStickerList.count, id: \.self) { i in
+                            AsyncImage(url: self.userVM.userStickerList[i].thumURL, content: { img in
+                                img
+                                    .resizable()
+                                    .frame(width: 30,height: 30)
+                                    .aspectRatio(contentMode: .fill)
+                                    .padding(5)
+                                    .background(BlurView(style: .systemUltraThinMaterialLight).opacity(self.self.userVM.userStickerIndex == i ? 1:0).cornerRadius(10))
+                                    .onTapGesture {
+                                        self.userVM.userStickerIndex = i
+                                    }
+                            }, placeholder: {
+                                ProgressView()
+                                    .frame(width: 30,height: 30)
+                            })
                         }
                     }
-                    .frame(width: 30,height: 30)
-                    .padding(.horizontal,5)
+                    //                    .frame(width: 30,height: 30)
+                    //                    .padding(.horizontal,5)
                 }
             }
             
+            if !self.userVM.userStickerList.isEmpty {
+                StickerSubView(stickerId: self.userVM.userStickerList[self.userVM.userStickerIndex].id,onSend: onSend)
+            }else {
+                VStack{
+                    Text("No sticker yet.")
+                        .foregroundColor(.gray)
+                        .italic()
+                }
+                .frame(maxHeight:UIScreen.main.bounds.height / 2.5)
+            }
             
-            StickerSubView(stickerId: stickers[index].id,onSend: onSend)
         }
         .fullScreenCover(isPresented: $isOpenShop){
             StickerShopView()
                 .environmentObject(stickerShopVM)
+                .environmentObject(userVM)
         }
     }
 
@@ -80,7 +98,6 @@ struct StickerView: View {
 
 struct StickerSubView: View {
     var stickerId : String
-//    @State private var isStickerExisted : Bool = false
     @State private var isDownloading : Bool = false
     @State private var stickerGroup : StickerGroup? = nil
     @Namespace private var namespace
@@ -148,6 +165,10 @@ struct StickerSubView: View {
         .frame(maxHeight:UIScreen.main.bounds.height / 2.5)
         .onAppear{
             isStickerGroupExist(id: stickerId)
+        }
+        .onChange(of: self.stickerId){ id in
+            self.stickerGroup = nil
+            isStickerGroupExist(id: id)
         }
     }
     

@@ -168,7 +168,7 @@ struct ProfileView: View {
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1){
                             Websocket.shared.reset()
-                            self.userModel.profile = nil
+                            self.userModel.reset()
                         }
                     }){
                         VStack(spacing:8){

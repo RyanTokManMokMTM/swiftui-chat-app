@@ -200,6 +200,71 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
+    
+    func AddUserSticker(req : AddUserStickerReq) async -> Result<AddUserStickerResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.AddUserSticker.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        do {
+            let body = try self.Encoder.encode(req)
+            request.httpBody = body
+        }catch {
+            return .failure(APIError.badEncoding)
+        }
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func DeleteUserSticker(req : DeleteUserStickerReq) async -> Result<DeleteUserStickerResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.DeleteUserSticker.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        do {
+            let body = try self.Encoder.encode(req)
+            request.httpBody = body
+        }catch {
+            return .failure(APIError.badEncoding)
+        }
+        return await self.AsyncPostAndDecode(request: request)
+    }
+    
+    func IsUserStikcerExist(sticker_id : String) async -> Result<IsUserStickerExistResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.IsUserStickerExist.rawValue + sticker_id) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+  
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
+    func GetUserStickerList() async -> Result<GetUserStickerListResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetUserStickerList.rawValue) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.getUserToken())", forHTTPHeaderField: "Authorization")
+        
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
+    
+    
     func SearchUser(email : String) async -> Result<SearchUserResp,Error> {
         guard var URLComp = URLComponents(string: HTTP_HOST + APIEndPoint.SearchUser.rawValue) else {
             return .failure(APIError.badUrl)
