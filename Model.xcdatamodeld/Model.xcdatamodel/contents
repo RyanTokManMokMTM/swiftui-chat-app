@@ -14,18 +14,18 @@
     </entity>
     <entity name="RoomMessages" representedClassName="RoomMessages" syncable="YES">
         <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="content_available_time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="content_type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="content_user_avatar" optional="YES" attributeType="String"/>
+        <attribute name="content_user_name" optional="YES" attributeType="String"/>
+        <attribute name="content_user_uuid" optional="YES" attributeType="String"/>
+        <attribute name="content_uuid" optional="YES" attributeType="String"/>
         <attribute name="deleted_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="file_name" optional="YES" attributeType="String"/>
         <attribute name="file_size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="message_status" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sent_at" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="story_available_time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="story_id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="story_user_avatar" optional="YES" attributeType="String"/>
-        <attribute name="story_user_name" optional="YES" attributeType="String"/>
-        <attribute name="story_user_uuid" optional="YES" attributeType="String"/>
         <attribute name="tempData" optional="YES" attributeType="Binary"/>
         <attribute name="url_path" optional="YES" attributeType="String"/>
         <relationship name="replyMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RoomMessages" inverseName="replyMessage" inverseEntity="RoomMessages"/>

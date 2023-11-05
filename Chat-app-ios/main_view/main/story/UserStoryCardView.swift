@@ -56,7 +56,7 @@ struct UserStoryCardView: View {
                                 //Move back to other story in current section
                                 self.timeProgress = CGFloat(Int(timeProgress) - 1)
                                 self.userStory.currentStoryIndex = self.userStory.currentStoryIndex - 1
-                                self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex]
+                                self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex].story_id
                             }
                         }
                     //TODO: Tap on right -> moving forward
@@ -74,7 +74,7 @@ struct UserStoryCardView: View {
                                 //Move to other story in current section
                                 self.timeProgress = CGFloat(Int(timeProgress) + 1)
                                 self.userStory.currentStoryIndex = self.userStory.currentStoryIndex + 1
-                                self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex]
+                                self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex].story_id
                             }
                         }
                 }
@@ -217,7 +217,7 @@ struct UserStoryCardView: View {
                     //TODO: for current section
                     self.timeProgress += 0.01
                     self.userStory.currentStoryIndex = min(Int(self.timeProgress), self.userStory.userStories.count - 1 )
-                    self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex]
+                    self.userStory.currentStoryID = self.userStory.userStories[self.userStory.currentStoryIndex].story_id
                 } else {
                     userStory.isShowStory = false
                 }
@@ -296,7 +296,7 @@ struct UserStoryCardView: View {
         }
         .onAppear{
             self.userStory.currentStoryIndex = 0
-            self.userStory.currentStoryID = self.userStory.userStories.first!
+            self.userStory.currentStoryID = self.userStory.userStories.first!.story_id
             Task {
                 await getStoryInfo(storyID: self.userStory.currentStoryID)
             }
@@ -320,7 +320,7 @@ struct UserStoryCardView: View {
         let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
         switch resp {
         case .success(let data):
-            self.storyInfo = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
+            self.storyInfo = StoryInfo(id: data.story_id, uuid: data.story_uuid,media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
             if data.is_liked{
                 self.likeCount = 10
             }

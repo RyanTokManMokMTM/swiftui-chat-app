@@ -10,7 +10,7 @@ import SwiftUI
 
 struct StoryViwerCard: View {
     @Binding var isShowStoryViewer : Bool
-    var storyId : UInt
+    var storyId : String
     var friendInfo : FriendInfo?
     
     @StateObject private var hub = BenHubState.shared
@@ -20,7 +20,7 @@ struct StoryViwerCard: View {
     @State private var timeProgress : CGFloat = 0
     
     @State private var isLoadingStoriesList = false
-    @State private var storyIds : [UInt] = []
+    @State private var stories : [BasicStoryInfo] = []
     @State private var index = 0
     @State private var isAction : Bool = false
     @State private var isStoryUnavaiable : Bool = false
@@ -91,7 +91,7 @@ struct StoryViwerCard: View {
                         .onTapGesture {
                             //move forward
 //                            print("front")
-                            if (self.timeProgress + 1) > CGFloat(self.storyIds.count) {
+                            if (self.timeProgress + 1) > CGFloat(self.stories.count) {
                                 //Move to other story section
                                 withAnimation{
                                     self.isShowStoryViewer = false
@@ -149,7 +149,7 @@ struct StoryViwerCard: View {
             .overlay(alignment:.top,content: {
                 HStack(spacing:3){
                     //MARK: Story Time line0p;
-                    ForEach(self.storyIds.indices,id: \.self){ index in
+                    ForEach(self.stories.indices,id: \.self){ index in
                         GeometryReader{ reader in
                             let width = reader.size.width
 
@@ -332,10 +332,10 @@ struct StoryViwerCard: View {
 //                    userStory.isSeen = true
 //                }
 //
-                if self.timeProgress < CGFloat(storyIds.count){
+                if self.timeProgress < CGFloat(self.stories.count){
                     //TODO: for current section
                     self.timeProgress += 0.01
-                    self.index = min(Int(self.timeProgress), self.storyIds.count - 1 )
+                    self.index = min(Int(self.timeProgress), self.stories.count - 1 )
                 } else {
                     self.isShowStoryViewer = false
                 }
@@ -348,7 +348,7 @@ struct StoryViwerCard: View {
             }
             .onChange(of: self.index){ id in
                 Task{
-                    await getStoryInfo(storyID: UInt(self.storyIds[self.index]))
+                    await getStoryInfo(storyID: UInt(self.stories[self.index].story_id))
                 }
             }
         }
@@ -373,21 +373,21 @@ struct StoryViwerCard: View {
     }
     private func getStoriesList(userId : UInt) async {
         isLoadingStoriesList = true
-        self.storyIds = []
+        self.stories = []
         let resp = await ChatAppService.shared.GetUserStories(id: Int(userId))
         switch resp {
         case .success(let data):
             DispatchQueue.main.async {
-                self.storyIds = data.story_ids
+                self.stories = data.stories
                 Task{
-                    if data.story_ids.isEmpty {
+                    if data.stories.isEmpty {
                         return
                     }
                     
-                    if let idx = data.story_ids.firstIndex(where: {$0 == self.storyId}) {
+                    if let idx = data.stories.firstIndex(where: {$0.story_uuid == self.storyId}) {
                         self.timeProgress = CGFloat(Int(idx))
                         self.index = idx
-                        await self.getStoryInfo(storyID: data.story_ids[idx])
+                        await self.getStoryInfo(storyID: data.stories[idx].id)
                         
                     }
                     isLoadingStoriesList = false
@@ -405,7 +405,7 @@ struct StoryViwerCard: View {
         let resp = await ChatAppService.shared.GetStoryInfo(storyID: storyID)
         switch resp {
         case .success(let data):
-            self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
+            self.story = StoryInfo(id: data.story_id, uuid : data.story_uuid, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
             if data.is_liked {
                 self.likeCount = 10
             }
@@ -415,7 +415,7 @@ struct StoryViwerCard: View {
     }
     
     private func getStoryIndex() -> Int {
-        return min(Int(self.timeProgress),self.storyIds.count - 1)
+        return min(Int(self.timeProgress),self.stories.count - 1)
     }
     
     private func getAngle(proxy : GeometryProxy) -> Angle{

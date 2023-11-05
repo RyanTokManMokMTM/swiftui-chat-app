@@ -8,6 +8,7 @@
 import Foundation
 struct StoryInfo : Identifiable {
     let id : UInt
+    let uuid : String
     let media_url : String
     let create_at : UInt
     var is_liked : Bool

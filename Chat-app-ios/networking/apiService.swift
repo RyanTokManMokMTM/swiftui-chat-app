@@ -37,7 +37,7 @@ protocol APIService {
     //User Sticker Feature
     func AddUserSticker(req : AddUserStickerReq) async -> Result<AddUserStickerResp,Error>
     func DeleteUserSticker(req : DeleteUserStickerReq) async -> Result<DeleteUserStickerResp,Error>
-    func IsUserStikcerExist(sticker_id : String) async -> Result<IsUserStickerExistResp,Error>
+    func IsUserStikcerExist(stickerId : String) async -> Result<IsUserStickerExistResp,Error>
     func GetUserStickerList() async -> Result<GetUserStickerListResp,Error>
     
     func GetMessages(req : GetMessageReq) async -> Result<GetMessageResp,Error>
@@ -56,7 +56,8 @@ protocol APIService {
     func DeleteStoryLike(req : DeleteStoryLikeReq) async -> Result<DeleteStoryLikeResp,Error>
     func GetStorySeenList(storyId : UInt) async -> Result<GetStorySeenListResp,Error>
     
-    func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error>
+    func GetStickerGroupResources(stickerID : String) async -> Result<GetStickerGroupResourcesResp,Error>
+    func GetStickerInfo(stickerID : String) async -> Result<GetStickerInfoResp,Error>
     func GetStickerGroupList() async -> Result<GetStickerGroupListResp,Error>
     
     func DownloadTaskFile(fileURL : URL) async -> Result<URL,Error>
@@ -143,7 +144,8 @@ enum APIEndPoint : String,CaseIterable {
     case DeleteStoryLike
     case GetStorySeenList
     
-    case GetStickerGroup
+    case GetStickerGroupResources
+    case GetStickerInfo
     case GetStickerGroupList
     
     var rawValue: String {
@@ -198,7 +200,8 @@ enum APIEndPoint : String,CaseIterable {
         case .DeleteStoryLike : return "/story/like"
         case .GetStorySeenList : return "/story/seen/"
             
-        case .GetStickerGroup : return "/sticker/"
+        case .GetStickerGroupResources : return "/sticker/resources/"
+        case .GetStickerInfo : return "/sticker/"
         case .GetStickerGroupList : return "/sticker/list"
         }
     }

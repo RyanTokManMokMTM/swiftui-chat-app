@@ -8,6 +8,6 @@
 import Foundation
 struct GetUserStoriesResp : Decodable {
     let code : UInt
-    let story_ids : [UInt]
+    let stories : [BasicStoryInfo]
     let last_story_id : UInt
 }

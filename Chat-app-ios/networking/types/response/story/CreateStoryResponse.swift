@@ -10,5 +10,5 @@ import Foundation
 //MARK: STORIES
 struct CreateStoryResp : Decodable {
     let code : UInt
-    let story_id : uint
+    let story_info : BasicStoryInfo
 }

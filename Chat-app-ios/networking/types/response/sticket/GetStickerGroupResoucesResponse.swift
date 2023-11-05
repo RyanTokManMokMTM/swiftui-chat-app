@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct GetStickerGroupResp : Decodable {
+struct GetStickerGroupResourcesResp : Decodable {
     let code : UInt
     let sticker_id : String
     let resources_path : [String]

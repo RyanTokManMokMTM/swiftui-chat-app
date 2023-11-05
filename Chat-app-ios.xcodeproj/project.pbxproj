@@ -53,6 +53,9 @@
 		205888E62AF5DFD4002C5086 /* DeleteUserStickerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888E52AF5DFD4002C5086 /* DeleteUserStickerResponse.swift */; };
 		205888EA2AF5E01E002C5086 /* IsUserStickerExistResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888E92AF5E01E002C5086 /* IsUserStickerExistResponse.swift */; };
 		205888EC2AF5E062002C5086 /* GetUserStickerListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888EB2AF5E062002C5086 /* GetUserStickerListResponse.swift */; };
+		205888EE2AF76541002C5086 /* BasicStoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888ED2AF76541002C5086 /* BasicStoryInfo.swift */; };
+		205888F02AF77A10002C5086 /* StickerInfoBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888EF2AF77A10002C5086 /* StickerInfoBottomSheetView.swift */; };
+		205888F22AF77C6C002C5086 /* GetStickerInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888F12AF77C6C002C5086 /* GetStickerInfoResponse.swift */; };
 		2065B37929B88E86004B6F2D /* Websocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2065B37829B88E86004B6F2D /* Websocket.swift */; };
 		2065B37B29B8A885004B6F2D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2065B37A29B8A885004B6F2D /* SearchView.swift */; };
 		2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2069095329F2AB15000EB157 /* GroupContentView.swift */; };
@@ -171,7 +174,7 @@
 		20C86BEA2AC7C90C00A29661 /* DeleteStoryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BE92AC7C90C00A29661 /* DeleteStoryResponse.swift */; };
 		20C86BEC2AC7C91900A29661 /* GetActiveStoryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BEB2AC7C91900A29661 /* GetActiveStoryResponse.swift */; };
 		20C86BEE2AC7C92700A29661 /* FriendStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BED2AC7C92700A29661 /* FriendStory.swift */; };
-		20C86BF12AC7C94A00A29661 /* GetStickerGroupResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF02AC7C94A00A29661 /* GetStickerGroupResponse.swift */; };
+		20C86BF12AC7C94A00A29661 /* GetStickerGroupResoucesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF02AC7C94A00A29661 /* GetStickerGroupResoucesResponse.swift */; };
 		20C86BF32AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF22AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift */; };
 		20C86BF52AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF42AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift */; };
 		20C86BF72AC7C98200A29661 /* CreateStoryLikeRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86BF62AC7C98200A29661 /* CreateStoryLikeRequest.swift */; };
@@ -251,6 +254,9 @@
 		205888E52AF5DFD4002C5086 /* DeleteUserStickerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteUserStickerResponse.swift; sourceTree = "<group>"; };
 		205888E92AF5E01E002C5086 /* IsUserStickerExistResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsUserStickerExistResponse.swift; sourceTree = "<group>"; };
 		205888EB2AF5E062002C5086 /* GetUserStickerListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserStickerListResponse.swift; sourceTree = "<group>"; };
+		205888ED2AF76541002C5086 /* BasicStoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicStoryInfo.swift; sourceTree = "<group>"; };
+		205888EF2AF77A10002C5086 /* StickerInfoBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerInfoBottomSheetView.swift; sourceTree = "<group>"; };
+		205888F12AF77C6C002C5086 /* GetStickerInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStickerInfoResponse.swift; sourceTree = "<group>"; };
 		2065B37829B88E86004B6F2D /* Websocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Websocket.swift; sourceTree = "<group>"; };
 		2065B37A29B8A885004B6F2D /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		2069095329F2AB15000EB157 /* GroupContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupContentView.swift; sourceTree = "<group>"; };
@@ -371,7 +377,7 @@
 		20C86BE92AC7C90C00A29661 /* DeleteStoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteStoryResponse.swift; sourceTree = "<group>"; };
 		20C86BEB2AC7C91900A29661 /* GetActiveStoryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetActiveStoryResponse.swift; sourceTree = "<group>"; };
 		20C86BED2AC7C92700A29661 /* FriendStory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendStory.swift; sourceTree = "<group>"; };
-		20C86BF02AC7C94A00A29661 /* GetStickerGroupResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStickerGroupResponse.swift; sourceTree = "<group>"; };
+		20C86BF02AC7C94A00A29661 /* GetStickerGroupResoucesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStickerGroupResoucesResponse.swift; sourceTree = "<group>"; };
 		20C86BF22AC7C95B00A29661 /* UpdateUserStorySeenRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserStorySeenRequest.swift; sourceTree = "<group>"; };
 		20C86BF42AC7C96B00A29661 /* UpdateUserStorySeenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserStorySeenResponse.swift; sourceTree = "<group>"; };
 		20C86BF62AC7C98200A29661 /* CreateStoryLikeRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateStoryLikeRequest.swift; sourceTree = "<group>"; };
@@ -908,6 +914,7 @@
 				208F45D02AC972E7004A843E /* StoryLikedUserBasicInfo.swift */,
 				208F45D62AC973B8004A843E /* StorySeenInfo.swift */,
 				20D3984A2AE666E600DE66FC /* StickerInfo.swift */,
+				205888ED2AF76541002C5086 /* BasicStoryInfo.swift */,
 			);
 			path = objects;
 			sourceTree = "<group>";
@@ -1010,8 +1017,9 @@
 		20C86BEF2AC7C93D00A29661 /* sticket */ = {
 			isa = PBXGroup;
 			children = (
-				20C86BF02AC7C94A00A29661 /* GetStickerGroupResponse.swift */,
+				20C86BF02AC7C94A00A29661 /* GetStickerGroupResoucesResponse.swift */,
 				20D398482AE666C300DE66FC /* GetStickerGroupListResponse.swift */,
+				205888F12AF77C6C002C5086 /* GetStickerInfoResponse.swift */,
 			);
 			path = sticket;
 			sourceTree = "<group>";
@@ -1030,6 +1038,7 @@
 				20D3984D2AE667B800DE66FC /* AddStickerListView.swift */,
 				20D3984E2AE667B800DE66FC /* StickerShopView.swift */,
 				2095A2762A1CE2DE00824DEC /* StickerView.swift */,
+				205888EF2AF77A10002C5086 /* StickerInfoBottomSheetView.swift */,
 			);
 			path = Sticker;
 			sourceTree = "<group>";
@@ -1135,6 +1144,7 @@
 				20C86BEE2AC7C92700A29661 /* FriendStory.swift in Sources */,
 				20C86B822AC7C1CA00A29661 /* UpdateUserInfoResponse.swift in Sources */,
 				206D250E29F41D59008E3727 /* EditView.swift in Sources */,
+				205888F02AF77A10002C5086 /* StickerInfoBottomSheetView.swift in Sources */,
 				20C86B782AC7C16500A29661 /* GetUserInfoRequest.swift in Sources */,
 				204C4A4229B721A5007AA02E /* menuRow.swift in Sources */,
 				20C86B8C2AC7C28300A29661 /* SearchUserResultResponse.swift in Sources */,
@@ -1164,6 +1174,7 @@
 				20C86B702AC7C0C100A29661 /* SignUpRequest.swift in Sources */,
 				20C86BC12AC7C62400A29661 /* UpdateGroupAvatarResponse.swift in Sources */,
 				20C86BE42AC7C8DA00A29661 /* GetStoryInfoRequest.swift in Sources */,
+				205888EE2AF76541002C5086 /* BasicStoryInfo.swift in Sources */,
 				20CE5D2D29A354EA001371A7 /* dummyData.swift in Sources */,
 				2022AFA729C99F4B00C47383 /* URL.swift in Sources */,
 				20B1267C2A10E5E6009FF2AB /* VideoCallView.swift in Sources */,
@@ -1257,6 +1268,7 @@
 				20B1267E2A10F4A9009FF2AB /* RTCViewModel.swift in Sources */,
 				20CE5D3129A35622001371A7 /* FriendContent.swift in Sources */,
 				205888E62AF5DFD4002C5086 /* DeleteUserStickerResponse.swift in Sources */,
+				205888F22AF77C6C002C5086 /* GetStickerInfoResponse.swift in Sources */,
 				20A8895229C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift in Sources */,
 				20C86BD82AC7C79200A29661 /* UploadImageResponse.swift in Sources */,
 				2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */,
@@ -1294,7 +1306,7 @@
 				20C86BB32AC7C46F00A29661 /* SearchGroupResponse.swift in Sources */,
 				200665BD29E699CC00A7C9E5 /* StoryPhototView.swift in Sources */,
 				208F45CF2AC7FAFB004A843E /* StoryShareView.swift in Sources */,
-				20C86BF12AC7C94A00A29661 /* GetStickerGroupResponse.swift in Sources */,
+				20C86BF12AC7C94A00A29661 /* GetStickerGroupResoucesResponse.swift in Sources */,
 				2076908B29B62CE400ACD532 /* Data.swift in Sources */,
 				20C86BC62AC7C68900A29661 /* GroupInfo.swift in Sources */,
 				20BBAA4329A669BB00ED3245 /* VoiceCallingView.swift in Sources */,

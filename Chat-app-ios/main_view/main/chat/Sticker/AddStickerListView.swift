@@ -154,7 +154,7 @@ struct AddStickerListView: View {
     
     private func GetSticker() async throws {
 //        self.isLoading = true
-        let resp = await  ChatAppService.shared.GetStickerGroup(stickerID: info.id)
+        let resp = await  ChatAppService.shared.GetStickerGroupResources(stickerID: info.id)
         switch resp {
         case.success(let data):
             DispatchQueue.main.async {
@@ -168,7 +168,7 @@ struct AddStickerListView: View {
     }
     
     private func IsUserStickerExist() async throws {
-        let resp = await  ChatAppService.shared.IsUserStikcerExist(sticker_id: info.id)
+        let resp = await  ChatAppService.shared.IsUserStikcerExist(stickerId: info.id)
         switch resp {
         case.success(let data):
             DispatchQueue.main.async {

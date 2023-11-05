@@ -61,9 +61,12 @@ struct ChattingView: View {
     @State private var placeHolder : String  = "Message"
     
     @State private var isShowStoryViewer : Bool = false
-    @State private var toShowStoryId : UInt = 0
+    @State private var toShowStoryId : String? = nil
     @State private var isGettingStoryInfo : Bool = false
     @State private var friendUUID : String = ""
+    
+    @State private var selectStickerGroupId : String? = nil
+    @State private var isShowStickerInfo : Bool = false
     
     var body: some View {
         VStack{
@@ -75,8 +78,17 @@ struct ChattingView: View {
             self.UDM.previousTotalMessage = 0
             self.videoCallVM.toUserUUID = nil
         }
+        .sheet(isPresented: $isShowStickerInfo){
+            if let stickerId = self.selectStickerGroupId {
+                StickerInfoBottomSheetView(stickerId: stickerId)
+                    .presentationDetents([.fraction(0.3)])
+                    .environmentObject(self.userModel)
+            }
+        }
         .fullScreenCover(isPresented: $isShowStoryViewer){
-            StoryViewer(isShowStoryViewer:$isShowStoryViewer,storyId: self.toShowStoryId, friendUUID: self.friendUUID)
+            if let storyUUID = self.toShowStoryId {
+                StoryViewer(isShowStoryViewer:$isShowStoryViewer,storyId: storyUUID, friendUUID: self.friendUUID)
+            }
         }
         .fullScreenCover(isPresented: $isPlayAudio){
             AudioPlayerView(isPlayingAudio: $isPlayAudio,fileName: self.audioInfo!.file_name!, path: self.audioInfo!.FileURL)
@@ -207,7 +219,6 @@ struct ChattingView: View {
                 print(failure.localizedDescription)
             }
         }
-
         .fullScreenCover(isPresented: $isShowImage){
             ShowImageView(imageURL: self.showImageURL, isShowImage: $isShowImage)
                 
@@ -624,7 +635,7 @@ struct ChattingView: View {
             }
             
             if self.isUseSticket {
-                StickerView(onSend: self.onSendSticker(stickerUri:))
+                StickerView(onSend: self.onSendSticker(stickerUri:StickerUUID:))
             }
             
             if self.isShowMoreContent{
@@ -773,8 +784,8 @@ extension ChattingView {
         }
         let msgID = UUID().uuidString
         
-        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,  storyUserAvatar: nil,
-                            storyUserUUID: nil)
+        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,  contentUserAvatar: nil,
+                            contentUserUUID: nil)
         playMessageSentSound()
         Websocket.shared.handleMessage(event:.send,msg: msg)
         
@@ -785,12 +796,12 @@ extension ChattingView {
         self.text.removeAll()
     }
     
-    private func onSendSticker(stickerUri : String){
+    private func onSendSticker(stickerUri : String,StickerUUID : String){
 //        print("sent sticker")
         let msgID = UUID().uuidString
 
-        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: nil, contentType: ContentType.sticker.rawValue, type: 4, messageType: self.chatUserData.message_type,urlPath: stickerUri,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
-                            storyUserUUID: nil)
+        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: nil, contentType: ContentType.sticker.rawValue, type: 4, messageType: self.chatUserData.message_type,urlPath: stickerUri,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: StickerUUID, contentUserName: nil,contentUserAvatar: nil,
+                            contentUserUUID: nil)
 
         playMessageSentSound()
         Websocket.shared.handleMessage(event:.send,msg: msg)
@@ -807,8 +818,8 @@ extension ChattingView {
         }
         let msgID = UUID().uuidString
         
-        let msg = WSMessage(messageID:msgID,replyMessageID: self.replyMessage!.id!.uuidString, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
-                            storyUserUUID: nil)
+        let msg = WSMessage(messageID:msgID,replyMessageID: self.replyMessage!.id!.uuidString, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,
+                            contentUserUUID: nil)
 
         
         playMessageSentSound()
@@ -851,8 +862,8 @@ extension ChattingView {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: nil,fileSize: nil,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
-                                storyUserUUID: nil)
+            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,
+                                contentUserUUID: nil)
             Websocket.shared.onSendNormal(msg: msg)
             Task {
                 await checkMessage(messageID: message.id!.uuidString)
@@ -905,8 +916,8 @@ extension ChattingView {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: fileName,fileSize: fileSize,storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,
-                                storyUserUUID: nil)
+            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: fileName,fileSize: fileSize,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,
+                                contentUserUUID: nil)
             Websocket.shared.onSendNormal(msg: msg)
             
             Task {
@@ -1224,8 +1235,8 @@ extension ChattingView {
                                 .aspectRatio(contentMode: .fill)
                                 .cornerRadius(10)
                                 .onTapGesture {
-                                    if message.story_id != 0 {
-                                        self.toShowStoryId = UInt(message.story_id)
+                                    if let id =  message.content_uuid ,!id.isEmpty{
+                                        self.toShowStoryId = id
                                         self.friendUUID = self.userModel.profile?.uuid ?? ""
                                         self.isShowStoryViewer = true
                                     }
@@ -1248,15 +1259,12 @@ extension ChattingView {
                                         .aspectRatio(contentMode: .fill)
                                         .cornerRadius(10)
                                         .onTapGesture {
-                                        
-                                            if message.story_id != 0 && chatUserData.id != nil{
-                                                self.toShowStoryId = UInt(message.story_id)
-                                                self.friendUUID = chatUserData.id?.uuidString ?? ""
-                                                self.isShowStoryViewer = true
+                                            if let id =  message.content_uuid ,!id.isEmpty &&  chatUserData.id != nil{
+                                                    self.toShowStoryId = id
+                                                    self.friendUUID = chatUserData.id?.uuidString ?? ""
+                                                    self.isShowStoryViewer = true
+                                                
                                             }
-                                            //MARK: fetch all the story of this user
-        //                                    self.toShowStoryId = 0
-        //                                    self.isShowStoryViewer = true
                                         }
 
                                 }, placeholder: {
@@ -1296,7 +1304,7 @@ extension ChattingView {
         let isSelf = isOwner(id: message.sender!.id!.uuidString.lowercased())
        return VStack(alignment:.leading){
             VStack(alignment: isSelf ?.trailing  : .leading){
-                Text("\(isSelf ? "Sent" : "Received") @\(message.story_user_name ?? "--")'s story")
+                Text("\(isSelf ? "Sent" : "Received") @\(message.content_user_name ?? "--")'s story")
                     .font(.footnote)
                     .fontWeight(.medium)
                     .foregroundColor(Color.gray)
@@ -1315,15 +1323,13 @@ extension ChattingView {
                                             .aspectRatio(contentMode: .fill)
                                             .cornerRadius(10)
                                             .onTapGesture {
-                                                if message.story_id != 0 && message.story_user_uuid != nil{
-                                                    self.toShowStoryId = UInt(message.story_id)
-                                                    self.friendUUID = message.story_user_uuid!
+                                                if let id =  message.content_uuid ,!id.isEmpty && message.content_user_uuid != nil{
+                                                    self.toShowStoryId = id
+                                                    self.friendUUID = message.content_user_uuid!
                                                     self.isShowStoryViewer = true
                                                 }
                                             }
-                                    
-                                  
-                                    
+ 
                                 }, placeholder: {
                                     ProgressView()
                                         .frame(width: 30,height: 30)
@@ -1343,7 +1349,7 @@ extension ChattingView {
                                             
                                         })
                                         
-                                        Text("\(message.story_user_name ?? "--")")
+                                        Text("\(message.content_user_name ?? "--")")
                                             .font(.system(size:14))
                                             .fontWeight(.medium)
                                             .foregroundColor(.white)
@@ -1404,6 +1410,14 @@ extension ChattingView {
                     .scaledToFit()
                     .frame(width:120,height: 120)
                     .aspectRatio(contentMode: .fit)
+                    .onTapGesture {
+                        if let id = message.content_uuid {
+                            withAnimation{
+                                self.selectStickerGroupId = id
+                                self.isShowStickerInfo = true
+                            }
+                        }
+                    }
             }, placeholder: {
                 ProgressView()
                     .scaledToFit()

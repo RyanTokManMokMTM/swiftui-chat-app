@@ -7,23 +7,6 @@
 
 import SwiftUI
 
-struct Sticker : Identifiable{
-    let id : String
-    let thrumb : String
-}
-
-let stickers : [Sticker] = [
-    Sticker(id: "d87b9eb9-8c77-4886-82af-87535f75ed59", thrumb: "d87b9eb9-8c77-4886-82af-87535f75ed59"),
-]
-
-struct StickerPaths : Identifiable{
-    let id = UUID().uuidString
-    let path : String
-    var StickerURL : URL {
-        return URL(string:  RESOURCES_HOST + self.path)!
-    }
-}
-
 struct StickerView: View {
     @EnvironmentObject var userVM : UserViewModel
     @EnvironmentObject var stickerShopVM : StickerShopViewModel
@@ -31,7 +14,7 @@ struct StickerView: View {
     @Namespace private var namespace
     
     
-    var onSend : (String) -> Void
+    var onSend : (String,String) -> Void
     let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 4)
     
     var body: some View {
@@ -102,7 +85,7 @@ struct StickerSubView: View {
     @State private var stickerGroup : StickerGroup? = nil
     @Namespace private var namespace
     
-    var onSend : (String) -> Void
+    var onSend : (String,String) -> Void
     let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 4)
     
     var body: some View {
@@ -129,8 +112,9 @@ struct StickerSubView: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .onTapGesture {
-                                            if let path = sticker.path {
-                                                onSend(path)
+                                       
+                                            if let path = sticker.path,let id = sticker.relationship?.id {
+                                                onSend(path,id.uuidString)
                                             }
                                         }
 
@@ -181,7 +165,7 @@ struct StickerSubView: View {
 
     private func GetSticker() async {
         self.isDownloading = true
-        let resp = await  ChatAppService.shared.GetStickerGroup(stickerID: stickerId)
+        let resp = await  ChatAppService.shared.GetStickerGroupResources(stickerID: stickerId)
         switch resp {
         case.success(let data):
             DispatchQueue.main.async {

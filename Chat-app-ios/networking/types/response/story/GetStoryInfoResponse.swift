@@ -9,6 +9,7 @@ import Foundation
 struct GetStoryInfoResp : Decodable {
     let code : UInt
     let story_id : UInt
+    let story_uuid : String
     let media_url : String
     let is_liked : Bool
     let create_at : UInt

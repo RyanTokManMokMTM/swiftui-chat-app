@@ -80,7 +80,7 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new messsge of the room to the cache
-    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0, storyUserName : String? = nil, storyUserAvatar : String? = nil, storyUserUUID : String? = nil) -> RoomMessages {
+    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,contentAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus,contentUUID : String? = nil, contentUserName : String? = nil, contentUserAvatar : String? = nil, contentUserUUID : String? = nil) -> RoomMessages {
         
         //TODO: Check Sender Info exist?
         var sender : SenderInfo?
@@ -103,13 +103,13 @@ class UserDataModel : ObservableObject {
         newMessage.tempData = tempData
         newMessage.file_name = fileName
         newMessage.file_size = fileSize
-        newMessage.story_available_time = storyAvailabeTime
+        newMessage.content_available_time = contentAvailabeTime
         newMessage.sender = sender
         newMessage.message_status = messageStatus.rawValue
-        newMessage.story_id = storyId
-        newMessage.story_user_name = storyUserName
-        newMessage.story_user_avatar = storyUserAvatar
-        newMessage.story_user_uuid = storyUserUUID
+        newMessage.content_uuid = contentUUID
+        newMessage.content_user_name = contentUserName
+        newMessage.content_user_avatar = contentUserAvatar
+        newMessage.content_user_uuid = contentUserUUID
         room.addToMessages(newMessage)
         self.manager.save()
         
@@ -140,7 +140,7 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new message to Room
-    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,storyAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus,storyId : Int16 = 0,storyUserName : String? = nil,storyUserAvatar : String? = nil, storyUserUUID : String? = nil) -> RoomMessages {
+    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,contentAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus,contentUUID : String? = nil, contentUserName : String? = nil, contentUserAvatar : String? = nil, contentUserUUID : String? = nil) -> RoomMessages {
         
         var sender : SenderInfo?
         if content_type != 7{ //SYSTEM_MESSAGE - no need to create
@@ -160,14 +160,14 @@ class UserDataModel : ObservableObject {
         newMessage.content_type = content_type
         newMessage.file_name = fileName
         newMessage.file_size = fileSize
-        newMessage.story_available_time = storyAvailabeTime
+        newMessage.content_available_time = contentAvailabeTime
         newMessage.url_path = fileURL
         newMessage.sender = sender
-        newMessage.story_id = storyId
+        newMessage.content_uuid = contentUUID
         newMessage.message_status = messageStatus.rawValue
-        newMessage.story_user_name = storyUserName
-        newMessage.story_user_avatar = storyUserAvatar
-        newMessage.story_user_uuid = storyUserUUID
+        newMessage.content_user_name = contentUserName
+        newMessage.content_user_avatar = contentUserAvatar
+        newMessage.content_user_uuid = contentUserUUID
         self.manager.save()
         
         return newMessage
@@ -302,7 +302,11 @@ class UserDataModel : ObservableObject {
         msg.file_name = nil
         msg.file_size = 0
         msg.content_type = ContentType.sys.rawValue
-        msg.story_id = 0
+        msg.content_uuid = nil
+        msg.content_user_name = nil
+        msg.content_user_uuid = nil
+        msg.content_available_time = 0
+        msg.content_user_avatar = nil
         self.manager.save()
     }
     

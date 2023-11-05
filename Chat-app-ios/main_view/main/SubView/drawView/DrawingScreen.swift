@@ -587,7 +587,7 @@ struct DrawingScreen: View {
         case .success(let data):
             hub.AlertMessage(sysImg: "checkmark", message: "Posted")
             DispatchQueue.main.async {
-                self.userStory.userStories.append(UInt(data.story_id))
+                self.userStory.userStories.append(data.story_info)
             }
 
         case .failure(let err):

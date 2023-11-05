@@ -102,7 +102,7 @@ class StoryViewModel : ObservableObject {
 
 
 class UserStoryViewModel : ObservableObject {
-    @Published var userStories : [UInt] = []
+    @Published var userStories : [BasicStoryInfo] = []
     @Published var isShowStory : Bool = false
     @Published var isSeen : Bool = false
     @Published var currentStoryIndex = 0
@@ -126,7 +126,7 @@ class UserStoryViewModel : ObservableObject {
         switch resp {
         case.success(let data):
             DispatchQueue.main.async {
-                self.userStories = data.story_ids
+                self.userStories = data.stories
             }
         case .failure(let err):
             print(err.localizedDescription)
@@ -140,7 +140,7 @@ class UserStoryViewModel : ObservableObject {
     @MainActor
     func deleteStory(storyID : UInt) async -> Bool {
         //Find the story with Its id in userStories
-        let index = self.userStories.firstIndex(where: {$0 == storyID}) ?? -1
+        let index = self.userStories.firstIndex(where: {$0.id == storyID}) ?? -1
         if index == -1 {
             return false
         }
@@ -163,7 +163,7 @@ class UserStoryViewModel : ObservableObject {
             
             
             self.currentStoryIndex = min(self.currentStoryIndex,self.userStories.count - 1)
-            self.currentStoryID = self.userStories[self.currentStoryIndex]
+            self.currentStoryID = self.userStories[self.currentStoryIndex].id
            
             return true
         case .failure(let err):

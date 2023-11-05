@@ -79,11 +79,11 @@ struct WSMessage : Codable {
     let urlPath : String?
     let fileName : String?
     let fileSize : Int64?
-    let storyAvailableTime : Int32?
-    let storyId : Int16?
-    let storyUserName : String?
-    let storyUserAvatar : String?
-    let storyUserUUID : String?
+    let contentAvailableTime : Int32?
+    let contentUUID : String?
+    let contentUserName : String?
+    let contentUserAvatar : String?
+    let contentUserUUID : String?
 
 }
 
@@ -234,7 +234,7 @@ class Websocket : ObservableObject {
     
     func sendPong(){
         print("send pong message to server")
-        let msg = WSMessage(messageID: nil, replyMessageID: nil, avatar: nil, fromUserName: nil, fromUUID: nil, toUUID: nil, content: "pong", contentType: nil, type: 2, messageType: nil,urlPath: nil,fileName: nil,fileSize: nil, storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,storyUserUUID: nil)
+        let msg = WSMessage(messageID: nil, replyMessageID: nil, avatar: nil, fromUserName: nil, fromUUID: nil, toUUID: nil, content: "pong", contentType: nil, type: 2, messageType: nil,urlPath: nil,fileName: nil,fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
         onSend(msg: msg)
     }
     
@@ -263,7 +263,7 @@ class Websocket : ObservableObject {
             let sentTime = Date.now
             let messageID = msg.messageID ?? UUID().uuidString
             if let room = UserDataModel.shared.findOneRoom(uuid: roomID) {
-                addNewMessageToRoomCache(msg: msg, room: room, messageID: messageID, sentTime: sentTime, event: event, storyId: msg.storyId ?? 0, storyUserName: msg.storyUserName ?? "",storyUserAvatar: msg.storyUserAvatar ?? "", storyUserUUID:  msg.storyUserUUID ?? "")
+                addNewMessageToRoomCache(msg: msg, room: room, messageID: messageID, sentTime: sentTime, event: event, contentUUID: msg.contentUUID ?? "", contentUserName:  msg.contentUserName ?? "" ,contentUserAvatar: msg.contentUserAvatar ?? "" , contentUserUUID:  msg.contentUserUUID ?? "")
                 //Only Sent event will sent the message...
                 if event == .send{
                     onSend(msg: msg,onSucceed: onSendSuccess)
@@ -284,7 +284,7 @@ class Websocket : ObservableObject {
                         case .success(let data):
                             let roomName = data.name
                             let roomAvatar = data.avatar
-                            addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: roomName, roomAvatar: roomAvatar, event: event, sentTime: sentTime, messageID: messageID, storyId: msg.storyId ?? 0, storyUserName: msg.storyUserName ?? "",storyUserAvatar: msg.storyUserAvatar ?? "", storyUserUUID:  msg.storyUserUUID ?? "")
+                            addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: roomName, roomAvatar: roomAvatar, event: event, sentTime: sentTime, messageID: messageID, contentUUID: msg.contentUUID ?? "", contentUserName: msg.contentUserName ?? "",contentUserAvatar: msg.contentUserAvatar ?? "", contentUserUUID:  msg.contentUserUUID ?? "")
                             if event == .send{
                                 onSend(msg: msg,onSucceed: onSendSuccess)
                             }
@@ -300,7 +300,7 @@ class Websocket : ObservableObject {
                             case .success(let data):
                                 GroupRoomName = data.result.name
                                 GroupRoomAvatar = data.result.avatar
-                                addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: GroupRoomName, roomAvatar: GroupRoomAvatar, event: event, sentTime: sentTime, messageID: messageID, storyId:  msg.storyId ?? 0, storyUserName: msg.storyUserName ?? "",storyUserAvatar: msg.storyUserAvatar ?? "", storyUserUUID:  msg.storyUserUUID ?? "")
+                                addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: GroupRoomName, roomAvatar: GroupRoomAvatar, event: event, sentTime: sentTime, messageID: messageID, contentUUID:  msg.contentUUID ?? "" , contentUserName: msg.contentUserName ?? "",contentUserAvatar: msg.contentUserAvatar ?? "", contentUserUUID:  msg.contentUserUUID ?? "")
                                 if event == .send{
                                     onSend(msg: msg,onSucceed: onSendSuccess)
                                 }
@@ -310,7 +310,7 @@ class Websocket : ObservableObject {
                             }
                         }
                     }else {
-                        addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: msg.fromUserName!, roomAvatar: msg.avatar!, event: event, sentTime: sentTime, messageID: messageID, storyId:  msg.storyId ?? 0, storyUserName: msg.storyUserName ?? "",storyUserAvatar: msg.storyUserAvatar ?? "", storyUserUUID:  msg.storyUserUUID ?? "")
+                        addNewRoomToCache(roomUUID: roomID, msg: msg, roomName: msg.fromUserName!, roomAvatar: msg.avatar!, event: event, sentTime: sentTime, messageID: messageID, contentUUID:  msg.contentUUID ?? "", contentUserName: msg.contentUserName ?? "",contentUserAvatar: msg.contentUserAvatar ?? "", contentUserUUID:  msg.contentUserUUID ?? "")
                         if event == .send{
                             onSend(msg: msg,onSucceed: onSendSuccess)
                         }
@@ -380,20 +380,20 @@ class Websocket : ObservableObject {
     @MainActor
     private func sendAck(messageID : String,formUUID : String) {
         print("send ack to server for messageID : \(messageID)")
-        let msg = WSMessage(messageID: messageID, replyMessageID: nil, avatar: nil, fromUserName: nil, fromUUID: formUUID, toUUID: nil, content: nil, contentType: nil, type: 6, messageType: nil,urlPath: nil,fileName: nil,fileSize: nil, storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,storyUserUUID: nil)
+        let msg = WSMessage(messageID: messageID, replyMessageID: nil, avatar: nil, fromUserName: nil, fromUUID: formUUID, toUUID: nil, content: nil, contentType: nil, type: 6, messageType: nil,urlPath: nil,fileName: nil,fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
         onSend(msg: msg)
     }
     
     
     func sendRTCSignal(toUUID : String, sdp : String) {
         print("send signaling")
-        let wsMSG = WSMessage(messageID: UUID().uuidString, replyMessageID: nil, avatar: userModel?.profile?.avatar, fromUserName: userModel?.profile?.name, fromUUID: userModel?.profile?.uuid, toUUID: toUUID, content:sdp , contentType: 7, type: 5, messageType: 1, urlPath: nil, fileName: nil, fileSize: nil, storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,storyUserUUID: nil)
+        let wsMSG = WSMessage(messageID: UUID().uuidString, replyMessageID: nil, avatar: userModel?.profile?.avatar, fromUserName: userModel?.profile?.name, fromUUID: userModel?.profile?.uuid, toUUID: toUUID, content:sdp , contentType: 7, type: 5, messageType: 1, urlPath: nil, fileName: nil, fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
         
         self.onSend(msg: wsMSG)
     }
     
     func recallMessage(message : RoomMessages,toUUID : String,messageType : Int16,sendMessage : String){
-        let recallMessage = WSMessage(messageID: message.id!.uuidString, replyMessageID: nil, avatar: message.sender?.avatar, fromUserName: message.sender?.name, fromUUID: message.sender?.id?.uuidString.lowercased(), toUUID: toUUID, content: sendMessage, contentType: ContentType.sys.rawValue, type: 7, messageType: messageType, urlPath: nil, fileName: nil, fileSize: nil, storyAvailableTime: nil, storyId: nil, storyUserName: nil,storyUserAvatar: nil,storyUserUUID: nil)
+        let recallMessage = WSMessage(messageID: message.id!.uuidString, replyMessageID: nil, avatar: message.sender?.avatar, fromUserName: message.sender?.name, fromUUID: message.sender?.id?.uuidString.lowercased(), toUUID: toUUID, content: sendMessage, contentType: ContentType.sys.rawValue, type: 7, messageType: messageType, urlPath: nil, fileName: nil, fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
         self.onSend(msg: recallMessage)
     }
     
@@ -420,14 +420,25 @@ extension Websocket {
 
 extension Websocket {
     @MainActor
-    private func addNewRoomToCache(roomUUID: UUID , msg : WSMessage,roomName : String,roomAvatar : String ,event : MessageEvent,sentTime : Date,messageID : String,storyId : Int16,storyUserName: String,storyUserAvatar: String,storyUserUUID: String){
-        print("To create new room...")
+    private func addNewRoomToCache(
+        roomUUID: UUID ,
+        msg : WSMessage,
+        roomName : String,
+        roomAvatar : String ,
+        event : MessageEvent,
+        sentTime : Date,
+        messageID : String,
+        contentUUID : String,
+        contentUserName: String,
+        contentUserAvatar: String,
+        contentUserUUID: String){
+
         if let room = UserDataModel.shared.addRoom(id: roomUUID.uuidString, name: roomName, avatar: roomAvatar, message_type: msg.messageType!) {
             room.unread_message = event == .send ? 0 : 1
             room.last_message = (msg.contentType == ContentType.text.rawValue || msg.contentType == ContentType.msgReply.rawValue) ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
             room.last_sent_time = sentTime
             
-            let RoomMsg = UserDataModel.shared.addRoomMessage(msgID:messageID,sender_uuid: msg.fromUUID!,receiver_uuid:msg.toUUID! ,sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type : msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),storyAvailabeTime: msg.storyAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,storyId: storyId,storyUserName: storyUserName,storyUserAvatar: storyUserAvatar,storyUserUUID: storyUserUUID)
+            let RoomMsg = UserDataModel.shared.addRoomMessage(msgID:messageID,sender_uuid: msg.fromUUID!,receiver_uuid:msg.toUUID! ,sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type : msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),contentAvailabeTime: msg.contentAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,contentUUID: contentUUID,contentUserName: contentUserName,contentUserAvatar: contentUserAvatar,contentUserUUID: contentUserUUID)
             
             if msg.contentType == ContentType.msgReply.rawValue{
                 if let replyMessage = UserDataModel.shared.findOneMessage(id: UUID(uuidString: msg.replyMessageID!)!) {
@@ -447,13 +458,13 @@ extension Websocket {
     }
     
     @MainActor
-    private func addNewMessageToRoomCache(msg : WSMessage,room : ActiveRooms,messageID : String,sentTime :Date,event : MessageEvent,storyId : Int16,storyUserName: String,storyUserAvatar: String,storyUserUUID: String){
+    private func addNewMessageToRoomCache(msg : WSMessage,room : ActiveRooms,messageID : String,sentTime :Date,event : MessageEvent,contentUUID : String,contentUserName: String,contentUserAvatar: String,contentUserUUID: String){
         if msg.contentType! != ContentType.sys.rawValue {
             room.last_message = (msg.contentType == ContentType.text.rawValue || msg.contentType == ContentType.msgReply.rawValue) ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
             room.last_sent_time = sentTime
         }
         
-        let roomMsg = UserDataModel.shared.addRoomMessage(room: room, msgID:messageID, sender_uuid: msg.fromUUID!,receiver_uuid: msg.toUUID!, sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type: msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),storyAvailabeTime: msg.storyAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,storyId: storyId,storyUserName: storyUserName,storyUserAvatar: storyUserAvatar,storyUserUUID: storyUserUUID)
+        let roomMsg = UserDataModel.shared.addRoomMessage(room: room, msgID:messageID, sender_uuid: msg.fromUUID!,receiver_uuid: msg.toUUID!, sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type: msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),contentAvailabeTime: msg.contentAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,contentUUID: contentUUID, contentUserName: contentUserName,contentUserAvatar: contentUserAvatar, contentUserUUID: contentUserUUID)
         //                print(msg.sender)
         
         //find the replyMessage

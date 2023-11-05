@@ -60,7 +60,7 @@ struct OtherStoryCardView: View {
     @FocusState private var isFocus : Bool
     
     @State private var isLoadingStoriesList = false
-    @State private var stories : [UInt] = []
+    @State private var stories : [BasicStoryInfo] = []
 //    @State private var isLiked : Bool = false
     @State private var likeCount = 0
     @State private var isStoryUnavaiable : Bool = false
@@ -350,8 +350,8 @@ struct OtherStoryCardView: View {
         .onChange(of: self.index){ i in
             Task {
                 self.isStoryUnavaiable = false
-                await self.getStoryInfo(storyID: UInt(self.stories[i]))
-                await self.updateStorySeen(storyId: UInt(self.stories[i]))
+                await self.getStoryInfo(storyID: UInt(self.stories[i].story_id))
+                await self.updateStorySeen(storyId: UInt(self.stories[i].story_id))
                 
             }
         }
@@ -391,11 +391,11 @@ struct OtherStoryCardView: View {
             urlPath: self.story!.media_url,
             fileName: nil,
             fileSize: nil,
-            storyAvailableTime: Int32(self.story!.create_at),
-            storyId: Int16(self.story!.id),
-            storyUserName: self.friendInfo.name,
-            storyUserAvatar: self.friendInfo.avatar,
-            storyUserUUID: self.friendInfo.uuid
+            contentAvailableTime: Int32(self.story!.create_at),
+            contentUUID: self.story!.uuid,
+            contentUserName: self.friendInfo.name,
+            contentUserAvatar: self.friendInfo.avatar,
+            contentUserUUID: self.friendInfo.uuid
         )
         Websocket.shared.handleMessage(event:.send,msg: sendMsg,isGetRoomUserInfo: true){
             hub.AlertMessage(sysImg: "checkmark", message: "Replied")
@@ -414,7 +414,7 @@ struct OtherStoryCardView: View {
         switch resp {
         case .success(let data):
             DispatchQueue.main.async {
-                self.story = StoryInfo(id: data.story_id, media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
+                self.story = StoryInfo(id: data.story_id, uuid: data.story_uuid ,media_url: data.media_url, create_at: data.create_at, is_liked: data.is_liked,story_seen_list: data.story_seen_list)
                 if data.is_liked {
                     self.likeCount = 10
                 }
@@ -433,24 +433,24 @@ struct OtherStoryCardView: View {
         switch resp {
         case .success(let data):
             DispatchQueue.main.async {
-                self.stories = data.story_ids
+                self.stories = data.stories
                 isLoadingStoriesList = false
                 Task{
 //                    print(data)
-                    if data.story_ids.isEmpty {
+                    if data.stories.isEmpty {
                         return
                     }
                     
-                    if let foundIndex = data.story_ids.firstIndex(where: {$0 >= data.last_story_id}){
-                        self.index = min(foundIndex,data.story_ids.count - 1)
-                        self.timeProgress = CGFloat(min(foundIndex,data.story_ids.count - 1))
-                    }else if let foundIndex = data.story_ids.lastIndex(where: {$0 < data.last_story_id}){
+                    if let foundIndex = data.stories.firstIndex(where: {$0.story_id >= data.last_story_id}){
+                        self.index = min(foundIndex,data.stories.count - 1)
+                        self.timeProgress = CGFloat(min(foundIndex,data.stories.count - 1))
+                    }else if let foundIndex = data.stories.lastIndex(where: {$0.story_id < data.last_story_id}){
                         self.index = max(foundIndex,0)
                         self.timeProgress = CGFloat(max(foundIndex,0))
                     }
                     if self.index == 0{
-                        await self.getStoryInfo(storyID: data.story_ids.first!)
-                        await self.updateStorySeen(storyId: data.story_ids.first!)
+                        await self.getStoryInfo(storyID: data.stories.first!.story_id)
+                        await self.updateStorySeen(storyId: data.stories.first!.story_id)
                     }
                 }
                 
@@ -543,7 +543,7 @@ struct OtherStoryCardView: View {
         
         
         //TODO: Check if the story is the last one(Forward)
-        if let last = self.stories.last,last == self.stories[index]{
+        if let last = self.stories.last,last.story_id == self.stories[index].story_id{
             //TODO: if there is any other story section,move to the other stroy section else close the story view
             if let lastStory = self.storyModel.activeStories.last,lastStory.id == friendInfo.id{
                 withAnimation{

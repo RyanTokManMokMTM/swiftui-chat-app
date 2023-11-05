@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StoryViewer: View {
     @Binding var isShowStoryViewer : Bool
-    var storyId : UInt
+    var storyId : String
     var friendUUID : String
     
     @EnvironmentObject private var userModel : UserViewModel

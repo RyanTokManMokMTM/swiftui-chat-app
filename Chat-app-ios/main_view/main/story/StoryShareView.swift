@@ -143,11 +143,11 @@ struct StoryShareView: View {
             urlPath: storyInfo.media_url,
             fileName: nil,
             fileSize: nil,
-            storyAvailableTime: Int32(storyInfo.create_at),
-            storyId: Int16(storyInfo.id),
-            storyUserName: storyUserInfo.name,
-            storyUserAvatar: storyUserInfo.avatar,
-            storyUserUUID: storyUserInfo.uuid
+            contentAvailableTime: Int32(storyInfo.create_at),
+            contentUUID: storyInfo.uuid,
+            contentUserName: storyUserInfo.name,
+            contentUserAvatar: storyUserInfo.avatar,
+            contentUserUUID: storyUserInfo.uuid
             
         )
         Websocket.shared.handleMessage(event:.send,msg: sendMsg,isGetRoomUserInfo: true){

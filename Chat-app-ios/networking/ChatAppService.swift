@@ -237,8 +237,8 @@ class ChatAppService : APIService {
         return await self.AsyncPostAndDecode(request: request)
     }
     
-    func IsUserStikcerExist(sticker_id : String) async -> Result<IsUserStickerExistResp,Error> {
-        guard let url = URL(string: HTTP_HOST + APIEndPoint.IsUserStickerExist.rawValue + sticker_id) else {
+    func IsUserStikcerExist(stickerId : String) async -> Result<IsUserStickerExistResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.IsUserStickerExist.rawValue + stickerId) else {
             return .failure(APIError.badUrl)
         }
         
@@ -685,9 +685,8 @@ class ChatAppService : APIService {
     }
     
 
-    
-    func GetStickerGroup(stickerID : String) async -> Result<GetStickerGroupResp,Error> {
-        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStickerGroup.rawValue + stickerID.description) else {
+    func GetStickerGroupResources(stickerID : String) async -> Result<GetStickerGroupResourcesResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStickerGroupResources.rawValue + stickerID.description) else {
             return .failure(APIError.badUrl)
         }
         
@@ -697,7 +696,19 @@ class ChatAppService : APIService {
 
         return await self.AsyncFetchAndDecode(request: request)
     }
+    
+    func GetStickerInfo(stickerID : String) async -> Result<GetStickerInfoResp,Error> {
+        guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStickerInfo.rawValue + stickerID.description) else {
+            return .failure(APIError.badUrl)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
+        return await self.AsyncFetchAndDecode(request: request)
+    }
+    
     func GetStickerGroupList() async -> Result<GetStickerGroupListResp,Error> {
         guard let url = URL(string: HTTP_HOST + APIEndPoint.GetStickerGroupList.rawValue) else {
             return .failure(APIError.badUrl)

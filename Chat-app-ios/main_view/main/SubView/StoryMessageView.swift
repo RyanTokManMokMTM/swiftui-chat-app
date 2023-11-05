@@ -105,11 +105,11 @@ struct StoryMessageView: View {
             urlPath: nil,
             fileName: nil,
             fileSize: nil,
-            storyAvailableTime: 0,
-            storyId: nil,
-            storyUserName: nil,
-            storyUserAvatar: nil,
-            storyUserUUID: nil)
+            contentAvailableTime: 0,
+            contentUUID: nil,
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
         Websocket.shared.handleMessage(event:.send,msg: sendMsg,isGetRoomUserInfo: true){
             withAnimation{
                 isAction = false
