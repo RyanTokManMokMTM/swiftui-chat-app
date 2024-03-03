@@ -73,6 +73,8 @@ class RTCViewModel : ObservableObject {
         self.webSocket = Websocket.shared
         self.webSocket?.delegate = self
         createNewPeer()
+        
+
     }
     
     func createNewPeer(){
@@ -171,7 +173,7 @@ extension RTCViewModel {
                     self.sendSingleMessage(sdpData)
 
                 }else {
-                    print("????sadasdas")
+                    print("SDP sending ferror")
                 }
             }
         }
@@ -257,14 +259,14 @@ extension RTCViewModel : WebRTCClientDelegate{
 
 
 extension RTCViewModel {
-    func sendSingleMessage(_ message : Data) {
+    func sendSingleMessage(_ message : Data, type : RTCType = .single) {
         guard let sdpStr = message.toJSONString else {
             return
         }
         
         let sdp = sdpStr as String
 
-        webSocket?.sendRTCSignal(toUUID: self.toUserUUID!, sdp: sdp)
+        webSocket?.sendRTCSignal(toUUID: self.toUserUUID!, sdp: sdp,type: type)
     }
     
     func processSignalingMessage(_ message: String,websocketMessage : WSMessage) -> Void {

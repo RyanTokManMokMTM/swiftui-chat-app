@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		20008A6F2A0A7CC300BFC758 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 20008A6E2A0A7CC300BFC758 /* WebRTC */; };
 		20008A732A0E03FB00BFC758 /* VoiceCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20008A722A0E03FB00BFC758 /* VoiceCallView.swift */; };
 		2000E0A02A21E40C00F03480 /* DrawingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2000E09F2A21E40C00F03480 /* DrawingScreen.swift */; };
 		2000E0A32A21F06200F03480 /* DragTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2000E0A22A21F06200F03480 /* DragTextView.swift */; };
@@ -203,7 +202,10 @@
 		20DB4DC929F2756500FF4C8B /* GroupSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DB4DC829F2756400FF4C8B /* GroupSearchView.swift */; };
 		20E0966829FE766800B5EBA7 /* Doc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E0966729FE766800B5EBA7 /* Doc.swift */; };
 		20EA19B82A174430006427F9 /* serverConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EA19B72A174430006427F9 /* serverConfig.swift */; };
+		20F2D9AB2B86361600E1EF7D /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 20F2D9AA2B86361600E1EF7D /* WebRTC */; };
+		20F2D9AE2B86367700E1EF7D /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 20F2D9AD2B86367700E1EF7D /* WebRTC */; };
 		20F47B2D29C598D2003D5CD0 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F47B2C29C598D2003D5CD0 /* DocumentPicker.swift */; };
+		20FCCEB42B122F420033CA7B /* multipleRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FCCEB32B122F420033CA7B /* multipleRTC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -407,6 +409,7 @@
 		20E0966729FE766800B5EBA7 /* Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Doc.swift; sourceTree = "<group>"; };
 		20EA19B72A174430006427F9 /* serverConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serverConfig.swift; sourceTree = "<group>"; };
 		20F47B2C29C598D2003D5CD0 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		20FCCEB32B122F420033CA7B /* multipleRTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = multipleRTC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -414,7 +417,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20008A6F2A0A7CC300BFC758 /* WebRTC in Frameworks */,
+				20F2D9AB2B86361600E1EF7D /* WebRTC in Frameworks */,
+				20F2D9AE2B86367700E1EF7D /* WebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +579,7 @@
 				203417D32A08E79E0076C942 /* config.swift */,
 				203417DA2A091E980076C942 /* RTCVideoView.swift */,
 				203417DE2A091F620076C942 /* VideoCallView.swift */,
+				20FCCEB32B122F420033CA7B /* multipleRTC.swift */,
 			);
 			path = rtc;
 			sourceTree = "<group>";
@@ -1068,7 +1073,8 @@
 			);
 			name = "Chat-app-ios";
 			packageProductDependencies = (
-				20008A6E2A0A7CC300BFC758 /* WebRTC */,
+				20F2D9AA2B86361600E1EF7D /* WebRTC */,
+				20F2D9AD2B86367700E1EF7D /* WebRTC */,
 			);
 			productName = "Chat-app-ios";
 			productReference = 2091E9BC299CECE400EB9A7C /* Chat-app-ios.app */;
@@ -1099,7 +1105,7 @@
 			);
 			mainGroup = 2091E9B3299CECE400EB9A7C;
 			packageReferences = (
-				20008A6D2A0A7CC300BFC758 /* XCRemoteSwiftPackageReference "WebRTC" */,
+				20F2D9AC2B86367700E1EF7D /* XCRemoteSwiftPackageReference "WebRTC" */,
 			);
 			productRefGroup = 2091E9BD299CECE400EB9A7C /* Products */;
 			projectDirPath = "";
@@ -1176,6 +1182,7 @@
 				20C86BE42AC7C8DA00A29661 /* GetStoryInfoRequest.swift in Sources */,
 				205888EE2AF76541002C5086 /* BasicStoryInfo.swift in Sources */,
 				20CE5D2D29A354EA001371A7 /* dummyData.swift in Sources */,
+				20FCCEB42B122F420033CA7B /* multipleRTC.swift in Sources */,
 				2022AFA729C99F4B00C47383 /* URL.swift in Sources */,
 				20B1267C2A10E5E6009FF2AB /* VideoCallView.swift in Sources */,
 				20C86BD22AC7C6F900A29661 /* DeleteMessageResponse.swift in Sources */,
@@ -1551,20 +1558,24 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		20008A6D2A0A7CC300BFC758 /* XCRemoteSwiftPackageReference "WebRTC" */ = {
+		20F2D9AC2B86367700E1EF7D /* XCRemoteSwiftPackageReference "WebRTC" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/stasel/WebRTC";
+			repositoryURL = "https://github.com/stasel/WebRTC.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 113.0.0;
+				minimumVersion = 121.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		20008A6E2A0A7CC300BFC758 /* WebRTC */ = {
+		20F2D9AA2B86361600E1EF7D /* WebRTC */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 20008A6D2A0A7CC300BFC758 /* XCRemoteSwiftPackageReference "WebRTC" */;
+			productName = WebRTC;
+		};
+		20F2D9AD2B86367700E1EF7D /* WebRTC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20F2D9AC2B86367700E1EF7D /* XCRemoteSwiftPackageReference "WebRTC" */;
 			productName = WebRTC;
 		};
 /* End XCSwiftPackageProductDependency section */

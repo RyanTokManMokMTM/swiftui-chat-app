@@ -87,6 +87,11 @@ struct WSMessage : Codable {
 
 }
 
+enum RTCType : Int {
+    case single = 1
+    case mutliple = 2
+}
+
 protocol WebSocketDelegate : class {
     func webSocket(_ webSocket: Websocket, didReceive data: WSMessage)
     func webSocket(_ webSocket: Websocket, didConnected data: Bool)
@@ -385,9 +390,11 @@ class Websocket : ObservableObject {
     }
     
     
-    func sendRTCSignal(toUUID : String, sdp : String) {
+    func sendRTCSignal(toUUID : String, sdp : String,type : RTCType = .single) {
         print("send signaling")
-        let wsMSG = WSMessage(messageID: UUID().uuidString, replyMessageID: nil, avatar: userModel?.profile?.avatar, fromUserName: userModel?.profile?.name, fromUUID: userModel?.profile?.uuid, toUUID: toUUID, content:sdp , contentType: 7, type: 5, messageType: 1, urlPath: nil, fileName: nil, fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
+        //if type == group / multiple.. handle in different way
+        //Create an other Peerconnection form server..
+        let wsMSG = WSMessage(messageID: UUID().uuidString, replyMessageID: nil, avatar: userModel?.profile?.avatar, fromUserName: userModel?.profile?.name, fromUUID: userModel?.profile?.uuid, toUUID: toUUID, content:sdp , contentType: 7, type: 5, messageType: Int16(type.rawValue), urlPath: nil, fileName: nil, fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
         
         self.onSend(msg: wsMSG)
     }

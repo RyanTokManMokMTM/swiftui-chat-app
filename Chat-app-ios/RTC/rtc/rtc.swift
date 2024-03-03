@@ -224,7 +224,6 @@ extension WebRTCClient {
             print("peer connection haven't created.")
             return
         }
-        
         let streamID = "stream"
         //put the source to peer connection and send
         let audioTrack = createAutioTrack()
@@ -472,7 +471,7 @@ extension WebRTCClient {
             }
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+                try self.rtcAudioSession.setCategory( AVAudioSession.Category(rawValue: AVAudioSession.Category.playAndRecord.rawValue))
                 try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
                 try self.rtcAudioSession.setActive(true)
             } catch let err {
@@ -489,8 +488,10 @@ extension WebRTCClient {
                 return
             }
             self.rtcAudioSession.lockForConfiguration()
+            
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+                
+                try self.rtcAudioSession.setCategory( AVAudioSession.Category(rawValue: AVAudioSession.Category.playAndRecord.rawValue))
                 try self.rtcAudioSession.overrideOutputAudioPort(.none)
             } catch let err {
                 debugPrint("Error setting AVAAudioSession \(err)")
@@ -544,7 +545,6 @@ extension RTCSessionDescription {
         return dict.JSONData
     }
 }
-
 
 
 extension Dictionary {
