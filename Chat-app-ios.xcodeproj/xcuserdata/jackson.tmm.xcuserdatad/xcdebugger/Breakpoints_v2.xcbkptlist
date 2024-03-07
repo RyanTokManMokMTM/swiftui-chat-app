@@ -190,8 +190,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "269"
-            endingLineNumber = "269"
+            startingLineNumber = "320"
+            endingLineNumber = "320"
             landmarkName = "handleMessage(event:msg:isGetRoomUserInfo:onSendSuccess:)"
             landmarkType = "7">
             <Locations>
@@ -254,8 +254,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "426"
-            endingLineNumber = "426"
+            startingLineNumber = "513"
+            endingLineNumber = "513"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -318,8 +318,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "329"
-            endingLineNumber = "329"
+            startingLineNumber = "380"
+            endingLineNumber = "380"
             landmarkName = "handleMessage(event:msg:isGetRoomUserInfo:onSendSuccess:)"
             landmarkType = "7">
          </BreakpointContent>

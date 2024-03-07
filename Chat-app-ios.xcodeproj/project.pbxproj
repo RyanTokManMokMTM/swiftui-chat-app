@@ -732,8 +732,8 @@
 		2091E9CE299CED4300EB9A7C /* networking */ = {
 			isa = PBXGroup;
 			children = (
-				20C86C072AC7CE1100A29661 /* requests.swift */,
 				2091E9D3299FC04700EB9A7C /* types */,
+				20C86C072AC7CE1100A29661 /* requests.swift */,
 				2091E9D1299D1E2B00EB9A7C /* apiService.swift */,
 				20A8AA3B29B49BCA00B0243E /* ChatAppService.swift */,
 				2065B37829B88E86004B6F2D /* Websocket.swift */,

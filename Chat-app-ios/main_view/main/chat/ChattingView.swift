@@ -182,7 +182,7 @@ struct ChattingView: View {
                     let fileName = UUID().uuidString + "." + fileFormat
                     //                    print(fileFormat)
                     Task.init{
-                        await self.sendFile(data:data,fileName:fileName,fileSize: 0,ext:fileFormat,type:isVideo(ext:fileFormat) ? .video : .img)
+                        await self.sendFile(data:data,fileName:fileName,fileSize: 0,ext:fileFormat,type:isVideo(ext:fileFormat) ? .VIDEO : .IMAGE)
                     }
                 }
             }
@@ -209,7 +209,7 @@ struct ChattingView: View {
 
                     let ext = data.pathExtension
                     Task.init{
-                        await self.sendFile(data: fileData, fileName: fileName, fileSize: Int64(fileSize), ext: ext, type: isAudio(ext : ext) ? .audio : .file)
+                        await self.sendFile(data: fileData, fileName: fileName, fileSize: Int64(fileSize), ext: ext, type: isAudio(ext : ext) ? .AUDIO : .FILE)
                     }
                 } catch(let err){
                     print("conver file to data failed \(err.localizedDescription)")
@@ -251,11 +251,11 @@ struct ChattingView: View {
                             VStack(spacing:0){
 
                                 
-                                if messages[index].content_type == ContentType.sys.rawValue{
+                                if messages[index].content_type == ContentType.SYS.rawValue{
                                     SysContentTypeView(message: messages[index])
                                 }else {
                                     
-                                    ChatBubble(direction: isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .sender : .receiver,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: Int(messages[index].content_type),messageStatus: messages[index].messageStatus,sentTime: messages[index].sent_at,isReplyMessage:$isReplyMessage,replyMessage:$replyMessage,message : messages[index]){
+                                    ChatBubble(direction: isOwner(id : messages[index].sender!.id!.uuidString.lowercased()) ? .sender : .receiver,messageType: Int(chatUserData.message_type), userName: messages[index].sender!.name!, userAvatarURL: messages[index].sender!.AvatarURL, contentType: messages[index].content_type! ,messageStatus: messages[index].messageStatus,sentTime: messages[index].sent_at,isReplyMessage:$isReplyMessage,replyMessage:$replyMessage,message : messages[index]){
                                         content(message: messages[index])
                                         
                                     }
@@ -439,19 +439,19 @@ struct ChattingView: View {
     
     @ViewBuilder
     private func content(message : RoomMessages) -> some View{
-        if message.content_type == ContentType.text.rawValue {
+        if message.content_type == ContentType.TEXT.rawValue {
             TextContentTypeView(message: message)
                 .contextMenu{
                     commentContextMenu(message: message)
                 }
                 
-        }else if message.content_type == ContentType.img.rawValue{
+        }else if message.content_type == ContentType.IMAGE.rawValue{
             ImageContentTypeView(message:message)
                 .contextMenu{
                     commentContextMenu(message: message)
                 }
                 
-        }else if message.content_type == ContentType.file.rawValue{
+        }else if message.content_type == ContentType.FILE.rawValue{
             FileContentTypeView(message: message)
                 .contextMenu{
                     commentContextMenu(message: message)
@@ -462,7 +462,7 @@ struct ChattingView: View {
                     })
                     .disabled(message.tempData != nil)
                 }
-        }else if message.content_type == ContentType.audio.rawValue {
+        }else if message.content_type == ContentType.AUDIO.rawValue {
             AudioContentTypeView(message: message)
                 .contextMenu{
                     commentContextMenu(message: message)
@@ -473,7 +473,7 @@ struct ChattingView: View {
                     })
                     .disabled(message.tempData != nil)
                 }
-        } else if message.content_type == ContentType.video.rawValue {
+        } else if message.content_type == ContentType.VIDEO.rawValue {
             VideoContentTypeView(message: message)
                 .contextMenu{
                     commentContextMenu(message: message)
@@ -515,20 +515,20 @@ struct ChattingView: View {
                     }
                 }
             
-        }else if message.content_type == ContentType.story.rawValue {
+        }else if message.content_type == ContentType.STORY.rawValue {
             StoryContentTypeView(message: message)
                 .contextMenu{
                     commentContextMenu(message: message)
                 }
-        } else if message.content_type == ContentType.msgReply.rawValue {
+        } else if message.content_type == ContentType.REPLY.rawValue {
             replyMessageContentTypeView(message: message)
                 .contextMenu{
                     commentContextMenu(message: message)
                 }
-        } else if message.content_type == ContentType.sticker.rawValue {
+        } else if message.content_type == ContentType.STICKER.rawValue {
             StickerContentTypeView(message: message)
  
-        } else if message.content_type == ContentType.share.rawValue {
+        } else if message.content_type == ContentType.SHARED.rawValue {
             StoryShareContentTypeView(message:message)
                 .contextMenu{
                     commentContextMenu(message: message)
@@ -702,25 +702,25 @@ struct ChattingView: View {
         var message : String = "\(replyMsg.sender?.name ?? "") : "
 
         switch replyMsg.content_type {
-        case ContentType.text.rawValue, ContentType.msgReply.rawValue:
+        case ContentType.TEXT.rawValue, ContentType.REPLY.rawValue:
             message.append(replyMsg.content ?? "")
             break
-        case ContentType.img.rawValue:
+        case ContentType.IMAGE.rawValue:
             message.append("[ image content ]")
             break
-        case ContentType.file.rawValue:
+        case ContentType.FILE.rawValue:
             message.append("[ file content ]")
             break
-        case ContentType.audio.rawValue:
+        case ContentType.AUDIO.rawValue:
             message.append("[ audio content ]")
             break
-        case ContentType.video.rawValue:
+        case ContentType.VIDEO.rawValue:
             message.append("[ video content ]")
             break
-        case ContentType.story.rawValue:
+        case ContentType.STORY.rawValue:
             message.append("[ story content ]")
             break
-        case ContentType.share.rawValue:
+        case ContentType.SHARED.rawValue:
             message.append("[ shared story content ]")
             break
             
@@ -778,14 +778,31 @@ extension ChattingView {
         
     }
     
-    private func sendMessage(contentType : Int16 = 1){
+    private func sendMessage(contentType : String = ContentType.TEXT.rawValue){
         if self.text.isEmpty {
             return
         }
         let msgID = UUID().uuidString
         
-        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,  contentUserAvatar: nil,
-                            contentUserUUID: nil)
+        let msg = WSMessage(
+            messageID:msgID,
+            replyMessageID: nil,
+            avatar: self.userModel.profile!.avatar,
+            fromUserName: self.userModel.profile!.name,
+            fromUUID: self.userModel.profile!.uuid,
+            toUUID: self.chatUserData.id!.uuidString.lowercased(),
+            content: self.text,
+            contentType: contentType,
+            eventType: EventType.MESSAGE.rawValue,
+            messageType: self.chatUserData.message_type,urlPath: nil,
+            fileName: nil,
+            fileSize: nil,
+            contentAvailableTime: nil,
+            contentUUID: nil, 
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
+        
         playMessageSentSound()
         Websocket.shared.handleMessage(event:.send,msg: msg)
         
@@ -800,7 +817,7 @@ extension ChattingView {
 //        print("sent sticker")
         let msgID = UUID().uuidString
 
-        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: nil, contentType: ContentType.sticker.rawValue, type: 4, messageType: self.chatUserData.message_type,urlPath: stickerUri,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: StickerUUID, contentUserName: nil,contentUserAvatar: nil,
+        let msg = WSMessage(messageID:msgID,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: nil, contentType: ContentType.STICKER.rawValue, eventType: EventType.MESSAGE.rawValue, messageType: self.chatUserData.message_type,urlPath: stickerUri,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: StickerUUID, contentUserName: nil,contentUserAvatar: nil,
                             contentUserUUID: nil)
 
         playMessageSentSound()
@@ -812,13 +829,13 @@ extension ChattingView {
         }
     }
     
-    private func sendReplyMessage(contentType : Int16 = ContentType.msgReply.rawValue){
+    private func sendReplyMessage(contentType : String = ContentType.REPLY.rawValue){
         if self.text.isEmpty {
             return
         }
         let msgID = UUID().uuidString
         
-        let msg = WSMessage(messageID:msgID,replyMessageID: self.replyMessage!.id!.uuidString, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, type: 4, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,
+        let msg = WSMessage(messageID:msgID,replyMessageID: self.replyMessage!.id!.uuidString, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: contentType, eventType: EventType.MESSAGE.rawValue, messageType: self.chatUserData.message_type,urlPath: nil,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,
                             contentUserUUID: nil)
 
         
@@ -840,7 +857,7 @@ extension ChattingView {
     
     private func sendImage(data : String, imageType : String,mediaType : MediaType = .Image) async {
         let sent_time = Date.now
-        let message = UDM.addRoomMessage(room: UDM.currentRoom!, msgID : UUID().uuidString,sender_uuid: self.userModel.profile!.uuid, receiver_uuid: self.chatUserData.id!.uuidString.lowercased(),sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: mediaType == .Image ? 2 : 3, message_type: self.chatUserData.message_type,sent_at: sent_time,tempData:self.selectedData,fileName: "",fileSize: 0,event: .send,messageStatus: .sending)
+        let message = UDM.addRoomMessage(room: UDM.currentRoom!, msgID : UUID().uuidString,sender_uuid: self.userModel.profile!.uuid, receiver_uuid: self.chatUserData.id!.uuidString.lowercased(),sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: mediaType == .Image ? ContentType.IMAGE.rawValue : ContentType.FILE.rawValue, message_type: self.chatUserData.message_type,sent_at: sent_time,tempData:self.selectedData,fileName: "",fileSize: 0,event: .send,messageStatus: .sending)
         
         chatUserData.last_message = "Sent a \(mediaType.rawValue)"
         chatUserData.last_sent_time = sent_time
@@ -862,8 +879,26 @@ extension ChattingView {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: mediaType == .Image ? 2 : 3, type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: nil,fileSize: nil,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,
-                                contentUserUUID: nil)
+            let msg = WSMessage(
+                messageID:message.id!.uuidString,
+                replyMessageID: nil,
+                avatar: self.userModel.profile!.avatar,
+                fromUserName: self.userModel.profile!.name,
+                fromUUID: self.userModel.profile!.uuid,
+                toUUID: self.chatUserData.id!.uuidString.lowercased(),
+                content: self.text,
+                contentType: mediaType == .Image ? ContentType.IMAGE.rawValue : ContentType.FILE.rawValue,
+                eventType: EventType.MESSAGE.rawValue,
+                messageType: self.chatUserData.message_type,
+                urlPath: data.path,
+                fileName: nil,
+                fileSize: nil,
+                contentAvailableTime: nil,
+                contentUUID: nil,
+                contentUserName: nil,
+                contentUserAvatar: nil,
+                contentUserUUID: nil)
+            
             Websocket.shared.onSendNormal(msg: msg)
             Task {
                 await checkMessage(messageID: message.id!.uuidString)
@@ -880,20 +915,20 @@ extension ChattingView {
         let contentType = type.rawValue
         var sentMsg = "Sent a "
         
-        if type == .img {
+        if type == .IMAGE {
             sentMsg.append("image")
-        }else if type == .file{
+        }else if type == .FILE{
             sentMsg.append("file")
-        } else if type == .audio {
+        } else if type == .AUDIO {
             sentMsg.append("audio")
-        } else if type == .video {
+        } else if type == .VIDEO {
             sentMsg.append("video")
         }else {
             return
         }
         
         let sent_time = Date.now
-        let message = UDM.addRoomMessage(room: UDM.currentRoom!,msgID: UUID().uuidString, sender_uuid: self.userModel.profile!.uuid,receiver_uuid: self.chatUserData.id!.uuidString.lowercased() ,sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: Int16(contentType),message_type: self.chatUserData.message_type, sent_at: sent_time,tempData:self.selectedData,fileName: fileName,fileSize: fileSize,event: .send,messageStatus: .sending)
+        let message = UDM.addRoomMessage(room: UDM.currentRoom!,msgID: UUID().uuidString, sender_uuid: self.userModel.profile!.uuid,receiver_uuid: self.chatUserData.id!.uuidString.lowercased() ,sender_avatar: self.userModel.profile!.avatar, sender_name: self.userModel.profile!.name, content: "", content_type: contentType,message_type: self.chatUserData.message_type, sent_at: sent_time,tempData:self.selectedData,fileName: fileName,fileSize: fileSize,event: .send,messageStatus: .sending)
         
         chatUserData.last_message = sentMsg
         chatUserData.last_sent_time = sent_time
@@ -916,8 +951,26 @@ extension ChattingView {
             }
             
             
-            let msg = WSMessage(messageID:message.id!.uuidString,replyMessageID: nil, avatar: self.userModel.profile!.avatar, fromUserName: self.userModel.profile!.name, fromUUID: self.userModel.profile!.uuid, toUUID: self.chatUserData.id!.uuidString.lowercased(), content: self.text, contentType: Int16(contentType), type: 4, messageType: self.chatUserData.message_type,urlPath: data.path,fileName: fileName,fileSize: fileSize,contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,
-                                contentUserUUID: nil)
+            let msg = WSMessage(
+                messageID:message.id!.uuidString,
+                replyMessageID: nil,
+                avatar: self.userModel.profile!.avatar,
+                fromUserName: self.userModel.profile!.name,
+                fromUUID: self.userModel.profile!.uuid,
+                toUUID: self.chatUserData.id!.uuidString.lowercased(),
+                content: self.text,
+                contentType: contentType,
+                eventType: EventType.MESSAGE.rawValue,
+                messageType: self.chatUserData.message_type,
+                urlPath: data.path,
+                fileName: fileName,
+                fileSize: fileSize,
+                contentAvailableTime: nil,
+                contentUUID: nil,
+                contentUserName: nil,
+                contentUserAvatar: nil,
+                contentUserUUID: nil)
+            
             Websocket.shared.onSendNormal(msg: msg)
             
             Task {

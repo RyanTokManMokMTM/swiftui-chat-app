@@ -35,33 +35,84 @@ enum MessageEvent {
 //
 //}
 
-enum ContentType : Int16,CaseIterable {
-    case text
-    case img
-    case file
-    case audio
-    case video
-    case story
-    case sys
-    case msgReply
-    case sticker
-    case share
-
+enum ContentType : String,CaseIterable {
+    case TEXT
+    case IMAGE
+    case FILE
+    case AUDIO
+    case VIDEO
+    case STORY
+    case SYS
+    case REPLY
+    case STICKER
+    case SHARED
+    case SFU
     
-    var rawValue: Int16 {
+    var rawValue: String {
         switch self{
-        case .text : return 1
-        case .img : return 2
-        case .file : return 3
-        case .audio : return 4
-        case .video : return 5
-        case .story : return 6
-        case .sys : return 7
-        case .msgReply : return 8
-        case .sticker : return 9
-        case .share : return 10
+        case .TEXT : return "TEXT"
+        case .IMAGE : return "IMAGE"
+        case .FILE : return "FILE"
+        case .AUDIO : return "AUDIO"
+        case .VIDEO : return "VIDEO"
+        case .STORY : return "STORY"
+        case .SYS : return "SYS"
+        case .REPLY : return "REPLY"
+        case .STICKER : return "STICKER"
+        case .SHARED : return "SHARED"
+        case .SFU : return "SFU"
         }
     }
+}
+
+enum EventType : String, CaseIterable {
+    case HEAT_BEAT_PING
+    case HEAT_BEAT_PONG
+    case SYSTEM
+    case MESSAGE
+    case WEB_RTC
+    case MSG_ACK
+    case RECALL
+
+    //For SFU feature
+    case SFU_EVENT_CONNECT
+    case SFU_EVENT_CONSUM
+    case SFU_EVENT_GET_PRODUCERS
+    case SFU_EVENT_ICE
+    case SFU_EVENT_CLOSE
+
+    //Send event -> only use for send to client
+    case SFU_EVENT_SEND_SDP
+    case SFU_EVENT_SEND_NEW_PRODUCER
+    case SFU_EVENT_SEND_PRODUCER_CLOSE
+
+    case ALL
+    
+    var rawValue: String {
+        switch(self){
+            case .HEAT_BEAT_PING: return "HEAT_BEAT_PING"
+            case .HEAT_BEAT_PONG: return "HEAT_BEAT_PONG"
+            case .SYSTEM: return "SYSTEM"
+            case .MESSAGE: return "MESSAGE"
+            case .WEB_RTC: return "WEB_RTC"
+            case .MSG_ACK: return "MSG_ACK"
+            case .RECALL : return "RECALL"
+
+                //For SFU feature
+            case .SFU_EVENT_CONNECT: return "SFU_EVENT_CONNECT"
+            case .SFU_EVENT_CONSUM: return "SFU_EVENT_CONSUM"
+            case .SFU_EVENT_GET_PRODUCERS: return "SFU_EVENT_GET_PRODUCERS"
+            case .SFU_EVENT_ICE: return "SFU_EVENT_ICE"
+            case .SFU_EVENT_CLOSE: return "SFU_EVENT_CLOSE"
+
+                //Send event -> only use for send to client
+            case .SFU_EVENT_SEND_SDP: return "SFU_EVENT_SEND_SDP"
+            case .SFU_EVENT_SEND_NEW_PRODUCER: return "SFU_EVENT_SEND_NEW_PRODUCER"
+            case .SFU_EVENT_SEND_PRODUCER_CLOSE: return "SFU_EVENT_SEND_PRODUCER_CLOSE"
+            case .ALL : return "ALL"
+        }
+    }
+
 }
 
 struct WSMessage : Codable {
@@ -72,8 +123,8 @@ struct WSMessage : Codable {
     let fromUUID : String?
     let toUUID : String?
     let content : String?
-    let contentType : Int16?
-    let type : Int16?
+    let contentType : String?
+    let eventType : String?
     let messageType : Int16?
     
     let urlPath : String?
@@ -174,34 +225,34 @@ class Websocket : ObservableObject {
                     let msg = try JSONDecoder().decode(WSMessage.self, from: data)
                     print(msg)
                     
-                    if let type = msg.type {
+                    if let type = msg.eventType {
                         switch type {
-                        case 1:
+                        case EventType.HEAT_BEAT_PING.rawValue:
                             sendPong()
                             break
-                        case 2:
+                        case EventType.HEAT_BEAT_PONG.rawValue:
                             break
-                        case 3:
+                        case EventType.SYSTEM.rawValue:
                             break
-                        case 4:
+                        case EventType.MESSAGE.rawValue:
                             handleMessage(event: .receive, msg: msg)
                             break
-                        case 5:
+                        case EventType.WEB_RTC.rawValue:
                             self.delegate?.webSocket(self, didReceive: msg) //TODO: VideoCall VM handel this.
                             break
-                        case 6:
+                        case EventType.MSG_ACK.rawValue:
                             guard let id = msg.messageID else {
                                 break
                             }
                             print("ack :\(id)")
                             updateMessageStatus(messsageID: id)
                             break
-                        case 7:
+                        case EventType.RECALL.rawValue:
                             print("recall message")
                             updateMessage(wsMSG: msg)
                             //Find the message and update the message
                         default:
-                            print("UNKNOW TYPE")
+                            print("UNKNOW TYPE ： \(type)")
                         }
                     }
                 } catch(let err) {
@@ -239,7 +290,7 @@ class Websocket : ObservableObject {
     
     func sendPong(){
         print("send pong message to server")
-        let msg = WSMessage(messageID: nil, replyMessageID: nil, avatar: nil, fromUserName: nil, fromUUID: nil, toUUID: nil, content: "pong", contentType: nil, type: 2, messageType: nil,urlPath: nil,fileName: nil,fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
+        let msg = WSMessage(messageID: nil, replyMessageID: nil, avatar: nil, fromUserName: nil, fromUUID: nil, toUUID: nil, content: "pong", contentType: nil, eventType: EventType.HEAT_BEAT_PONG.rawValue, messageType: nil,urlPath: nil,fileName: nil,fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
         onSend(msg: msg)
     }
     
@@ -336,9 +387,9 @@ class Websocket : ObservableObject {
                     if msg.messageType == 1 {
                         
                         let notifyMessage : String
-                        if msg.contentType == ContentType.text.rawValue{
+                        if msg.contentType == ContentType.TEXT.rawValue{
                             notifyMessage = "\(msg.content!)"
-                        }else if msg.contentType == ContentType.msgReply.rawValue {
+                        }else if msg.contentType == ContentType.REPLY.rawValue {
                             notifyMessage = "Reply to a meesage : \(msg.content!)"
                         }else {
                             notifyMessage = "\(notificationConentMessage(fromUUID: msg.fromUserName!, contentType: msg.contentType!))"
@@ -347,15 +398,15 @@ class Websocket : ObservableObject {
                         BenHubState.shared.AlertMessageWithUserInfo(message: notifyMessage, avatarPath: msg.avatar!, name: msg.fromUserName!,type: .messge)
                     }else {
                         if UserDataModel.shared.findOneRoomWithIndex(uuid: roomID) != nil {
-                            if msg.contentType == ContentType.text.rawValue {
+                            if msg.contentType == ContentType.TEXT.rawValue {
                                 let notifyMessage = "\(msg.fromUserName!) : \(msg.content!)"
                                 
                                 BenHubState.shared.AlertMessageWithUserInfo(message: notifyMessage, avatarPath: GroupRoomAvatar, name: GroupRoomName,type: .messge)
-                            }else if msg.contentType == ContentType.msgReply.rawValue {
+                            }else if msg.contentType == ContentType.REPLY.rawValue {
                                 let notifyMessage = "\(msg.fromUserName!) : Reply to a mesasge - \(msg.content!)"
                                 
                                 BenHubState.shared.AlertMessageWithUserInfo(message: notifyMessage, avatarPath: GroupRoomAvatar, name: GroupRoomName,type: .messge)
-                            }else if msg.contentType != ContentType.sys.rawValue{
+                            }else if msg.contentType != ContentType.SYS.rawValue{
                                 let notifyMessage = "\(msg.fromUserName!) : \(notificationConentMessage(fromUUID: msg.fromUserName!, contentType: msg.contentType!))"
                                 
                                 BenHubState.shared.AlertMessageWithUserInfo(message: notifyMessage, avatarPath: GroupRoomAvatar, name: GroupRoomName,type: .messge)
@@ -385,7 +436,25 @@ class Websocket : ObservableObject {
     @MainActor
     private func sendAck(messageID : String,formUUID : String) {
         print("send ack to server for messageID : \(messageID)")
-        let msg = WSMessage(messageID: messageID, replyMessageID: nil, avatar: nil, fromUserName: nil, fromUUID: formUUID, toUUID: nil, content: nil, contentType: nil, type: 6, messageType: nil,urlPath: nil,fileName: nil,fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
+        let msg = WSMessage(
+            messageID: messageID,
+            replyMessageID: nil,
+            avatar: nil,
+            fromUserName: nil,
+            fromUUID: formUUID,
+            toUUID: nil,
+            content: nil,
+            contentType: nil,
+            eventType: EventType.MSG_ACK.rawValue,
+            messageType: nil,
+            urlPath: nil,
+            fileName: nil,
+            fileSize: nil,
+            contentAvailableTime: nil,
+            contentUUID: nil,
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
         onSend(msg: msg)
     }
     
@@ -394,13 +463,31 @@ class Websocket : ObservableObject {
         print("send signaling")
         //if type == group / multiple.. handle in different way
         //Create an other Peerconnection form server..
-        let wsMSG = WSMessage(messageID: UUID().uuidString, replyMessageID: nil, avatar: userModel?.profile?.avatar, fromUserName: userModel?.profile?.name, fromUUID: userModel?.profile?.uuid, toUUID: toUUID, content:sdp , contentType: 7, type: 5, messageType: Int16(type.rawValue), urlPath: nil, fileName: nil, fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
+        let wsMSG = WSMessage(
+            messageID: UUID().uuidString,
+            replyMessageID: nil,
+            avatar: userModel?.profile?.avatar,
+            fromUserName: userModel?.profile?.name,
+            fromUUID: userModel?.profile?.uuid,
+            toUUID: toUUID,
+            content:sdp ,
+            contentType: ContentType.SYS.rawValue, //Need to change to rtc?
+            eventType: EventType.WEB_RTC.rawValue,
+            messageType: Int16(type.rawValue),
+            urlPath: nil,
+            fileName: nil,
+            fileSize: nil,
+            contentAvailableTime: nil,
+            contentUUID: nil,
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
         
         self.onSend(msg: wsMSG)
     }
     
     func recallMessage(message : RoomMessages,toUUID : String,messageType : Int16,sendMessage : String){
-        let recallMessage = WSMessage(messageID: message.id!.uuidString, replyMessageID: nil, avatar: message.sender?.avatar, fromUserName: message.sender?.name, fromUUID: message.sender?.id?.uuidString.lowercased(), toUUID: toUUID, content: sendMessage, contentType: ContentType.sys.rawValue, type: 7, messageType: messageType, urlPath: nil, fileName: nil, fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
+        let recallMessage = WSMessage(messageID: message.id!.uuidString, replyMessageID: nil, avatar: message.sender?.avatar, fromUserName: message.sender?.name, fromUUID: message.sender?.id?.uuidString.lowercased(), toUUID: toUUID, content: sendMessage, contentType: ContentType.SYS.rawValue, eventType: EventType.RECALL.rawValue, messageType: messageType, urlPath: nil, fileName: nil, fileSize: nil, contentAvailableTime: nil, contentUUID: nil, contentUserName: nil,contentUserAvatar: nil,contentUserUUID: nil)
         self.onSend(msg: recallMessage)
     }
     
@@ -442,12 +529,12 @@ extension Websocket {
 
         if let room = UserDataModel.shared.addRoom(id: roomUUID.uuidString, name: roomName, avatar: roomAvatar, message_type: msg.messageType!) {
             room.unread_message = event == .send ? 0 : 1
-            room.last_message = (msg.contentType == ContentType.text.rawValue || msg.contentType == ContentType.msgReply.rawValue) ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
+            room.last_message = (msg.contentType == ContentType.TEXT.rawValue || msg.contentType == ContentType.REPLY.rawValue) ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
             room.last_sent_time = sentTime
             
-            let RoomMsg = UserDataModel.shared.addRoomMessage(msgID:messageID,sender_uuid: msg.fromUUID!,receiver_uuid:msg.toUUID! ,sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type : msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),contentAvailabeTime: msg.contentAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,contentUUID: contentUUID,contentUserName: contentUserName,contentUserAvatar: contentUserAvatar,contentUserUUID: contentUserUUID)
+            let RoomMsg = UserDataModel.shared.addRoomMessage(msgID:messageID,sender_uuid: msg.fromUUID!,receiver_uuid:msg.toUUID! ,sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: msg.contentType!, message_type : msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),contentAvailabeTime: msg.contentAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,contentUUID: contentUUID,contentUserName: contentUserName,contentUserAvatar: contentUserAvatar,contentUserUUID: contentUserUUID)
             
-            if msg.contentType == ContentType.msgReply.rawValue{
+            if msg.contentType == ContentType.REPLY.rawValue{
                 if let replyMessage = UserDataModel.shared.findOneMessage(id: UUID(uuidString: msg.replyMessageID!)!) {
                     RoomMsg.replyMessage = replyMessage
                 }else {
@@ -466,16 +553,16 @@ extension Websocket {
     
     @MainActor
     private func addNewMessageToRoomCache(msg : WSMessage,room : ActiveRooms,messageID : String,sentTime :Date,event : MessageEvent,contentUUID : String,contentUserName: String,contentUserAvatar: String,contentUserUUID: String){
-        if msg.contentType! != ContentType.sys.rawValue {
-            room.last_message = (msg.contentType == ContentType.text.rawValue || msg.contentType == ContentType.msgReply.rawValue) ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
+        if msg.contentType! != ContentType.SYS.rawValue {
+            room.last_message = (msg.contentType == ContentType.TEXT.rawValue || msg.contentType == ContentType.REPLY.rawValue) ? msg.content! : fileConentMessage(fromUUID: msg.fromUUID!, contentType: msg.contentType!)
             room.last_sent_time = sentTime
         }
         
-        let roomMsg = UserDataModel.shared.addRoomMessage(room: room, msgID:messageID, sender_uuid: msg.fromUUID!,receiver_uuid: msg.toUUID!, sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: Int16(msg.contentType!), message_type: msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),contentAvailabeTime: msg.contentAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,contentUUID: contentUUID, contentUserName: contentUserName,contentUserAvatar: contentUserAvatar, contentUserUUID: contentUserUUID)
+        let roomMsg = UserDataModel.shared.addRoomMessage(room: room, msgID:messageID, sender_uuid: msg.fromUUID!,receiver_uuid: msg.toUUID!, sender_avatar: msg.avatar ?? "",sender_name: msg.fromUserName ?? "",content: msg.content ?? "",content_type: msg.contentType!, message_type: msg.messageType!,sent_at:sentTime,fileURL: msg.urlPath ?? "",fileName: msg.fileName ?? "",fileSize: Int64(msg.fileSize ?? 0),contentAvailabeTime: msg.contentAvailableTime ?? 0,event: event,messageStatus: event == .send ? .sending : .received,contentUUID: contentUUID, contentUserName: contentUserName,contentUserAvatar: contentUserAvatar, contentUserUUID: contentUserUUID)
         //                print(msg.sender)
         
         //find the replyMessage
-        if msg.contentType == ContentType.msgReply.rawValue{
+        if msg.contentType == ContentType.REPLY.rawValue{
             print(msg)
             if let replyMessage = UserDataModel.shared.findOneMessage(id: UUID(uuidString: msg.replyMessageID!)!) {
                 roomMsg.replyMessage = replyMessage
@@ -500,22 +587,22 @@ extension Websocket {
 
 extension Websocket {
     @MainActor
-    private func fileConentMessage(fromUUID : String,contentType : Int16) -> String {
-        if contentType ==  ContentType.img.rawValue{
+    private func fileConentMessage(fromUUID : String,contentType : String) -> String {
+        if contentType ==  ContentType.IMAGE.rawValue{
             return self.userModel!.profile!.uuid == fromUUID ? "Sent a image." : "Received a image."
-        }else if contentType ==  ContentType.file.rawValue {
+        }else if contentType ==  ContentType.FILE.rawValue {
             return self.userModel!.profile!.uuid == fromUUID ? "Sent a file." : "Received a file."
-        }else if contentType ==  ContentType.audio.rawValue {
+        }else if contentType ==  ContentType.AUDIO.rawValue {
             return self.userModel!.profile!.uuid == fromUUID ? "Sent a audio" : "Received a audio."
-        }else if contentType ==  ContentType.video.rawValue {
+        }else if contentType ==  ContentType.VIDEO.rawValue {
             return self.userModel!.profile!.uuid == fromUUID ? "Sent a video" : "Received a video."
-        }else if contentType ==  ContentType.story.rawValue{
+        }else if contentType ==  ContentType.STORY.rawValue{
             return "Reply to a story"
-        } else if contentType ==  ContentType.sticker.rawValue{
+        } else if contentType ==  ContentType.STICKER.rawValue{
             return self.userModel!.profile!.uuid == fromUUID ? "Sent a sticker" : "Received a sticker."
-        } else if contentType == ContentType.sys.rawValue {
+        } else if contentType == ContentType.SYS.rawValue {
             return ""
-        } else if contentType == ContentType.share.rawValue {
+        } else if contentType == ContentType.SHARED.rawValue {
             return self.userModel!.profile!.uuid == fromUUID ? "Sent a story sharing" : "Receive a story sharing."
         } else {
             return ""
@@ -523,22 +610,22 @@ extension Websocket {
     }
     
     @MainActor
-    private func notificationConentMessage(fromUUID : String,contentType : Int16) -> String {
-        if contentType ==  ContentType.img.rawValue{
+    private func notificationConentMessage(fromUUID : String,contentType : String) -> String {
+        if contentType ==  ContentType.IMAGE.rawValue{
             return self.userModel!.profile!.uuid != fromUUID ? "Sent a image." : "Received a image."
-        }else if contentType ==  ContentType.file.rawValue {
+        }else if contentType ==  ContentType.FILE.rawValue {
             return self.userModel!.profile!.uuid != fromUUID ? "Sent a file." : "Received a file."
-        }else if contentType ==  ContentType.audio.rawValue {
+        }else if contentType ==  ContentType.AUDIO.rawValue {
             return self.userModel!.profile!.uuid != fromUUID ? "Sent a audio" : "Received a audio."
-        }else if contentType ==  ContentType.video.rawValue {
+        }else if contentType ==  ContentType.VIDEO.rawValue {
             return self.userModel!.profile!.uuid != fromUUID ? "Sent a video" : "Received a video."
-        }else if contentType ==  ContentType.story.rawValue{
+        }else if contentType ==  ContentType.STORY.rawValue{
             return "Reply to a story"
-        } else if contentType ==  ContentType.sticker.rawValue {
+        } else if contentType ==  ContentType.STICKER.rawValue {
             return self.userModel!.profile!.uuid != fromUUID ? "Sent a sticker" : "Received a sticker."
-        } else if contentType == ContentType.sys.rawValue {
+        } else if contentType == ContentType.SYS.rawValue {
             return ""
-        } else if contentType == ContentType.share.rawValue {
+        } else if contentType == ContentType.SHARED.rawValue {
             return "Shared a story to you."
         } else {
             return ""

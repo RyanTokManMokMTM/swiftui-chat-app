@@ -2,7 +2,7 @@
 //  RoomMessages+CoreDataProperties.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 5/11/2023.
+//  Created by TOK MAN MOK on 7/3/2024.
 //
 //
 
@@ -17,18 +17,18 @@ extension RoomMessages {
     }
 
     @NSManaged public var content: String?
-    @NSManaged public var content_type: Int16
+    @NSManaged public var content_available_time: Int32
+    @NSManaged public var content_type: String?
+    @NSManaged public var content_user_avatar: String?
+    @NSManaged public var content_user_name: String?
+    @NSManaged public var content_user_uuid: String?
+    @NSManaged public var content_uuid: String?
     @NSManaged public var deleted_at: Date?
     @NSManaged public var file_name: String?
     @NSManaged public var file_size: Int64
     @NSManaged public var id: UUID?
     @NSManaged public var message_status: Int16
     @NSManaged public var sent_at: Date?
-    @NSManaged public var content_available_time: Int32
-    @NSManaged public var content_uuid: String?
-    @NSManaged public var content_user_avatar: String?
-    @NSManaged public var content_user_name: String?
-    @NSManaged public var content_user_uuid: String?
     @NSManaged public var tempData: Data?
     @NSManaged public var url_path: String?
     @NSManaged public var replyMessage: RoomMessages?
@@ -36,7 +36,6 @@ extension RoomMessages {
     @NSManaged public var sender: SenderInfo?
 
 }
-
 
 extension RoomMessages : Identifiable {
     var FileURL : URL{
@@ -81,29 +80,29 @@ extension RoomMessages : Identifiable {
         guard let replyMsg = self.replyMessage else {
             return ""
         }
-        if self.content_type == ContentType.msgReply.rawValue {
+        if self.content_type == ContentType.REPLY.rawValue {
             var message : String = ""
             
             switch replyMsg.content_type {
-            case ContentType.text.rawValue,ContentType.msgReply.rawValue:
+            case ContentType.TEXT.rawValue,ContentType.REPLY.rawValue:
                 message.append(replyMsg.content ?? "")
                 break
-            case ContentType.img.rawValue:
+            case ContentType.IMAGE.rawValue:
                 message.append("[ image content ]")
                 break
-            case ContentType.file.rawValue:
+            case ContentType.FILE.rawValue:
                 message.append("[ file content ]")
                 break
-            case ContentType.audio.rawValue:
+            case ContentType.AUDIO.rawValue:
                 message.append("[ audio content ]")
                 break
-            case ContentType.video.rawValue:
+            case ContentType.VIDEO.rawValue:
                 message.append("[ video content ]")
                 break
-            case ContentType.story.rawValue:
+            case ContentType.STORY.rawValue:
                 message.append("[ story content ]")
                 break
-            case ContentType.share.rawValue:
+            case ContentType.SHARED.rawValue:
                 message.append("[ story share content ]")
                 break
             default:

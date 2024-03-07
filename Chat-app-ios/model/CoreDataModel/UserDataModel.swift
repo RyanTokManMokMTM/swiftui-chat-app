@@ -80,11 +80,32 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new messsge of the room to the cache
-    func addRoomMessage(room: ActiveRooms,msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type:Int16,sent_at : Date,fileURL : String = "",tempData :Data? = nil,fileName: String,fileSize : Int64,contentAvailabeTime : Int32 = 0, event : MessageEvent,messageStatus : MessageStatus,contentUUID : String? = nil, contentUserName : String? = nil, contentUserAvatar : String? = nil, contentUserUUID : String? = nil) -> RoomMessages {
+    func addRoomMessage(
+        room: ActiveRooms,
+        msgID : String,
+        sender_uuid : String,
+        receiver_uuid:String,
+        sender_avatar : String,
+        sender_name : String,
+        content : String,
+        content_type : String,
+        message_type:Int16,
+        sent_at : Date,
+        fileURL : String = "",
+        tempData :Data? = nil,
+        fileName: String,
+        fileSize : Int64,
+        contentAvailabeTime : Int32 = 0,
+        event : MessageEvent,
+        messageStatus : MessageStatus,
+        contentUUID : String? = nil,
+        contentUserName : String? = nil,
+        contentUserAvatar : String? = nil,
+        contentUserUUID : String? = nil) -> RoomMessages {
         
         //TODO: Check Sender Info exist?
         var sender : SenderInfo?
-        if content_type != ContentType.sys.rawValue{ //SYSTEM_MESSAGE - no need to create
+        if content_type != ContentType.SYS.rawValue{ //SYSTEM_MESSAGE - no need to create
             //MARK: If current is group chat, according to our data structure, sender_id will be the group_id,so we need the recevier_id here
             let id = message_type == 1 ? sender_uuid : event == .send ?  sender_uuid : receiver_uuid
             if let found =  findOneSender(uuid: UUID(uuidString : id)!) {
@@ -140,10 +161,29 @@ class UserDataModel : ObservableObject {
     }
     
     //MARK: addRoomMessage Add a new message to Room
-    func addRoomMessage(msgID : String,sender_uuid : String,receiver_uuid:String,sender_avatar : String,sender_name : String,content : String,content_type : Int16,message_type : Int16,sent_at : Date,fileURL : String = "",fileName: String,fileSize : Int64,contentAvailabeTime : Int32 = 0,event : MessageEvent,messageStatus : MessageStatus,contentUUID : String? = nil, contentUserName : String? = nil, contentUserAvatar : String? = nil, contentUserUUID : String? = nil) -> RoomMessages {
+    func addRoomMessage(
+        msgID : String,
+        sender_uuid : String,
+        receiver_uuid:String,
+        sender_avatar : String,
+        sender_name : String,
+        content : String,
+        content_type : String,
+        message_type : Int16,
+        sent_at : Date,
+        fileURL : String = "",
+        fileName: String,
+        fileSize : Int64,
+        contentAvailabeTime : Int32 = 0,
+        event : MessageEvent,
+        messageStatus : MessageStatus,
+        contentUUID : String? = nil,
+        contentUserName : String? = nil,
+        contentUserAvatar : String? = nil,
+        contentUserUUID : String? = nil) -> RoomMessages {
         
         var sender : SenderInfo?
-        if content_type != 7{ //SYSTEM_MESSAGE - no need to create
+            if content_type != ContentType.SYS.rawValue{ //SYSTEM_MESSAGE - no need to create
             //MARK: If current is group chat, according to our data structure, sender_id will be the group_id,so we need the recevier_id here
             let id = message_type == 1 ? sender_uuid : event == .send ?  sender_uuid : receiver_uuid
             if let found =  findOneSender(uuid: UUID(uuidString : id)!) {
@@ -301,7 +341,7 @@ class UserDataModel : ObservableObject {
         msg.url_path = nil
         msg.file_name = nil
         msg.file_size = 0
-        msg.content_type = ContentType.sys.rawValue
+        msg.content_type = ContentType.SYS.rawValue
         msg.content_uuid = nil
         msg.content_user_name = nil
         msg.content_user_uuid = nil

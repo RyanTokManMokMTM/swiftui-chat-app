@@ -98,7 +98,7 @@ struct ChatBubble<Content> : View where Content : View {
     let userAvatarURL : URL
     let direction : TextBubbleShape.Direction
     let content :()->Content
-    let contentType : Int
+    let contentType : String
     let messageType : Int
     let userName : String
     let isSame : Bool
@@ -108,7 +108,7 @@ struct ChatBubble<Content> : View where Content : View {
     @Binding var replyMessage : RoomMessages?
     let message : RoomMessages
     
-    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : Int,isSame : Bool = false,messageStatus : MessageStatus,sentTime : Date? = nil,isReplyMessage: Binding<Bool>,replyMessage : Binding<RoomMessages?>,message : RoomMessages,@ViewBuilder content : @escaping ()->Content){
+    init(direction : TextBubbleShape.Direction,messageType : Int,userName:String,userAvatarURL : URL,contentType : String,isSame : Bool = false,messageStatus : MessageStatus,sentTime : Date? = nil,isReplyMessage: Binding<Bool>,replyMessage : Binding<RoomMessages?>,message : RoomMessages,@ViewBuilder content : @escaping ()->Content){
         self.direction = direction
         self.content = content
         self.userAvatarURL = userAvatarURL
@@ -202,7 +202,7 @@ struct ChatBubble<Content> : View where Content : View {
             }
         }
         .padding((direction == .receiver) ? .leading : .trailing,20)
-        .padding([.top,.bottom],self.contentType == 6 ? 0 : 5)
+        .padding([.top,.bottom],self.contentType == ContentType.STORY.rawValue ? 0 : 5)
         .padding((direction == .sender) ? .leading : .trailing,70)
     }
     
