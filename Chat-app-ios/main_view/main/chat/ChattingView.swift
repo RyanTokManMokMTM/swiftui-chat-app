@@ -27,6 +27,7 @@ struct ChattingView: View {
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
+    @EnvironmentObject private var sfuProducerVM : SFUProdcuerViewModel
     
     let chatUserData : ActiveRooms
     @Binding var messages : [RoomMessages]
@@ -44,6 +45,7 @@ struct ChattingView: View {
     @State private var isShowInfo : Bool = false
     @State private var isPlayAudio : Bool = false
     @State private var isShowVideo : Bool = false
+
     @State private var audioInfo : RoomMessages?
     @State private var videoURL : URL?
     
@@ -166,7 +168,35 @@ struct ChattingView: View {
                                 .bold()
                         }
                     }
+                }else{
+                    HStack{
+                        Button(action:{
+                            DispatchQueue.main.async {
+                                setUpVoiceCallingInfoForGroup()
+//                                setUpVoiceCallingInfo()
+                            }
+
+                        }){
+                            Image(systemName: "phone.fill")
+                                .imageScale(.large)
+                                .foregroundColor(Color.green)
+                                .bold()
+                        }
+                        Button(action:{
+                            DispatchQueue.main.async {
+                                setUpVideoCallingInfo()
+                            }
+
+                        }){
+                            Image(systemName: "video.fill")
+                                .imageScale(.large)
+                                .foregroundColor(Color.green)
+                                .bold()
+                        }
+                    }
                 }
+                
+                
                 
 
             }
@@ -332,7 +362,6 @@ struct ChattingView: View {
         self.videoCallVM.sendOffer(type:.Voice) //TODO: sending offer to receiver
     }
     
-    
     private func setUpVideoCallingInfo(){
         self.videoCallVM.start() //TODO: creating a new peer if it don't init and setting RTC device
         self.videoCallVM.videoPrepare() //TODO: To enable video
@@ -343,6 +372,7 @@ struct ChattingView: View {
         //Sending the offer
         self.videoCallVM.sendOffer(type:.Video) //TODO: sending offer to receiver
     }
+
     
     private func checkMessage(messageID : String) async {
         //TODO: need to be optimized
@@ -739,6 +769,7 @@ struct ChattingView: View {
     }
     
 }
+
 extension ChattingView {
     private func fileBase64Encoding(data : Data,format : String) -> String {
         let base64 = data.base64EncodedString()
@@ -1502,11 +1533,50 @@ extension ChattingView {
     }
 }
 
-//struct ChattingView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ChattingView(chatUserData: dummyActiveChat[0],messages: dummyChattingMessageRoom1, isActive: .constant(true))
-//    }
-//}
+extension ChattingView {
+    private func setUpVoiceCallingInfoForGroup(){
+        guard let sessionId = self.chatUserData.id?.uuidString else {
+            print("GroupID not exist")
+            return
+        }
+        
+        guard let clientId = self.userModel.profile?.uuid else {
+            print("clientId(Producer) not exist")
+            return
+        }
+        
+        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
+        self.sfuProducerVM.voicePrepare() //TODO: To disable video
+        self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
+        self.sfuProducerVM.callingType = .Voice //TODO: Type is voice
+        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
+        
+        //Sending the offer
+        self.sfuProducerVM.sendOffer(type:.Voice) //TODO: sending offer to receiver
+    }
+    
+    private func setUpVideoCallingForGroup(){
+        guard let sessionId = self.chatUserData.id?.uuidString else {
+            print("GroupID not exist")
+            return
+        }
+        
+        guard let clientId = self.userModel.profile?.uuid else {
+            print("clientId(Producer) not exist")
+            return
+        }
+        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
+        self.sfuProducerVM.videoPrepare() //TODO: To enable video
+        self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
+        self.sfuProducerVM.callingType = .Video //TODO: Type is voice
+        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
+        
+        //Sending the offer
+        self.sfuProducerVM.sendOffer(type:.Video) //TODO: sending offer to receiver
+    }
+
+}
+
 
 struct MessageData : Identifiable {
     let id = UUID().uuidString

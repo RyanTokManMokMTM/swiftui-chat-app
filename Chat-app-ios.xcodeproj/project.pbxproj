@@ -103,6 +103,11 @@
 		209F7ABD29BC41C3003701E8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209F7ABC29BC41C3003701E8 /* AppDelegate.swift */; };
 		209F7AC129BC42DC003701E8 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209F7AC029BC42DC003701E8 /* PersistenceController.swift */; };
 		20A1B4F029F5252C0088FD6A /* OtherUserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A1B4EF29F5252C0088FD6A /* OtherUserProfileView.swift */; };
+		20A280122B9C516300D1BECE /* SFUProducerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280112B9C516300D1BECE /* SFUProducerViewModel.swift */; };
+		20A280142B9C529500D1BECE /* GroupCallingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280132B9C529500D1BECE /* GroupCallingView.swift */; };
+		20A280172B9C5B0F00D1BECE /* request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280162B9C5B0F00D1BECE /* request.swift */; };
+		20A280192B9C5B1B00D1BECE /* response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280182B9C5B1B00D1BECE /* response.swift */; };
+		20A280222B9D74A200D1BECE /* SFUConsumerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280212B9D74A200D1BECE /* SFUConsumerViewModel.swift */; };
 		20A8894B29C02EF200B5BED2 /* UserDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8894A29C02EF200B5BED2 /* UserDataModel.swift */; };
 		20A8895229C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8894C29C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift */; };
 		20A8895329C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A8894D29C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift */; };
@@ -114,7 +119,7 @@
 		20AF749D2A1DD30F00A07D12 /* AddContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AF749C2A1DD30E00A07D12 /* AddContentView.swift */; };
 		20B1267C2A10E5E6009FF2AB /* VideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1267B2A10E5E6009FF2AB /* VideoCallView.swift */; };
 		20B1267E2A10F4A9009FF2AB /* RTCViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1267D2A10F4A9009FF2AB /* RTCViewModel.swift */; };
-		20BBAA4329A669BB00ED3245 /* VoiceCallingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */; };
+		20BBAA4329A669BB00ED3245 /* PersonChatCallingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BBAA4229A669BB00ED3245 /* PersonChatCallingView.swift */; };
 		20C86B702AC7C0C100A29661 /* SignUpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B6F2AC7C0C100A29661 /* SignUpRequest.swift */; };
 		20C86B722AC7C0F100A29661 /* SignUpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B712AC7C0F100A29661 /* SignUpResponse.swift */; };
 		20C86B742AC7C11600A29661 /* SignInRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C86B732AC7C11600A29661 /* SignInRequest.swift */; };
@@ -309,6 +314,11 @@
 		209F7AC029BC42DC003701E8 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		209F7AC229BC64D4003701E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		20A1B4EF29F5252C0088FD6A /* OtherUserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserProfileView.swift; sourceTree = "<group>"; };
+		20A280112B9C516300D1BECE /* SFUProducerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUProducerViewModel.swift; sourceTree = "<group>"; };
+		20A280132B9C529500D1BECE /* GroupCallingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCallingView.swift; sourceTree = "<group>"; };
+		20A280162B9C5B0F00D1BECE /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
+		20A280182B9C5B1B00D1BECE /* response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = response.swift; sourceTree = "<group>"; };
+		20A280212B9D74A200D1BECE /* SFUConsumerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUConsumerViewModel.swift; sourceTree = "<group>"; };
 		20A8894A29C02EF200B5BED2 /* UserDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataModel.swift; sourceTree = "<group>"; };
 		20A8894C29C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDatas+CoreDataClass.swift"; sourceTree = "<group>"; };
 		20A8894D29C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDatas+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -320,7 +330,7 @@
 		20AF749C2A1DD30E00A07D12 /* AddContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContentView.swift; sourceTree = "<group>"; };
 		20B1267B2A10E5E6009FF2AB /* VideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallView.swift; sourceTree = "<group>"; };
 		20B1267D2A10F4A9009FF2AB /* RTCViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTCViewModel.swift; sourceTree = "<group>"; };
-		20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCallingView.swift; sourceTree = "<group>"; };
+		20BBAA4229A669BB00ED3245 /* PersonChatCallingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonChatCallingView.swift; sourceTree = "<group>"; };
 		20C86B6F2AC7C0C100A29661 /* SignUpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpRequest.swift; sourceTree = "<group>"; };
 		20C86B712AC7C0F100A29661 /* SignUpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpResponse.swift; sourceTree = "<group>"; };
 		20C86B732AC7C11600A29661 /* SignInRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInRequest.swift; sourceTree = "<group>"; };
@@ -456,6 +466,7 @@
 		203417D22A08E7890076C942 /* RTC */ = {
 			isa = PBXGroup;
 			children = (
+				20A280152B9C5AFC00D1BECE /* sfuRequest */,
 				203D5DA32A62CC52003E1A1A /* rtc */,
 				203417E02A091F720076C942 /* viewModel */,
 			);
@@ -465,6 +476,7 @@
 		203417E02A091F720076C942 /* viewModel */ = {
 			isa = PBXGroup;
 			children = (
+				20A280202B9D747400D1BECE /* sfu */,
 				20B1267D2A10F4A9009FF2AB /* RTCViewModel.swift */,
 			);
 			path = viewModel;
@@ -525,8 +537,9 @@
 			children = (
 				20D3984C2AE667A800DE66FC /* Sticker */,
 				2073D66E29A252B800AA29D9 /* Message.swift */,
-				20BBAA4229A669BB00ED3245 /* VoiceCallingView.swift */,
+				20BBAA4229A669BB00ED3245 /* PersonChatCallingView.swift */,
 				201140F129A49A6600015AD8 /* ChattingView.swift */,
+				20A280132B9C529500D1BECE /* GroupCallingView.swift */,
 			);
 			path = chat;
 			sourceTree = "<group>";
@@ -786,6 +799,24 @@
 				20061B772ACA52DC0097D72F /* StoryMessageView.swift */,
 			);
 			path = SubView;
+			sourceTree = "<group>";
+		};
+		20A280152B9C5AFC00D1BECE /* sfuRequest */ = {
+			isa = PBXGroup;
+			children = (
+				20A280162B9C5B0F00D1BECE /* request.swift */,
+				20A280182B9C5B1B00D1BECE /* response.swift */,
+			);
+			path = sfuRequest;
+			sourceTree = "<group>";
+		};
+		20A280202B9D747400D1BECE /* sfu */ = {
+			isa = PBXGroup;
+			children = (
+				20A280112B9C516300D1BECE /* SFUProducerViewModel.swift */,
+				20A280212B9D74A200D1BECE /* SFUConsumerViewModel.swift */,
+			);
+			path = sfu;
 			sourceTree = "<group>";
 		};
 		20A8894929C02EE100B5BED2 /* CoreDataModel */ = {
@@ -1176,6 +1207,7 @@
 				2073D67529A26CFA00AA29D9 /* Date.swift in Sources */,
 				20A8AA4429B4BD4E00B0243E /* Error.swift in Sources */,
 				201CB7AD29BED1D20036D181 /* Model.xcdatamodeld in Sources */,
+				20A280122B9C516300D1BECE /* SFUProducerViewModel.swift in Sources */,
 				20C86BDA2AC7C81900A29661 /* UploadFileRequest.swift in Sources */,
 				20C86B702AC7C0C100A29661 /* SignUpRequest.swift in Sources */,
 				20C86BC12AC7C62400A29661 /* UpdateGroupAvatarResponse.swift in Sources */,
@@ -1266,6 +1298,7 @@
 				2090350129FD06FB00DE66AF /* VideoPlayerView.swift in Sources */,
 				204C4A4429B72A22007AA02E /* ProfileView.swift in Sources */,
 				203D5DAC2A6BC983003E1A1A /* StoryUserView.swift in Sources */,
+				20A280142B9C529500D1BECE /* GroupCallingView.swift in Sources */,
 				20C86B802AC7C1B200A29661 /* UpdateUserInfoRequest.swift in Sources */,
 				208F5DCD29F4E8A600549483 /* StatusMessageEditView.swift in Sources */,
 				20C86C082AC7CE1100A29661 /* requests.swift in Sources */,
@@ -1290,6 +1323,7 @@
 				20C86B7E2AC7C19B00A29661 /* GetUserProfileResponse.swift in Sources */,
 				208FE8A829E42BBE00D8A820 /* StoryOtherView.swift in Sources */,
 				202F48972AA46DB3002AD538 /* TextItemView.swift in Sources */,
+				20A280172B9C5B0F00D1BECE /* request.swift in Sources */,
 				20C86BE22AC7C8C200A29661 /* GetUserStoriesResponse.swift in Sources */,
 				20C86BF72AC7C98200A29661 /* CreateStoryLikeRequest.swift in Sources */,
 				20C86BDC2AC7C83E00A29661 /* UploadFileResponse.swift in Sources */,
@@ -1313,16 +1347,18 @@
 				20C86BB32AC7C46F00A29661 /* SearchGroupResponse.swift in Sources */,
 				200665BD29E699CC00A7C9E5 /* StoryPhototView.swift in Sources */,
 				208F45CF2AC7FAFB004A843E /* StoryShareView.swift in Sources */,
+				20A280222B9D74A200D1BECE /* SFUConsumerViewModel.swift in Sources */,
 				20C86BF12AC7C94A00A29661 /* GetStickerGroupResoucesResponse.swift in Sources */,
 				2076908B29B62CE400ACD532 /* Data.swift in Sources */,
 				20C86BC62AC7C68900A29661 /* GroupInfo.swift in Sources */,
-				20BBAA4329A669BB00ED3245 /* VoiceCallingView.swift in Sources */,
+				20BBAA4329A669BB00ED3245 /* PersonChatCallingView.swift in Sources */,
 				20A8895329C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift in Sources */,
 				20C86BAB2AC7C41900A29661 /* DeleteGroupRequest.swift in Sources */,
 				20A8AA3C29B49BCA00B0243E /* ChatAppService.swift in Sources */,
 				20CE5D2529A352C9001371A7 /* FriendRow.swift in Sources */,
 				20C86B9D2AC7C33A00A29661 /* FriendInfo.swift in Sources */,
 				20C86BB72AC7C49B00A29661 /* GroupMemberInfo.swift in Sources */,
+				20A280192B9C5B1B00D1BECE /* response.swift in Sources */,
 				208FE8A629E4241C00D8A820 /* StoryViewModel.swift in Sources */,
 				2091E9C0299CECE400EB9A7C /* Chat_app_iosApp.swift in Sources */,
 				203D5DAA2A6BBFB1003E1A1A /* SoundManager.swift in Sources */,

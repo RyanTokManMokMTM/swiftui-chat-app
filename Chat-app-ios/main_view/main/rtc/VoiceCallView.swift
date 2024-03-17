@@ -111,7 +111,11 @@ struct VoiceCallView: View {
                 }
                 
                 Spacer()
-//                
+                Text("connection state : \(self.videoCallVM.connectionStatus.description)")
+                Text("call State : \(self.videoCallVM.callState.rawValue)")
+                Text("local : \(self.videoCallVM.localCanindate)")
+                Text("remote : \(self.videoCallVM.remoteCanindate)")
+//
                 if self.videoCallVM.callState == .Incoming {
                     self.IncomingCall()
                 }else {
@@ -137,7 +141,7 @@ struct VoiceCallView: View {
                 self.counter += 1
             }
             .onChange(of: self.videoCallVM.callState){ state in
-//                print("State Changed : \(state)")
+                print("State Changed : \(state)")
                 if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
                     DispatchQueue.main.async {
                         SoundManager.shared.stopPlaying()
@@ -245,7 +249,6 @@ struct VoiceCallView: View {
             Button(action:{
                 DispatchQueue.main.async {
                     //TODO: disconnect and reset and send the signal
-                    print("Disconnected????")
                     self.videoCallVM.sendDisconnect()
                     self.videoCallVM.DisConnect()
                     self.videoCallVM.isIncomingCall = false

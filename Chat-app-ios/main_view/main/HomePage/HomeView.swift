@@ -30,6 +30,7 @@ struct HomeView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @StateObject private var videoCallVM = RTCViewModel()
+    @StateObject private var producerVM = SFUProdcuerViewModel()
     @StateObject var hub = BenHubState.shared
     @State private var index = 0
     @State private var search = ""
@@ -50,6 +51,7 @@ struct HomeView: View {
                 .environmentObject(storyModel)
                 .environmentObject(userStory)
                 .environmentObject(videoCallVM)
+                .environmentObject(producerVM)
                 .navigationTitle("")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar{
@@ -102,6 +104,11 @@ struct HomeView: View {
                     .environmentObject(videoCallVM)
             }
         }
+        .fullScreenCover(isPresented: self.$producerVM.isIncomingCall){
+           GroupCallingView()
+                .environmentObject(producerVM)
+        }
+
         .sheet(isPresented: $isShowSheet){
             AddContent(isAddContent: $isShowSheet)
                 .environmentObject(UDM)

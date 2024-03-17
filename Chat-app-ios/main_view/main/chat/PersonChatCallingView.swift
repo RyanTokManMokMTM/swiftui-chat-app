@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct VoiceCallingView: View {
+struct PersonChatCallingView: View {
     @Binding var isCallView : Bool
     @EnvironmentObject private var userVM : UserViewModel
     @EnvironmentObject private var videoCallVM : RTCViewModel

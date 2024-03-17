@@ -14,6 +14,12 @@ enum MessageEvent {
     case receive
 }
 
+enum SFUSignalType {
+    case SDP
+    case Candinate
+    case Close
+}
+
 //
 //enum SocketMessageType : Int16{
 //    case PING
@@ -153,7 +159,10 @@ class Websocket : ObservableObject {
     static var shared = Websocket()
     
     private var anyCancellable : AnyCancellable? = nil
-    var delegate : WebSocketDelegate?
+    private var jsonDecoder = JSONDecoder()
+    private var jsonEncoder = JSONEncoder()
+    var delegate : WebSocketDelegate? //For Person
+    var sessionDelegate : WebSocketDelegate? //For session
     var userModel : UserViewModel? {
         didSet {
             self.objectWillChange.send()
@@ -193,6 +202,7 @@ class Websocket : ObservableObject {
         self.session?.receive(completionHandler: self.onReceive(result:))
         self.session?.resume() //continue
         self.delegate?.webSocket(self, didConnected: true)
+        self.sessionDelegate?.webSocket(self, didConnected: true)
     }
     
     func disconnect(){
@@ -214,7 +224,7 @@ class Websocket : ObservableObject {
                 let data = Data(str.utf8)
                 
                 do {
-                    let msg = try JSONDecoder().decode(WSMessage.self, from: data)
+                    let msg = try self.jsonDecoder.decode(WSMessage.self, from: data)
                 } catch(let err) {
                     print(err.localizedDescription)
                 }
@@ -222,8 +232,8 @@ class Websocket : ObservableObject {
                 
             case .data(let data):
                 do {
-                    let msg = try JSONDecoder().decode(WSMessage.self, from: data)
-                    print(msg)
+                    let msg = try self.jsonDecoder.decode(WSMessage.self, from: data)
+//                    print(msg)
                     
                     if let type = msg.eventType {
                         switch type {
@@ -251,6 +261,37 @@ class Websocket : ObservableObject {
                             print("recall message")
                             updateMessage(wsMSG: msg)
                             //Find the message and update the message
+                            //For SFU feature
+//                        case EventType.SFU_EVENT_CONNECT.rawValue:
+//                            print("SFU_EVENT_CONNECT: \(msg.content ?? "--")")
+//                            break
+//                        case EventType.SFU_EVENT_CONSUM.rawValue:
+//                            print("SFU_EVENT_CONSUM: \(msg.content ?? "--")")
+//                            break
+                        case EventType.SFU_EVENT_GET_PRODUCERS.rawValue:
+//                            print("SFU_EVENT_GET_PRODUCERS: \(msg.content ?? "--")")
+                            self.sessionDelegate?.webSocket(self, didReceive: msg)
+                            break
+                        case EventType.SFU_EVENT_ICE.rawValue:
+//                            print("SFU_EVENT_ICE: \(msg.content ?? "--" )")
+                            self.sessionDelegate?.webSocket(self, didReceive: msg)
+                            break
+                        case EventType.SFU_EVENT_CLOSE.rawValue:
+//                            print("SFU_EVENT_CLOSE: \(msg.content ?? "--")")
+                            self.sessionDelegate?.webSocket(self, didReceive: msg)
+                            break
+                        //Event back from server
+                        case EventType.SFU_EVENT_SEND_SDP.rawValue:
+//                            print("SFU_EVENT_SEND_SDP: \(msg.content ?? "--")")
+                            self.sessionDelegate?.webSocket(self, didReceive: msg)
+                            break
+                        case EventType.SFU_EVENT_SEND_NEW_PRODUCER.rawValue:
+//                            print("SFU_EVENT_SEND_NEW_PRODUCER: \(msg.content ?? "--")")
+                            break
+                        case EventType.SFU_EVENT_SEND_PRODUCER_CLOSE.rawValue:
+                            print("SFU_EVENT_SEND_PRODUCER_CLOSE: \(msg.content ?? "--")")
+                            self.sessionDelegate?.webSocket(self, didReceive: msg)
+                            break
                         default:
                             print("UNKNOW TYPE ： \(type)")
                         }
@@ -265,6 +306,7 @@ class Websocket : ObservableObject {
         case .failure(let err):
             print("received err :\(err.localizedDescription)")
             self.delegate?.webSocket(self, didConnected: false)
+            self.sessionDelegate?.webSocket(self, didConnected: false)
         }
     }
     
@@ -460,7 +502,8 @@ class Websocket : ObservableObject {
     
     
     func sendRTCSignal(toUUID : String, sdp : String,type : RTCType = .single) {
-        print("send signaling")
+        print("send signaling to \(toUUID)")
+        
         //if type == group / multiple.. handle in different way
         //Create an other Peerconnection form server..
         let wsMSG = WSMessage(
@@ -510,7 +553,6 @@ extension Websocket {
             
     }
 }
-
 
 extension Websocket {
     @MainActor
@@ -631,4 +673,121 @@ extension Websocket {
             return ""
         }
     }
+}
+
+extension Websocket {
+    func sendSFUSDP(sessionId : String,sdpType : String){
+        let req = SFUConnectSessionReq(session_id: sessionId, SDPType: sdpType)
+        do{
+            let content = try self.jsonEncoder.encode(req)
+            guard let jsonContent = content.toJSONString else {
+                return
+            }
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CONNECT)
+        }catch(let err){
+            print("SFU CONNECT ERROR :\(err.localizedDescription)")
+        }
+    }
+    
+    //MARK: clientId : producer client id
+    func sendSFUCandindate(sessionId : String, isProducer : Bool, clientId : String ,data : String){
+        let req = SFUSendIceCandindateReq(session_id: sessionId, is_producer: isProducer, client_id: clientId, ice_candidate_type: data)
+        do{
+            let content = try self.jsonEncoder.encode(req)
+            guard let jsonContent = content.toJSONString else {
+                return
+            }
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_ICE)
+        }catch(let err){
+            print("SFU SEND ICE ERROR :\(err.localizedDescription)")
+        }
+    }
+    
+    func sendSFUClose(sessionId : String){
+        let req = SFUCloseConnectionReq(session_id: sessionId)
+        do{
+            let content = try self.jsonEncoder.encode(req)
+            guard let jsonContent = content.toJSONString else {
+                return
+            }
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CLOSE)
+        }catch(let err){
+            print("SFU CONNECT CLOSE :\(err.localizedDescription)")
+        }
+
+    }
+    
+    private func sendSFUMessage(content : String,eventType : EventType){
+        print("Sending \(eventType) to server～～～～～～～～～～～～～～～～～")
+        let wsMSG = WSMessage(
+            messageID: UUID().uuidString,
+            replyMessageID: nil,
+            avatar: userModel?.profile?.avatar,
+            fromUserName: userModel?.profile?.name,
+            fromUUID: userModel?.profile?.uuid,
+            toUUID: "SFU",
+            content: content ,
+            contentType: ContentType.SYS.rawValue,
+            eventType: eventType.rawValue,
+            messageType: Int16(RTCType.single.rawValue), //Always be single
+            urlPath: nil,
+            fileName: nil,
+            fileSize: nil,
+            contentAvailableTime: nil,
+            contentUUID: nil,
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
+        
+        self.onSend(msg: wsMSG)
+    }
+//    func sendRTCSignalForSession(sessionId : String,reqData : String, sfuSignalingType : SFUSignalType) {
+//        print("send session signaling")
+//        //if type == group / multiple.. handle in different way
+//        //Create an other Peerconnection form server..
+//        var eventType : EventType?  = nil
+//        switch(sfuSignalingType){
+//        case .SDP:
+//            eventType = EventType.SFU_EVENT_CONNECT
+//            break
+//        case .Candinate:
+//            request = SFUSendIceCandindateReq(session_id: sessionId, is_producer: true, client_id: <#T##String#>, ice_candidate: data)
+//            break
+//        case .Close:
+//            break
+//        }
+//        
+//        guard let req = request else {
+//            print("signaling request is null")
+//            return
+//        }
+//        
+//        do{
+//            let data = try self.jsonEncoder.encode(req)
+//            let wsMSG = WSMessage(
+//                messageID: UUID().uuidString,
+//                replyMessageID: nil,
+//                avatar: userModel?.profile?.avatar,
+//                fromUserName: userModel?.profile?.name,
+//                fromUUID: userModel?.profile?.uuid,
+//                toUUID: "SFU",
+//                content: data.toJSONString?.description ,
+//                contentType: ContentType.SYS.rawValue,
+//                eventType: EventType.SFU_EVENT_CONNECT.rawValue,
+//                messageType: Int16(RTCType.single.rawValue), //Always be single
+//                urlPath: nil,
+//                fileName: nil,
+//                fileSize: nil,
+//                contentAvailableTime: nil,
+//                contentUUID: nil,
+//                contentUserName: nil,
+//                contentUserAvatar: nil,
+//                contentUserUUID: nil)
+//            
+//            self.onSend(msg: wsMSG)
+//        }catch(let err){
+//            print("encoding error :",err)
+//        }
+//    }
+    
 }

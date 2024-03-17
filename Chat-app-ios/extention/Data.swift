@@ -8,6 +8,7 @@
 import Foundation
 import UniformTypeIdentifiers
 
+
 public extension Data {
     var fileExtension: String {
         var values = [UInt8](repeating:0, count:1)
@@ -34,6 +35,8 @@ public extension Data {
         }
         return ext
     }
+    
+  
 }
 
 func convertFileData(fieldName: String, fileName: String, mimeType: String, fileData: Data, using boundary: String) -> Data {

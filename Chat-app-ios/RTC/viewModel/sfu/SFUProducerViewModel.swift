@@ -1,52 +1,18 @@
 //
-//  RTCViewModel.swift
+//  SFUProdcuerViewModel.swift
 //  Chat-app-ios
 //
-//  Created by Jackson.tmm on 14/5/2023.
+//  Created by TOK MAN MOK on 9/3/2024.
 //
 
-
 import Foundation
+import Combine
 import WebRTC
 import SwiftUI
-import Combine
 
-enum CallingType : Int {
-    case Voice
-    case Video
-    
-    var rawValue: Int {
-        switch self {
-        case .Voice : return 0
-        case .Video : return 1
-        }
-    }
-}
-
-enum CallingStatus : String {
-    case Connected
-    case Connecting
-    case Incoming
-    case Ended
-    case Pending
-    
-    var rawValue: String{
-        switch(self){
-        case .Connected : return "Connected"
-        case .Connecting : return "Connecting"
-        case .Incoming : return "Incoming"
-        case .Ended : return "Ended"
-        case .Pending : return "Connected"
-        }
-    }
-}
-
-enum CameraPossion {
-    case front
-    case back
-}
-
-class RTCViewModel : ObservableObject {
+//For current user used.
+//MARK: same as
+class SFUProdcuerViewModel : ObservableObject {
     @Published var isConnectd : Bool = false
     @Published var isSetLoaclSDP : Bool = false
     @Published var isSetRemoteSDP : Bool = false
@@ -70,18 +36,20 @@ class RTCViewModel : ObservableObject {
     @Published var isAudioOn : Bool  = true
     @Published var isVideoOn : Bool = true
     @Published var camera : CameraPossion = .front
+    
+    @Published var  sessionId : String? = nil //Chat group UUID.
+    @Published var clientId : String? = nil
+    
+    private var candidateList : [RTCIceCandidate] = []
     //MARK: Singal
     var webSocket : Websocket?
-    var queue = [String]()
     var webRTCClient : WebRTCClient?
-    var toUserUUID : String?
-    var userName : String?
-    var userAvatar : String?
+
     
     
     init(){
         self.webSocket = Websocket.shared
-        self.webSocket?.delegate = self
+        self.webSocket?.sessionDelegate = self
         createNewPeer()
     
     }
@@ -96,7 +64,9 @@ class RTCViewModel : ObservableObject {
     }
     
     
-    func start(){
+    func start(sessionId : String,clientId : String){
+        self.sessionId = sessionId
+        self.clientId = clientId
         createNewPeer()
         prepare()
     }
@@ -120,6 +90,8 @@ class RTCViewModel : ObservableObject {
     
     
     private func clear(){
+        self.sessionId = nil
+        self.clientId = nil
         self.webSocket = nil
         self.webRTCClient = nil
         self.localVideoTrack = nil
@@ -138,9 +110,9 @@ class RTCViewModel : ObservableObject {
             self.refershRemoteTrack = true
             self.refershLocalTrack = true
             
-            self.toUserUUID = nil
-            self.userName = nil
-            self.userAvatar = nil
+//            self.toUserUUID = nil
+//            self.userName = nil
+//            self.userAvatar = nil
             self.callingType = .Voice
         }
     }
@@ -155,22 +127,19 @@ class RTCViewModel : ObservableObject {
 
 }
 
-extension RTCViewModel {
+extension SFUProdcuerViewModel {
     func sendOffer(type : CallingType){
-        if self.toUserUUID == nil {
-            print("please input candindate uuid")
-            return
-        }
         if self.isConnectd && !self.isSetRemoteSDP && !self.isSetLoaclSDP {
             //is connecte and not set remote and not set ans
-            print("sending offer")
-            guard let url = Bundle.main.url(forResource: "call", withExtension: ".mp3") else {
-                self.callState = .Ended
-                return
-            }
+            print("sending offer with sessionId :\(self.sessionId?.description ?? "KNOW.")")
+//            guard let url = Bundle.main.url(forResource: "call", withExtension: ".mp3") else {
+//                self.callState = .Ended
+//                return
+//            }
+//            
+//            SoundManager.shared.playSound(url: url)
             
-            SoundManager.shared.playSound(url: url)
-            
+            //Connecting...
             self.webRTCClient?.offer(){ sdp in
                 DispatchQueue.main.async {
                     self.isSetLoaclSDP = true
@@ -180,7 +149,7 @@ extension RTCViewModel {
                 if let sdpData = sdp.JSONData(type: type) {
                     //send via websocket
                     print("sendeing offer signal")
-                    self.sendSingleMessage(sdpData)
+                    self.sendSingleMessage(sdpData,signalType: .SDP)
 
                 }else {
                     print("SDP sending ferror")
@@ -191,38 +160,39 @@ extension RTCViewModel {
     
 
     
-    func sendAnswer(type : CallingType){
-        if self.toUserUUID == nil {
-            print("please input candindate uuid")
-            return
-        }
-        
-        if self.isConnectd && self.isSetRemoteSDP && !self.isSetLoaclSDP{
-            self.webRTCClient?.answer(){ sdp in
-                DispatchQueue.main.async {
-                    self.isSetLoaclSDP = true
-                }
-                
-                if let sdpData = sdp.JSONData(type: type) {
-                    //send via websocket
-                    self.sendSingleMessage(sdpData)
-                }
-            }
-        }
-                            
-    }
+//    func sendAnswer(type : CallingType){
+////        if self.toUserUUID == nil {
+////            print("please input candindate uuid")
+////            return
+////        }
+//        
+//        if self.isConnectd && self.isSetRemoteSDP && !self.isSetLoaclSDP{
+//            self.webRTCClient?.answer(){ sdp in
+//                DispatchQueue.main.async {
+//                    self.isSetLoaclSDP = true
+//                }
+//                
+//                if let sdpData = sdp.JSONData(type: type) {
+//                    //send via websocket
+//                    self.sendSingleMessage(sdpData,.SDP)
+//                }
+//            }
+//        }
+//                            
+//    }
     
     func sendDisconnect(){
         let dict = ["type" : "bye"]
         if let data = dict.JSONData{
-            self.sendSingleMessage(data)
+            self.sendSingleMessage(data,signalType: .Close)
         }
     }
 }
 
-extension RTCViewModel : WebRTCClientDelegate{
+extension SFUProdcuerViewModel : WebRTCClientDelegate{
     func webRTCClient(_ client: WebRTCClient, sendData data: Data) {
-        self.sendSingleMessage(data)
+        print("TODO: Send Data")
+//        self.sendSingleMessage(data)
     }
     
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
@@ -231,12 +201,12 @@ extension RTCViewModel : WebRTCClientDelegate{
             print("candindate failed")
             return
         }
-//        print("To send SDP candiate : \(candinateData.toJSONString)")
         DispatchQueue.main.async {
             self.localCanindate += 1
         }
-        self.sendSingleMessage(candinateData)
+        self.sendSingleMessage(candinateData,signalType: .Candinate)
         //send to
+    
     }
     
     func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
@@ -268,33 +238,71 @@ extension RTCViewModel : WebRTCClientDelegate{
     }
 }
 
-
-
-extension RTCViewModel {
-    func sendSingleMessage(_ message : Data, type : RTCType = .single) {
+extension SFUProdcuerViewModel {
+    func sendSingleMessage(_ message : Data,signalType: SFUSignalType) {
         guard let sdpStr = message.toJSONString else {
             return
         }
         
         let sdp = sdpStr as String
-
-        webSocket?.sendRTCSignal(toUUID: self.toUserUUID!, sdp: sdp,type: type)
+        guard let clientId = self.clientId else {
+            print("Client Id not yet set")
+            return
+        }
+        guard let sessionId = self.sessionId else{
+            print("Session Id not yet set")
+            return
+        }
+        switch(signalType){
+        case .SDP:
+            webSocket?.sendSFUSDP(sessionId: sessionId, sdpType: sdp)
+            break
+        case .Candinate:
+            webSocket?.sendSFUCandindate(sessionId: sessionId, isProducer: true, clientId: clientId, data: sdp)
+            break
+        case .Close:
+            print("CLOSED")
+            webSocket?.sendSFUClose(sessionId: sessionId)
+            break
+        }
+        
+        
+//        webSocket?.sendRTCSignalForSession(sessionId: sessionId, sdp: sdp)
+//        webSocket?.sendRTCSignal(toUUID: self.toUserUUID!, sdp: sdp,type: type)
     }
     
     func processSignalingMessage(_ message: String,websocketMessage : WSMessage) -> Void {
         guard let webRTCClient = webRTCClient else { return }
         print(message)
         let signalMessage = SignalMessage.from(message: message)
+  
         switch signalMessage {
         case .candidate(let candidate):
-            print("candindate")
-            print(candidate)
-            webRTCClient.handleCandidateMessage(candidate,completion: { error in
-                DispatchQueue.main.async {
-                    self.remoteCanindate += 1
+            
+            print("Received ice :\(candidate.sdpMid)")
+            print("Received ice :\(candidate.sdpMLineIndex)")
+            print("Received ice :\(candidate.sdp)")
+            if !isSetRemoteSDP {
+                print("Not yet set remote DESC before candidate............!!!!!!!!!!!!!")
+                self.candidateList.append(candidate)
+            }else{
+                if !self.candidateList.isEmpty {
+                    self.candidateList.forEach{ice in
+                        webRTCClient.handleCandidateMessage(ice,completion: { error in
+                            DispatchQueue.main.async {
+                                self.remoteCanindate += 1
+                            }
+                        })
+                    }
+                    self.candidateList.removeAll()
                 }
-
-            })
+                webRTCClient.handleCandidateMessage(candidate,completion: { error in
+                    DispatchQueue.main.async {
+                        self.remoteCanindate += 1
+                    }
+                })
+            }
+           
             break
         case .answer(let answer):
             print("Recevie answer:") //receving answer -> offer is the remoteSDP for the receiver
@@ -309,37 +317,37 @@ extension RTCViewModel {
                     self.isSetRemoteSDP = true //JUST FOR TESTING
                 }
             })
-            SoundManager.shared.stopPlaying()
+//            SoundManager.shared.stopPlaying()
             
             break
             //TODO:
-        case .offer(let offer): //receving offer -> offer is the remoteSDP for the receiver
+        case .offer(let offer): //receving offer -> offer is the remoteSDP from the receiver
             print("Recevie offer")
-            if self.isSetRemoteSDP{
-                debugPrint("SDP is already set")
-                return
-            }
-            
-
-            webRTCClient.handleRemoteDescription(offer, completion: { err in
-                DispatchQueue.main.async {
-                    self.isSetRemoteSDP = true
-                }
-            })
-            
-            DispatchQueue.main.async{
-                self.callState = .Incoming
-                self.toUserUUID = websocketMessage.fromUUID!
-                self.userName = websocketMessage.fromUserName!
-                self.userAvatar = websocketMessage.avatar!
-                self.callingType = SignalMessage.getCallType(message: message)
-                self.isIncomingCall = true
-//                NSDataAsset(name: "ringing")
-                guard let url = Bundle.main.url(forResource: "ringing", withExtension: ".mp3") else {
-                    return
-                }
-                SoundManager.shared.playSound(url: url)
-            }
+//            if self.isSetRemoteSDP{
+//                debugPrint("SDP is already set")
+//                return
+//            }
+//            
+//
+//            webRTCClient.handleRemoteDescription(offer, completion: { err in
+//                DispatchQueue.main.async {
+//                    self.isSetRemoteSDP = true
+//                }
+//            })
+//            
+//            DispatchQueue.main.async{
+//                self.callState = .Incoming
+////                self.toUserUUID = websocketMessage.fromUUID!
+////                self.userName = websocketMessage.fromUserName!
+////                self.userAvatar = websocketMessage.avatar!
+//                self.callingType = SignalMessage.getCallType(message: message)
+//                self.isIncomingCall = true
+////                NSDataAsset(name: "ringing")
+//                guard let url = Bundle.main.url(forResource: "ringing", withExtension: ".mp3") else {
+//                    return
+//                }
+//                SoundManager.shared.playSound(url: url)
+//            }
             break
         case .bye:
             print("leave")
@@ -351,10 +359,9 @@ extension RTCViewModel {
             break
         }
     }
-    
 }
 
-extension RTCViewModel {
+extension SFUProdcuerViewModel {
     func mute()  {
         DispatchQueue.main.async {
             self.webRTCClient?.mute()
@@ -413,127 +420,49 @@ extension RTCViewModel {
     }
 }
 
-
-extension RTCViewModel : WebSocketDelegate {
+extension SFUProdcuerViewModel : WebSocketDelegate {
     func webSocket(_ webSocket: Websocket, didReceive data: WSMessage) {
-        //received
-        print("received a signal")
-        self.processSignalingMessage(data.content!,websocketMessage: data)
+        guard let content = data.content else{
+            return
+        }
+        switch(data.eventType){
+        case EventType.SFU_EVENT_SEND_SDP.rawValue:
+            do{
+                let resp = try JSONDecoder().decode(SfuConnectSessionResp.self, from: Data(content.utf8))
+                print("received an sdp！！！！！！！！！！！！！！！！！")
+                self.processSignalingMessage(resp.SDPType,websocketMessage: data)
+            }catch(let err){
+                print(err.localizedDescription)
+            }
+            break
+        case EventType.SFU_EVENT_ICE.rawValue:
+            do{
+                //Receive ice candindate.
+                let resp = try JSONDecoder().decode(SFUSendIceCandindateReq.self, from: Data(content.utf8))
+                print("received an ice candindate！！！！！！！！！！！！！！")
+                self.processSignalingMessage(resp.ice_candidate_type,websocketMessage: data)
+            }catch(let err){
+                print(err.localizedDescription)
+            }
+            break
+        case EventType.SFU_EVENT_CLOSE.rawValue: //Close own connection:
+            do{
+                let resp = try JSONDecoder().decode(SFUCloseConnectionResp.self, from: Data(content.utf8))
+                print("Connection Closed \(resp)")
+//                self.processSignalingMessage(resp.,websocketMessage: data)
+            }catch(let err){
+                print(err.localizedDescription)
+            }
+            break
+        default:
+            print("UNKNOW event :\(data.eventType)")
+            break
+        }
     }
     
     func webSocket(_ webSocket: Websocket, didConnected data : Bool) {
         DispatchQueue.main.async {
             self.isConnectd = data
         }
-    }
-}
-
-//For SFU
-
-enum SignalMessage {
-    case none
-    case candidate(_ message: RTCIceCandidate)
-    case answer(_ message: RTCSessionDescription)
-    case offer(_ message: RTCSessionDescription)
-    case bye
-    
-    static func from(message: String) -> SignalMessage {
-        if let dict = message.convertToDictionary() {
-            var messageDict: [String: Any]?
-
-            if dict.keys.contains("msg") {
-                let messageStr = dict["msg"] as? String
-                messageDict = messageStr?.convertToDictionary()
-            } else {
-                messageDict = dict
-            }
-            
-            if let messageDict = messageDict,
-                let type = messageDict["type"] as? String {
-                
-                if type == "candidate",
-                    let candidate = RTCIceCandidate.candidate(from: messageDict) {
-                    return .candidate(candidate)
-                } else if type == "answer",
-                    let sdp = messageDict["sdp"] as? String {
-                    return .answer(RTCSessionDescription(type: .answer, sdp: sdp))
-                } else if type == "offer",
-                    let sdp = messageDict["sdp"] as? String {
-                    return .offer(RTCSessionDescription(type: .offer, sdp: sdp))
-                } else if type == "bye" {
-                    return .bye
-                }
-                
-            }
-        }
-        return none
-    }
-    
-    static func getCallType(message: String) -> CallingType {
-        if let dict = message.convertToDictionary() {
-            var messageDict: [String: Any]?
-            
-            if dict.keys.contains("msg") {
-                let messageStr = dict["msg"] as? String
-                messageDict = messageStr?.convertToDictionary()
-            } else {
-                messageDict = dict
-            }
-            
-            if let messageDict = messageDict,
-               let type = messageDict["call"] as? String {
-                
-                if type == "0"{
-                    return .Voice
-                } else if type == "1" {
-                    return .Video
-                }
-                
-            }
-        }
-        return .Voice
-    }
-}
-
-extension String {
-    func convertToDictionary() -> [String: Any]? {
-        if let data = self.data(using: .utf8) {
-            do {
-                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-            } catch {
-                debugPrint(error.localizedDescription)
-            }
-        }
-        return nil
-    }
-}
-
-extension RTCIceCandidate {
-    func JSONData() -> Data? {
-        let dict = ["type": "candidate",
-//                    "sdpMLineIndex": "\(self.sdpMLineIndex)",
-//                    "sdpMid": self.sdpMid,
-                    "candidate": self.sdp
-        ]
-        return dict.JSONData
-    }
-
-    static func candidate(from: [String: Any]) -> RTCIceCandidate? {
-        let sdp = from["candidate"] as? String
-//        let sdpMid = from["sdpMid"] as? String
-//        let labelStr = from["sdpMLineIndex"] as? String
-//        let label = (from["sdpMLineIndex"] as? Int32) ?? 0
-        return RTCIceCandidate(sdp: sdp ?? "", sdpMLineIndex: 0, sdpMid: "")
-    }
-}
-
-
-extension Data {
-    var toJSONString : NSString? {
-        guard let obj = try? JSONSerialization.jsonObject(with: self,options: []),let data = try? JSONSerialization.data(withJSONObject: obj,options: [.prettyPrinted]),let jsonStr = NSString(data: data, encoding: String.Encoding.utf8.rawValue) else {
-            return nil
-        }
-        
-        return jsonStr
     }
 }
