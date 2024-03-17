@@ -14,7 +14,7 @@ struct Message: View {
     @StateObject private var messageModel = MessageViewModel()
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
-    @EnvironmentObject private var producerVM : SFUProdcuerViewModel
+    @EnvironmentObject private var producerVM : SFProducerViewModel
     @EnvironmentObject var stickerShopVM : StickerShopViewModel
     @Binding var isActive : Bool
     @Binding var isAddStory : Bool

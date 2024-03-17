@@ -12,7 +12,8 @@ import SwiftUI
 
 //For current user used.
 //MARK: same as
-class SFUProdcuerViewModel : ObservableObject {
+class SFProducerViewModel : ObservableObject {
+    
     @Published var isConnectd : Bool = false
     @Published var isSetLoaclSDP : Bool = false
     @Published var isSetRemoteSDP : Bool = false
@@ -127,7 +128,7 @@ class SFUProdcuerViewModel : ObservableObject {
 
 }
 
-extension SFUProdcuerViewModel {
+extension SFProducerViewModel {
     func sendOffer(type : CallingType){
         if self.isConnectd && !self.isSetRemoteSDP && !self.isSetLoaclSDP {
             //is connecte and not set remote and not set ans
@@ -189,7 +190,7 @@ extension SFUProdcuerViewModel {
     }
 }
 
-extension SFUProdcuerViewModel : WebRTCClientDelegate{
+extension SFProducerViewModel : WebRTCClientDelegate{
     func webRTCClient(_ client: WebRTCClient, sendData data: Data) {
         print("TODO: Send Data")
 //        self.sendSingleMessage(data)
@@ -238,7 +239,7 @@ extension SFUProdcuerViewModel : WebRTCClientDelegate{
     }
 }
 
-extension SFUProdcuerViewModel {
+extension SFProducerViewModel {
     func sendSingleMessage(_ message : Data,signalType: SFUSignalType) {
         guard let sdpStr = message.toJSONString else {
             return
@@ -361,7 +362,7 @@ extension SFUProdcuerViewModel {
     }
 }
 
-extension SFUProdcuerViewModel {
+extension SFProducerViewModel {
     func mute()  {
         DispatchQueue.main.async {
             self.webRTCClient?.mute()
@@ -420,7 +421,7 @@ extension SFUProdcuerViewModel {
     }
 }
 
-extension SFUProdcuerViewModel : WebSocketDelegate {
+extension SFProducerViewModel : WebSocketDelegate {
     func webSocket(_ webSocket: Websocket, didReceive data: WSMessage) {
         guard let content = data.content else{
             return
@@ -439,8 +440,10 @@ extension SFUProdcuerViewModel : WebSocketDelegate {
             do{
                 //Receive ice candindate.
                 let resp = try JSONDecoder().decode(SFUSendIceCandindateReq.self, from: Data(content.utf8))
-                print("received an ice candindate！！！！！！！！！！！！！！")
-                self.processSignalingMessage(resp.ice_candidate_type,websocketMessage: data)
+                if resp.is_producer{
+                    print("received an ice candindate(Producer)！！！！！！！！！！！！！！")
+                    self.processSignalingMessage(resp.ice_candidate_type,websocketMessage: data)
+                }
             }catch(let err){
                 print(err.localizedDescription)
             }

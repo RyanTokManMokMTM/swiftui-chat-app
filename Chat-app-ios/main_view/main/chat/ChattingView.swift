@@ -27,7 +27,7 @@ struct ChattingView: View {
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
-    @EnvironmentObject private var sfuProducerVM : SFUProdcuerViewModel
+    @EnvironmentObject private var sfuProducerVM : SFProducerViewModel
     
     let chatUserData : ActiveRooms
     @Binding var messages : [RoomMessages]

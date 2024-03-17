@@ -8,7 +8,6 @@ import SwiftUI
 import AVFoundation
 
 
-
 struct ContentView: View {
     @StateObject var state = SearchState()
     @StateObject var stickerShopVM = StickerShopViewModel()

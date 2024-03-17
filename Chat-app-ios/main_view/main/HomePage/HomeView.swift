@@ -30,7 +30,7 @@ struct HomeView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @StateObject private var videoCallVM = RTCViewModel()
-    @StateObject private var producerVM = SFUProdcuerViewModel()
+    @StateObject private var producerVM = SFProducerViewModel()
     @StateObject var hub = BenHubState.shared
     @State private var index = 0
     @State private var search = ""

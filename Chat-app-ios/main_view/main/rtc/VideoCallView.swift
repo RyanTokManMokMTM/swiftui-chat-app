@@ -20,7 +20,6 @@ struct VideoCallView: View {
                 videoCallingView()
             }
         }
-        
         .edgesIgnoringSafeArea(.all)
         .overlay(alignment: .top){
             HStack{

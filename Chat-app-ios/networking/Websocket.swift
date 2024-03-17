@@ -91,6 +91,8 @@ enum EventType : String, CaseIterable {
     case SFU_EVENT_SEND_SDP
     case SFU_EVENT_SEND_NEW_PRODUCER
     case SFU_EVENT_SEND_PRODUCER_CLOSE
+    
+    case SFU_EVENT_SEND_CONSUMER_SDP
 
     case ALL
     
@@ -115,6 +117,8 @@ enum EventType : String, CaseIterable {
             case .SFU_EVENT_SEND_SDP: return "SFU_EVENT_SEND_SDP"
             case .SFU_EVENT_SEND_NEW_PRODUCER: return "SFU_EVENT_SEND_NEW_PRODUCER"
             case .SFU_EVENT_SEND_PRODUCER_CLOSE: return "SFU_EVENT_SEND_PRODUCER_CLOSE"
+            
+            case .SFU_EVENT_SEND_CONSUMER_SDP   :return "SFU_EVENT_SEND_CONSUMER_SDP"
             case .ALL : return "ALL"
         }
     }
@@ -163,6 +167,7 @@ class Websocket : ObservableObject {
     private var jsonEncoder = JSONEncoder()
     var delegate : WebSocketDelegate? //For Person
     var sessionDelegate : WebSocketDelegate? //For session
+    var sessionConsumerDelegate : WebSocketDelegate? //For session
     var userModel : UserViewModel? {
         didSet {
             self.objectWillChange.send()
@@ -260,21 +265,14 @@ class Websocket : ObservableObject {
                         case EventType.RECALL.rawValue:
                             print("recall message")
                             updateMessage(wsMSG: msg)
-                            //Find the message and update the message
-                            //For SFU feature
-//                        case EventType.SFU_EVENT_CONNECT.rawValue:
-//                            print("SFU_EVENT_CONNECT: \(msg.content ?? "--")")
-//                            break
-//                        case EventType.SFU_EVENT_CONSUM.rawValue:
-//                            print("SFU_EVENT_CONSUM: \(msg.content ?? "--")")
-//                            break
+                        
                         case EventType.SFU_EVENT_GET_PRODUCERS.rawValue:
 //                            print("SFU_EVENT_GET_PRODUCERS: \(msg.content ?? "--")")
                             self.sessionDelegate?.webSocket(self, didReceive: msg)
                             break
                         case EventType.SFU_EVENT_ICE.rawValue:
-//                            print("SFU_EVENT_ICE: \(msg.content ?? "--" )")
-                            self.sessionDelegate?.webSocket(self, didReceive: msg)
+                            self.sessionDelegate?.webSocket(self, didReceive: msg) //If producer
+                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg) //If Consumer
                             break
                         case EventType.SFU_EVENT_CLOSE.rawValue:
 //                            print("SFU_EVENT_CLOSE: \(msg.content ?? "--")")
@@ -285,8 +283,16 @@ class Websocket : ObservableObject {
 //                            print("SFU_EVENT_SEND_SDP: \(msg.content ?? "--")")
                             self.sessionDelegate?.webSocket(self, didReceive: msg)
                             break
+                            
+                        case EventType.SFU_EVENT_SEND_CONSUMER_SDP.rawValue:
+                            //After consuming the producer
+                            print("SFU_EVENT_SEND_CONSUMER_SDP: \(msg.content ?? "--")")
+                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
+                            break
+                            
                         case EventType.SFU_EVENT_SEND_NEW_PRODUCER.rawValue:
-//                            print("SFU_EVENT_SEND_NEW_PRODUCER: \(msg.content ?? "--")")
+                            print("SFU_EVENT_SEND_NEW_PRODUCER: \(msg.content ?? "--")")
+                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
                             break
                         case EventType.SFU_EVENT_SEND_PRODUCER_CLOSE.rawValue:
                             print("SFU_EVENT_SEND_PRODUCER_CLOSE: \(msg.content ?? "--")")
@@ -791,3 +797,20 @@ extension Websocket {
 //    }
     
 }
+
+//Consumer
+extension Websocket {
+    func sendSFUSDPForConsumer(sessionId : String,producerId : String,sdpType : String){
+        let req = SFUConsumeProducerReq(session_id: sessionId, producer_id: producerId, SDPType: sdpType)
+        do{
+            let content = try self.jsonEncoder.encode(req)
+            guard let jsonContent = content.toJSONString else {
+                return
+            }
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CONSUM)
+        }catch(let err){
+            print("SFU CONNECT ERROR :\(err.localizedDescription)")
+        }
+    }
+}
+

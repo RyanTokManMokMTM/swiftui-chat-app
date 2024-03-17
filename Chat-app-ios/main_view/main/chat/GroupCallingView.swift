@@ -35,23 +35,31 @@ let dummyDataCalls = [
 struct GroupCallingView: View {
     //One prodcuer
     //Many Consumer
-    @EnvironmentObject private var producerVM : SFUProdcuerViewModel
-    let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 4)
+    @EnvironmentObject private var userVM : UserViewModel
+    @EnvironmentObject private var producerVM : SFProducerViewModel
+    let columns = Array(repeating: GridItem(spacing: 10, alignment: .center), count: 4)
    
     var body: some View {
         VStack{
-            Text("Producer: Connection status : \(self.producerVM.callState.rawValue)")
-            Text("connectionStatus : \(self.producerVM.connectionStatus.rawValue)")
-            Text("isSetLoaclSDP : \(self.producerVM.isSetLoaclSDP.description)")
-            Text("isSetRemoteSDP : \(self.producerVM.isSetRemoteSDP.description)")
-            Text("localCanindate : \(self.producerVM.localCanindate)")
-            Text("remoteCanindate : \(self.producerVM.remoteCanindate)")
-//            LazyVGrid(columns: columns, spacing: 10) {
-//                ForEach(dummyDataCalls, id: \.id) { user in
-//                    testView(item: user)
-//                }
-//            }
-//            
+//            Text("Producer: Connection status : \(self.producerVM.callState.rawValue)")
+//            Text("connectionStatus : \(self.producerVM.connectionStatus.rawValue)")
+//            Text("isSetLoaclSDP : \(self.producerVM.isSetLoaclSDP.description)")
+//            Text("isSetRemoteSDP : \(self.producerVM.isSetRemoteSDP.description)")
+//            Text("localCanindate : \(self.producerVM.localCanindate)")
+//            Text("remoteCanindate : \(self.producerVM.remoteCanindate)")
+//            renderProducerStreaming()
+            ScrollView(.vertical,showsIndicators: false){
+                LazyVGrid(columns: self.columns,spacing: 5){
+                    renderProducerStreaming()
+                    
+                    ForEach(dummyDataCalls,id:\.id) { data in
+                        testView(item: data)
+                    }
+                }
+                .padding(.horizontal,10)
+            }
+         
+//
             Button(action: {
                 withAnimation{
                     DispatchQueue.main.async { //TODO: Send disconnected signal and Disconnect and reset all RTC
@@ -77,6 +85,40 @@ struct GroupCallingView: View {
 //                            }
                         }
 
+    }
+    
+    
+    @ViewBuilder
+    private func renderProducerStreaming() -> some View {
+        RTCVideoView(track: self.producerVM.localVideoTrack,webClient: producerVM.webRTCClient, isRemote: false, isVoice: true,refershTrack: Binding<Bool>(get: {return self.producerVM.refershLocalTrack},set: { p in self.producerVM.refershLocalTrack = p}))
+        .frame(width: 100,height: 100)
+        .background(BlurView().clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
+        .overlay{
+            VStack(spacing:0){
+                
+                AsyncImage(url: self.userVM.profile?.AvatarURL ?? URL(string: "")!, content: { img in
+                    img
+                        .resizable()
+                        .aspectRatio( contentMode: .fill)
+                        .frame(width: 45,height: 45)
+                        .clipShape(Circle())
+                    
+                }, placeholder: {
+                    ProgressView()
+                        .frame(width: 40,height: 40)
+                })
+                .padding(.top,10)
+                
+                Text(self.userVM.profile?.name ?? "--")
+                    .font(.system(size: 12))
+                    .bold()
+                    .padding(.vertical,5)
+                
+                Text(self.producerVM.callState == .Connected ? "Connected" : "Connecting...")
+                    .font(.system(size: 8))
+                    .bold()
+            }
+        }
     }
     
     @ViewBuilder

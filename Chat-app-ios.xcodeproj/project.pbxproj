@@ -20,6 +20,8 @@
 		20164E3B29BADCDA00F61813 /* SearchUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20164E3A29BADCDA00F61813 /* SearchUserViewModel.swift */; };
 		20164E3D29BAE51700F61813 /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20164E3C29BAE51700F61813 /* CustomSearchBar.swift */; };
 		20198A252A500B3E00860018 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20198A242A500B3E00860018 /* View.swift */; };
+		201A45D92BA6CD4000344A95 /* SFUProducerStreamingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A45D82BA6CD4000344A95 /* SFUProducerStreamingView.swift */; };
+		201A45DB2BA6CD5400344A95 /* SFUConsumerStreamingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A45DA2BA6CD5400344A95 /* SFUConsumerStreamingView.swift */; };
 		201CB7AD29BED1D20036D181 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 201CB7AB29BED1D20036D181 /* Model.xcdatamodeld */; };
 		201CB7B329BEEAFE0036D181 /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CB7B229BEEAFE0036D181 /* NavigationState.swift */; };
 		201E9CC02A99DC910068429A /* StoryViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E9CBF2A99DC910068429A /* StoryViewer.swift */; };
@@ -228,6 +230,8 @@
 		20164E3A29BADCDA00F61813 /* SearchUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserViewModel.swift; sourceTree = "<group>"; };
 		20164E3C29BAE51700F61813 /* CustomSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
 		20198A242A500B3E00860018 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
+		201A45D82BA6CD4000344A95 /* SFUProducerStreamingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUProducerStreamingView.swift; sourceTree = "<group>"; };
+		201A45DA2BA6CD5400344A95 /* SFUConsumerStreamingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUConsumerStreamingView.swift; sourceTree = "<group>"; };
 		201CB7AC29BED1D20036D181 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		201CB7B229BEEAFE0036D181 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
 		201E9CBF2A99DC910068429A /* StoryViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewer.swift; sourceTree = "<group>"; };
@@ -454,6 +458,15 @@
 			path = dragTextView;
 			sourceTree = "<group>";
 		};
+		201A45D72BA6CD2500344A95 /* SFU */ = {
+			isa = PBXGroup;
+			children = (
+				201A45D82BA6CD4000344A95 /* SFUProducerStreamingView.swift */,
+				201A45DA2BA6CD5400344A95 /* SFUConsumerStreamingView.swift */,
+			);
+			path = SFU;
+			sourceTree = "<group>";
+		};
 		201E9CC12A99DD340068429A /* storyViewGroup */ = {
 			isa = PBXGroup;
 			children = (
@@ -535,6 +548,7 @@
 		203D5D9E2A62CB0E003E1A1A /* chat */ = {
 			isa = PBXGroup;
 			children = (
+				201A45D72BA6CD2500344A95 /* SFU */,
 				20D3984C2AE667A800DE66FC /* Sticker */,
 				2073D66E29A252B800AA29D9 /* Message.swift */,
 				20BBAA4229A669BB00ED3245 /* PersonChatCallingView.swift */,
@@ -1168,6 +1182,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				201A45D92BA6CD4000344A95 /* SFUProducerStreamingView.swift in Sources */,
 				205888E02AF5DF3B002C5086 /* AddUserStickerRequest.swift in Sources */,
 				20C86BE02AC7C87F00A29661 /* CreateStoryResponse.swift in Sources */,
 				20C86BF92AC7C99500A29661 /* CreateStoryLikeResponse.swift in Sources */,
@@ -1273,6 +1288,7 @@
 				20C86C042AC7CBE100A29661 /* UpdateUserCoverResponse.swift in Sources */,
 				20E0966829FE766800B5EBA7 /* Doc.swift in Sources */,
 				20C86B862AC7C21C00A29661 /* UpdateUserStateResponse.swift in Sources */,
+				201A45DB2BA6CD5400344A95 /* SFUConsumerStreamingView.swift in Sources */,
 				20D398602AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift in Sources */,
 				208B4CBA29F3CA3F001F2EF1 /* UserProfileEditView.swift in Sources */,
 				20D3985F2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift in Sources */,
