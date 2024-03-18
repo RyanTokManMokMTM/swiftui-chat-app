@@ -427,16 +427,15 @@ extension SFProducerViewModel : WebSocketDelegate {
             return
         }
         switch(data.eventType){
-        case EventType.SFU_EVENT_SEND_SDP.rawValue:
+        case EventType.SFU_EVENT_PRODUCER_SDP.rawValue:
             do{
                 let resp = try JSONDecoder().decode(SfuConnectSessionResp.self, from: Data(content.utf8))
-                print("received an sdp！！！！！！！！！！！！！！！！！")
                 self.processSignalingMessage(resp.SDPType,websocketMessage: data)
             }catch(let err){
                 print(err.localizedDescription)
             }
             break
-        case EventType.SFU_EVENT_ICE.rawValue:
+        case EventType.SFU_EVENT_PRODUCER_ICE.rawValue:
             do{
                 //Receive ice candindate.
                 let resp = try JSONDecoder().decode(SFUSendIceCandindateReq.self, from: Data(content.utf8))
@@ -448,17 +447,8 @@ extension SFProducerViewModel : WebSocketDelegate {
                 print(err.localizedDescription)
             }
             break
-        case EventType.SFU_EVENT_CLOSE.rawValue: //Close own connection:
-            do{
-                let resp = try JSONDecoder().decode(SFUCloseConnectionResp.self, from: Data(content.utf8))
-                print("Connection Closed \(resp)")
-//                self.processSignalingMessage(resp.,websocketMessage: data)
-            }catch(let err){
-                print(err.localizedDescription)
-            }
-            break
         default:
-            print("UNKNOW event :\(data.eventType)")
+            print("UNKNOW event :\(data.eventType ?? "--")")
             break
         }
     }

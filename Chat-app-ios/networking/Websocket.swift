@@ -79,20 +79,17 @@ enum EventType : String, CaseIterable {
     case WEB_RTC
     case MSG_ACK
     case RECALL
-
-    //For SFU feature
-    case SFU_EVENT_CONNECT
-    case SFU_EVENT_CONSUM
-    case SFU_EVENT_GET_PRODUCERS
-    case SFU_EVENT_ICE
-    case SFU_EVENT_CLOSE
-
-    //Send event -> only use for send to client
-    case SFU_EVENT_SEND_SDP
-    case SFU_EVENT_SEND_NEW_PRODUCER
-    case SFU_EVENT_SEND_PRODUCER_CLOSE
     
-    case SFU_EVENT_SEND_CONSUMER_SDP
+    case SFU_EVENT_PRODUCER_SDP
+    case SFU_EVENT_PRODUCER_ICE
+    case SFU_EVENT_PRODUCER_CLOSE
+
+    case SFU_EVENT_CONSUMER_SDP
+    case SFU_EVENT_CONSUMER_ICE
+    case SFU_EVENT_CONSUMER_CLOSE
+
+    case SFU_EVENT_GET_PRODUCERS
+    case SFU_EVENT_SEND_NEW_PRODUCER
 
     case ALL
     
@@ -105,20 +102,16 @@ enum EventType : String, CaseIterable {
             case .WEB_RTC: return "WEB_RTC"
             case .MSG_ACK: return "MSG_ACK"
             case .RECALL : return "RECALL"
-
-                //For SFU feature
-            case .SFU_EVENT_CONNECT: return "SFU_EVENT_CONNECT"
-            case .SFU_EVENT_CONSUM: return "SFU_EVENT_CONSUM"
-            case .SFU_EVENT_GET_PRODUCERS: return "SFU_EVENT_GET_PRODUCERS"
-            case .SFU_EVENT_ICE: return "SFU_EVENT_ICE"
-            case .SFU_EVENT_CLOSE: return "SFU_EVENT_CLOSE"
-
-                //Send event -> only use for send to client
-            case .SFU_EVENT_SEND_SDP: return "SFU_EVENT_SEND_SDP"
-            case .SFU_EVENT_SEND_NEW_PRODUCER: return "SFU_EVENT_SEND_NEW_PRODUCER"
-            case .SFU_EVENT_SEND_PRODUCER_CLOSE: return "SFU_EVENT_SEND_PRODUCER_CLOSE"
             
-            case .SFU_EVENT_SEND_CONSUMER_SDP   :return "SFU_EVENT_SEND_CONSUMER_SDP"
+            case .SFU_EVENT_PRODUCER_SDP : return "SFU_EVENT_PRODUCER_SDP"
+            case .SFU_EVENT_PRODUCER_ICE : return "SFU_EVENT_PRODUCER_ICE"
+            case .SFU_EVENT_PRODUCER_CLOSE : return "SFU_EVENT_PRODUCER_CLOSE"
+            case .SFU_EVENT_CONSUMER_SDP : return "SFU_EVENT_CONSUMER_SDP"
+            case .SFU_EVENT_CONSUMER_ICE : return "SFU_EVENT_CONSUMER_ICE"
+            case .SFU_EVENT_CONSUMER_CLOSE : return "SFU_EVENT_CONSUMER_CLOSE"
+            case .SFU_EVENT_GET_PRODUCERS : return "SFU_EVENT_GET_PRODUCERS"
+            case .SFU_EVENT_SEND_NEW_PRODUCER : return "SFU_EVENT_SEND_NEW_PRODUCER"
+        
             case .ALL : return "ALL"
         }
     }
@@ -265,37 +258,34 @@ class Websocket : ObservableObject {
                         case EventType.RECALL.rawValue:
                             print("recall message")
                             updateMessage(wsMSG: msg)
-                        
-                        case EventType.SFU_EVENT_GET_PRODUCERS.rawValue:
-//                            print("SFU_EVENT_GET_PRODUCERS: \(msg.content ?? "--")")
-                            self.sessionDelegate?.webSocket(self, didReceive: msg)
-                            break
-                        case EventType.SFU_EVENT_ICE.rawValue:
+                            
+                        case EventType.SFU_EVENT_PRODUCER_SDP.rawValue:
                             self.sessionDelegate?.webSocket(self, didReceive: msg) //If producer
-                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg) //If Consumer
-                            break
-                        case EventType.SFU_EVENT_CLOSE.rawValue:
-//                            print("SFU_EVENT_CLOSE: \(msg.content ?? "--")")
-                            self.sessionDelegate?.webSocket(self, didReceive: msg)
-                            break
-                        //Event back from server
-                        case EventType.SFU_EVENT_SEND_SDP.rawValue:
-//                            print("SFU_EVENT_SEND_SDP: \(msg.content ?? "--")")
-                            self.sessionDelegate?.webSocket(self, didReceive: msg)
                             break
                             
-                        case EventType.SFU_EVENT_SEND_CONSUMER_SDP.rawValue:
-                            //After consuming the producer
-                            print("SFU_EVENT_SEND_CONSUMER_SDP: \(msg.content ?? "--")")
+                        case EventType.SFU_EVENT_CONSUMER_SDP.rawValue:
                             self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
+                            break
+                            
+                        case EventType.SFU_EVENT_PRODUCER_ICE.rawValue:
+                            self.sessionDelegate?.webSocket(self, didReceive: msg) //If producer
+                            break
+                            
+                        case EventType.SFU_EVENT_CONSUMER_ICE.rawValue:
+                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg) //If Consumer
+                            break
+                            
+                        case EventType.SFU_EVENT_CONSUMER_CLOSE.rawValue:
+                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg) //If Consumer
                             break
                             
                         case EventType.SFU_EVENT_SEND_NEW_PRODUCER.rawValue:
                             print("SFU_EVENT_SEND_NEW_PRODUCER: \(msg.content ?? "--")")
                             self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
                             break
-                        case EventType.SFU_EVENT_SEND_PRODUCER_CLOSE.rawValue:
-                            print("SFU_EVENT_SEND_PRODUCER_CLOSE: \(msg.content ?? "--")")
+                            
+                        case EventType.SFU_EVENT_GET_PRODUCERS.rawValue:
+//                            print("SFU_EVENT_GET_PRODUCERS: \(msg.content ?? "--")")
                             self.sessionDelegate?.webSocket(self, didReceive: msg)
                             break
                         default:
@@ -689,7 +679,7 @@ extension Websocket {
             guard let jsonContent = content.toJSONString else {
                 return
             }
-            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CONNECT)
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_PRODUCER_SDP)
         }catch(let err){
             print("SFU CONNECT ERROR :\(err.localizedDescription)")
         }
@@ -703,7 +693,7 @@ extension Websocket {
             guard let jsonContent = content.toJSONString else {
                 return
             }
-            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_ICE)
+            self.sendSFUMessage(content: String(jsonContent), eventType: isProducer ? .SFU_EVENT_PRODUCER_ICE  : .SFU_EVENT_CONSUMER_ICE)
         }catch(let err){
             print("SFU SEND ICE ERROR :\(err.localizedDescription)")
         }
@@ -716,7 +706,7 @@ extension Websocket {
             guard let jsonContent = content.toJSONString else {
                 return
             }
-            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CLOSE)
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_PRODUCER_CLOSE)
         }catch(let err){
             print("SFU CONNECT CLOSE :\(err.localizedDescription)")
         }
@@ -807,7 +797,7 @@ extension Websocket {
             guard let jsonContent = content.toJSONString else {
                 return
             }
-            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CONSUM)
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CONSUMER_SDP)
         }catch(let err){
             print("SFU CONNECT ERROR :\(err.localizedDescription)")
         }

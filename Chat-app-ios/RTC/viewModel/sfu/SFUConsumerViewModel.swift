@@ -157,16 +157,15 @@ extension SFUConsumerManager : WebSocketDelegate {
         }
         //Some event for consuming only
         switch(data.eventType){
-        case EventType.SFU_EVENT_SEND_CONSUMER_SDP.rawValue:
+        case EventType.SFU_EVENT_CONSUMER_SDP.rawValue:
             do{
                 let resp = try JSONDecoder().decode(SFUConsumeProducerResp.self, from: Data(content.utf8))
-                print("received an sdp！！！！！！！！！！！！！！！！！")
                 self.processSignalingMessage(resp.SDPType,websocketMessage: data, clientId: resp.producer_id)
             }catch(let err){
                 print(err.localizedDescription)
             }
             break
-        case EventType.SFU_EVENT_ICE.rawValue:
+        case EventType.SFU_EVENT_CONSUMER_ICE.rawValue:
             do{
                 //Receive ice candindate.
                 let resp = try JSONDecoder().decode(SFUSendIceCandindateReq.self, from: Data(content.utf8))
@@ -189,8 +188,17 @@ extension SFUConsumerManager : WebSocketDelegate {
                 print(err.localizedDescription)
             }
             break
+            
+        case EventType.SFU_EVENT_CONSUMER_CLOSE.rawValue:
+            print("Handling a Producer left the session...")
+            
+            break
+            
+        case EventType.SFU_EVENT_GET_PRODUCERS.rawValue:
+            print("TODO: Handling all producer...")
+            break
         default:
-            print("UNKNOW event :\(data.eventType)")
+            print("UNKNOW event :\(data.eventType ?? "--")")
             break
         }
     }
