@@ -190,8 +190,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "358"
-            endingLineNumber = "358"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "handleMessage(event:msg:isGetRoomUserInfo:onSendSuccess:)"
             landmarkType = "7">
             <Locations>
@@ -302,8 +302,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "418"
-            endingLineNumber = "418"
+            startingLineNumber = "424"
+            endingLineNumber = "424"
             landmarkName = "handleMessage(event:msg:isGetRoomUserInfo:onSendSuccess:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -318,8 +318,8 @@
             filePath = "Chat-app-ios/main_view/main/chat/ChattingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "471"
-            endingLineNumber = "471"
+            startingLineNumber = "472"
+            endingLineNumber = "472"
             landmarkName = "content(message:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -809,8 +809,8 @@
             filePath = "Chat-app-ios/main_view/main/chat/ChattingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
             landmarkName = "ChattingView"
             landmarkType = "14">
          </BreakpointContent>
@@ -825,8 +825,8 @@
             filePath = "Chat-app-ios/main_view/main/chat/ChattingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
+            startingLineNumber = "355"
+            endingLineNumber = "355"
             landmarkName = "setUpVoiceCallingInfo()"
             landmarkType = "7">
          </BreakpointContent>
@@ -841,8 +841,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "242"
-            endingLineNumber = "242"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
             landmarkName = "onReceive(result:)"
             landmarkType = "7">
             <Locations>
@@ -904,8 +904,8 @@
             filePath = "Chat-app-ios/networking/Websocket.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "230"
-            endingLineNumber = "230"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
             landmarkName = "onReceive(result:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -978,7 +978,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "2E0D730E-EBC6-4688-B58B-7015B89BF7FD"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Chat-app-ios/RTC/viewModel/sfu/SFUProducerViewModel.swift"
@@ -988,6 +988,159 @@
             endingLineNumber = "185"
             landmarkName = "sendDisconnect()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1A687C8B-8231-418D-9450-06430EAC718E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/RTC/viewModel/sfu/SFUProducerViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
+            landmarkName = "SFProducerViewModel"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 610a52728ab9f410"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "property wrapper backing initializer of Chat_app_ios.SFProducerViewModel.localCanindate : Swift.Int"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/Chat-app-ios/RTC/viewModel/sfu/SFUProducerViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 4324047c68098309"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.localCanindate.getter : Swift.Int"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/Chat-app-ios/RTC/viewModel/sfu/SFUProducerViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "28">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 3788a2b9e8659171"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.localCanindate.setter : Swift.Int"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/Chat-app-ios/RTC/viewModel/sfu/SFUProducerViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 8765f6be979b7d84"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.localCanindate.modify : Swift.Int"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/Chat-app-ios/RTC/viewModel/sfu/SFUProducerViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 3a1d4161eefa9b43"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.localCanindate.modify : Swift.Int with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 7078022d8e13a467"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.$localCanindate.getter : Combine.Published&lt;Swift.Int&gt;.Publisher"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/Chat-app-ios/RTC/viewModel/sfu/SFUProducerViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 6c9f8bca23ed52"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.$localCanindate.setter : Combine.Published&lt;Swift.Int&gt;.Publisher"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - aeff5f8aa4a4a13c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.$localCanindate.modify : Combine.Published&lt;Swift.Int&gt;.Publisher"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  uuid = "1A687C8B-8231-418D-9450-06430EAC718E - 26902a28eff57b4f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.SFProducerViewModel.$localCanindate.modify : Combine.Published&lt;Swift.Int&gt;.Publisher with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "24">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

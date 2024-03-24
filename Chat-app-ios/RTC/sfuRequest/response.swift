@@ -11,10 +11,20 @@ struct SfuNewProducerResp : Decodable {
     let producer_info : SfuProducerUserInfo
 }
 
+struct SFUConnectSessionResp : Decodable {
+    let session_id : String
+    let producer_id : String
+    let session_producers : [SfuProducerUserInfo]
+}
+
 struct SfuProducerUserInfo : Decodable {
     let producer_user_id     :  String
     let producer_user_name   : String
     let producer_user_avatar : String
+    
+    var AvatarURL : URL {
+        return URL(string: RESOURCES_HOST  + self.producer_user_avatar)!
+    }
 }
 
 struct SfuConnectSessionResp : Decodable {

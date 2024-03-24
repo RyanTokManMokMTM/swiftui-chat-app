@@ -83,6 +83,7 @@ enum EventType : String, CaseIterable {
     case SFU_EVENT_PRODUCER_SDP
     case SFU_EVENT_PRODUCER_ICE
     case SFU_EVENT_PRODUCER_CLOSE
+    case SFU_EVENT_PRODUCER_CONNECTED
 
     case SFU_EVENT_CONSUMER_SDP
     case SFU_EVENT_CONSUMER_ICE
@@ -106,6 +107,7 @@ enum EventType : String, CaseIterable {
             case .SFU_EVENT_PRODUCER_SDP : return "SFU_EVENT_PRODUCER_SDP"
             case .SFU_EVENT_PRODUCER_ICE : return "SFU_EVENT_PRODUCER_ICE"
             case .SFU_EVENT_PRODUCER_CLOSE : return "SFU_EVENT_PRODUCER_CLOSE"
+            case .SFU_EVENT_PRODUCER_CONNECTED : return "SFU_EVENT_PRODUCER_CONNECTED"
             case .SFU_EVENT_CONSUMER_SDP : return "SFU_EVENT_CONSUMER_SDP"
             case .SFU_EVENT_CONSUMER_ICE : return "SFU_EVENT_CONSUMER_ICE"
             case .SFU_EVENT_CONSUMER_CLOSE : return "SFU_EVENT_CONSUMER_CLOSE"
@@ -269,6 +271,10 @@ class Websocket : ObservableObject {
                             
                         case EventType.SFU_EVENT_PRODUCER_ICE.rawValue:
                             self.sessionDelegate?.webSocket(self, didReceive: msg) //If producer
+                            break
+                        case EventType.SFU_EVENT_PRODUCER_CONNECTED.rawValue:
+                            print("Current Producer connected")
+                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
                             break
                             
                         case EventType.SFU_EVENT_CONSUMER_ICE.rawValue:
@@ -737,6 +743,7 @@ extension Websocket {
         
         self.onSend(msg: wsMSG)
     }
+
 //    func sendRTCSignalForSession(sessionId : String,reqData : String, sfuSignalingType : SFUSignalType) {
 //        print("send session signaling")
 //        //if type == group / multiple.. handle in different way

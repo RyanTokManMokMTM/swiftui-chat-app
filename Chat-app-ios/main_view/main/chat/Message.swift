@@ -15,6 +15,7 @@ struct Message: View {
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
     @EnvironmentObject private var producerVM : SFProducerViewModel
+    @EnvironmentObject private var consumerVM : SFUConsumerManager
     @EnvironmentObject var stickerShopVM : StickerShopViewModel
     @Binding var isActive : Bool
     @Binding var isAddStory : Bool
@@ -78,6 +79,7 @@ struct Message: View {
                     .environmentObject(UDM)
                     .environmentObject(videoCallVM)
                     .environmentObject(producerVM)
+                    .environmentObject(consumerVM)
                     .environmentObject(stickerShopVM)
                     .onAppear{
                         DispatchQueue.main.async{

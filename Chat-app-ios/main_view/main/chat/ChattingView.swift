@@ -28,6 +28,7 @@ struct ChattingView: View {
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
     @EnvironmentObject private var sfuProducerVM : SFProducerViewModel
+    @EnvironmentObject private var sfuConsumerVM : SFUConsumerManager
     
     let chatUserData : ActiveRooms
     @Binding var messages : [RoomMessages]
@@ -1553,6 +1554,7 @@ extension ChattingView {
         
         //Sending the offer
         self.sfuProducerVM.sendOffer(type:.Voice) //TODO: sending offer to receiver
+        self.sfuConsumerVM.setUpSessionManager(sessionId,callType: .Voice)
     }
     
     private func setUpVideoCallingForGroup(){
@@ -1565,14 +1567,14 @@ extension ChattingView {
             print("clientId(Producer) not exist")
             return
         }
-        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
-        self.sfuProducerVM.videoPrepare() //TODO: To enable video
-        self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
-        self.sfuProducerVM.callingType = .Video //TODO: Type is voice
-        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
-        
-        //Sending the offer
-        self.sfuProducerVM.sendOffer(type:.Video) //TODO: sending offer to receiver
+//        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
+//        self.sfuProducerVM.videoPrepare() //TODO: To enable video
+//        self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
+//        self.sfuProducerVM.callingType = .Video //TODO: Type is voice
+//        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
+//        
+//        //Sending the offer
+//        self.sfuProducerVM.sendOffer(type:.Video) //TODO: sending offer to receiver
     }
 
 }

@@ -35,30 +35,27 @@ let dummyDataCalls = [
 struct GroupCallingView: View {
     //One prodcuer
     //Many Consumer
+    var sessionId : String? = nil
+    @StateObject private var ws = Websocket.shared
     @EnvironmentObject private var userVM : UserViewModel
     @EnvironmentObject private var producerVM : SFProducerViewModel
+    @EnvironmentObject private var cosnumerVM : SFUConsumerManager
     let columns = Array(repeating: GridItem(spacing: 10, alignment: .center), count: 4)
    
     var body: some View {
         VStack{
-//            Text("Producer: Connection status : \(self.producerVM.callState.rawValue)")
-//            Text("connectionStatus : \(self.producerVM.connectionStatus.rawValue)")
-//            Text("isSetLoaclSDP : \(self.producerVM.isSetLoaclSDP.description)")
-//            Text("isSetRemoteSDP : \(self.producerVM.isSetRemoteSDP.description)")
-//            Text("localCanindate : \(self.producerVM.localCanindate)")
-//            Text("remoteCanindate : \(self.producerVM.remoteCanindate)")
-//            renderProducerStreaming()
             ScrollView(.vertical,showsIndicators: false){
                 LazyVGrid(columns: self.columns,spacing: 5){
                     renderProducerStreaming()
                     
-                    ForEach(dummyDataCalls,id:\.id) { data in
-                        testView(item: data)
+                    ForEach(self.$cosnumerVM.consumerMap,id:\.clientId) { consumer in
+                        ConsumerInfo(consumer: consumer)
+                            .padding(.horizontal,5)
                     }
                 }
                 .padding(.horizontal,10)
             }
-         
+
 //
             Button(action: {
                 withAnimation{
@@ -77,12 +74,12 @@ struct GroupCallingView: View {
         }
         .onChange(of: self.producerVM.callState){ state in
                             print("State Changed : \(state)")
-//                            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
-//                                DispatchQueue.main.async {
-//                                    self.producerVM.isIncomingCall = false
-//                                    self.producerVM.DisConnect()
-//                                }
-//                            }
+                            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
+                                DispatchQueue.main.async {
+                                    self.producerVM.isIncomingCall = false
+                                    self.producerVM.DisConnect()
+                                }
+                            }
                         }
 
     }
@@ -120,28 +117,45 @@ struct GroupCallingView: View {
             }
         }
     }
-    
-    @ViewBuilder
-    private func testView(item : TestCallingData) -> some View {
-        VStack(spacing:0){
-            Image(item.avatar)
-                .resizable()
-                .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-                .frame(width: 45,height: 45)
-                .clipShape(Circle())
-                .padding(.top,10)
-            
-            Text(item.name)
-                .font(.system(size: 12))
-                .bold()
-                .padding(.vertical,5)
-        }
+
+}
+
+
+struct ConsumerInfo : View {
+    @Binding var consumer : SFUConsumer
+    var body: some View {
+        RTCVideoView(track: self.consumer.remoteVideoTrack,webClient: consumer.webRTCClient, isRemote: true, isVoice: true,refershTrack: Binding<Bool>(get: {return consumer.refershRemoteTrack},set: { p in consumer.refershRemoteTrack = p}))
         .frame(width: 100,height: 100)
         .background(BlurView().clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
-//        .clipShape(CustomConer(coners: [.allCorners]))
+        .overlay{
+            VStack(spacing:0){
+                VStack(spacing:0){
+                    AsyncImage(url: consumer.userInfo.AvatarURL, content: { img in
+                        img
+                            .resizable()
+                            .aspectRatio( contentMode: .fill)
+                            .frame(width: 45,height: 45)
+                            .clipShape(Circle())
+                        
+                    }, placeholder: {
+                        ProgressView()
+                            .frame(width: 40,height: 40)
+                    })
+                    .padding(.top,10)
+                    
+                    Text(consumer.userInfo.producer_user_name)
+                        .font(.system(size: 12))
+                        .bold()
+                        .padding(.vertical,5)
+                    
+                    Text(consumer.callState == .Connected ? "Connected" : "Connecting...")
+                        .font(.system(size: 8))
+                        .bold()
+                }
+                .frame(width: 100,height: 100)
+                .background(BlurView().clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
+            }
+        }
+    
     }
 }
-//
-//#Preview {
-//    GroupCallingView()
-//}

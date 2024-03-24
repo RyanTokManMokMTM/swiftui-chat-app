@@ -22,44 +22,67 @@ protocol SFUConsumserManagerDelegate : class {
     func SFUConsumserManager(_ message : Data,signalType: SFUSignalType,producerId : String?)
 }
 
+@MainActor
 class SFUConsumerManager : ObservableObject {
     @Published var sessionId : String?
     @Published var consumerMap : [SFUConsumer] = []
-    static var shared  = SFUConsumerManager()
+    private var callType : CallingType? = nil //by default
+//    static var shared  = SFUConsumerManager()
     private var webSocket : Websocket?
     //Need to know for which client. and set it  to that webRTC client
     private var cancellables = [AnyCancellable]()
-    private init(){
+    init(){
         self.consumerMap.forEach({
                     let c = $0.objectWillChange.sink(receiveValue: { self.objectWillChange.send() })
                     self.cancellables.append(c)
                 })
-    }
-    
-    func setUpSessionManager(_ sessionId : String){ //Calling this one first
         self.webSocket = Websocket.shared
         self.webSocket?.sessionConsumerDelegate = self
-        self.sessionId = sessionId
     }
     
-    func consumeProducer(producerId : String, producerInfo : SfuProducerUserInfo,type : CallingType){ //Then this one...
-        let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId)
-        consumer.start()
-        consumer.sendOffer(type: type)
+    func setUpSessionManager(_ sessionId : String,callType : CallingType){ //Calling this one first
+        self.sessionId = sessionId
+        self.callType =  callType
+    }
+    
+    func consumeProducer(producerId : String, producerInfo : SfuProducerUserInfo){ //Then this one...
+        guard let callType = self.callType else {
+            print("Calling Type is nil")
+            return
+        }
+        DispatchQueue.main.async {
+            print("Starting Consuming Producer......")
+            let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId)
+            self.addConsumer(consumer: consumer)
+           
+            consumer.sfuManagerDelegate = self
+            consumer.start()
+            consumer.sendOffer(type: callType)
+        }
+    }
+    
+    func handleProducers(prodcuersList : [SfuProducerUserInfo]){
+        prodcuersList.forEach{ info in
+            print("Ready to consume : \(info.producer_user_id)")
+            self.consumeProducer(producerId: info.producer_user_id, producerInfo: info)
+        }
     }
     
     
     
     func processSignalingMessage(_ message: String,websocketMessage : WSMessage, clientId : String) -> Void {
-            guard let i = findConsumerIndexById(producerId: clientId) else {
+        print("Process Signaling for(Consumer) \(clientId)")
+        print(message)
+        guard let i = self.findConsumerIndexById(producerId: clientId) else {
                 print("consumer not found")
                 return
             }
+            
             let signalMessage = SignalMessage.from(message: message)
 //    
             switch signalMessage {
             case .candidate(let candidate):
-                print("Recevie candidate")
+                print("Recevie candidate(CONSUMER)")
                 if !self.consumerMap[i].isSetRemoteSDP {
                     print("Not yet set remote DESC before candidate(Consumer)............!!!!!!!!!!!!!")
                     self.consumerMap[i].updateCandindateList(candindate: candidate)
@@ -84,8 +107,8 @@ class SFUConsumerManager : ObservableObject {
     
                 break
             case .answer(let answer):
-                print("Recevie answer") //receving answer -> offer is the remoteSDP for the receiver
-//    
+                print("Recevie answer(CONSUMER)") //receving answer -> offer is the remoteSDP for the receiver
+//
                 if self.consumerMap[i].isSetRemoteSDP {
                     debugPrint("Not need to send more answer")
                     return
@@ -112,11 +135,17 @@ class SFUConsumerManager : ObservableObject {
         }
     
     private func findConsumerIndexById(producerId : String) -> Int?{
+        
         return self.consumerMap.firstIndex(where: {$0.clientId == producerId})
     }
+    
+    private func addConsumer(consumer : SFUConsumer) {
+        self.consumerMap.append(consumer)
+    }
+
 }
 
-extension SFUConsumerManager {
+extension SFUConsumerManager : SFUConsumserManagerDelegate {
     func SFUConsumserManager(_ message : Data,signalType: SFUSignalType,producerId : String?){
         
         guard let sdpStr = message.toJSONString else {
@@ -156,10 +185,12 @@ extension SFUConsumerManager : WebSocketDelegate {
             return
         }
         //Some event for consuming only
+      
         switch(data.eventType){
         case EventType.SFU_EVENT_CONSUMER_SDP.rawValue:
             do{
                 let resp = try JSONDecoder().decode(SFUConsumeProducerResp.self, from: Data(content.utf8))
+                
                 self.processSignalingMessage(resp.SDPType,websocketMessage: data, clientId: resp.producer_id)
             }catch(let err){
                 print(err.localizedDescription)
@@ -184,6 +215,10 @@ extension SFUConsumerManager : WebSocketDelegate {
                 //Receive ice candindate.
                 let resp = try JSONDecoder().decode(SfuNewProducerResp.self, from: Data(content.utf8))
                 print(resp)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+                    self.consumeProducer(producerId: resp.producer_info.producer_user_id, producerInfo: resp.producer_info)
+                }
+             
             }catch(let err){
                 print(err.localizedDescription)
             }
@@ -191,12 +226,21 @@ extension SFUConsumerManager : WebSocketDelegate {
             
         case EventType.SFU_EVENT_CONSUMER_CLOSE.rawValue:
             print("Handling a Producer left the session...")
-            
+        
+            break
+        case EventType.SFU_EVENT_PRODUCER_CONNECTED.rawValue:
+            do{
+                //Receive ice candindate.
+                print("SFU_conncected.")
+                let resp = try JSONDecoder().decode(SFUConnectSessionResp.self, from: Data(content.utf8))
+                print(resp)
+                self.handleProducers(prodcuersList: resp.session_producers)
+            }catch(let err){
+                print(err.localizedDescription)
+            }
             break
             
-        case EventType.SFU_EVENT_GET_PRODUCERS.rawValue:
-            print("TODO: Handling all producer...")
-            break
+
         default:
             print("UNKNOW event :\(data.eventType ?? "--")")
             break
@@ -239,7 +283,7 @@ class SFUConsumer  : ObservableObject{
     @Published var userInfo : SfuProducerUserInfo
     
     private var candidateList : [RTCIceCandidate] = []
-    private var sfuManagerDelegate : SFUConsumserManagerDelegate?
+    var sfuManagerDelegate : SFUConsumserManagerDelegate?
     var webRTCClient : WebRTCClient?
 
     
@@ -323,7 +367,8 @@ class SFUConsumer  : ObservableObject{
 
 extension SFUConsumer {
     func sendOffer(type : CallingType){
-        if self.isConnectd && !self.isSetRemoteSDP && !self.isSetLoaclSDP {
+        print("Sending Consumer offer....")
+        if !self.isSetRemoteSDP && !self.isSetLoaclSDP {
             self.webRTCClient?.offer(){ sdp in
                 DispatchQueue.main.async {
                     self.isSetLoaclSDP = true
@@ -374,16 +419,19 @@ extension SFUConsumer : WebRTCClientDelegate{
     }
     
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState){
+        print("Consuming Producer Connection Status Changed :\(state)")
         DispatchQueue.main.async {
             self.connectionStatus = state
             switch state {
             case .connected, .completed:
-                SoundManager.shared.stopPlaying()
+//                SoundManager.shared.stopPlaying()
                 self.callState = .Connected
+                print("(Consumer)Connected.")
             case .disconnected,.failed, .closed:
-                
+                print("(Consumer)Ended.")
                 self.callState = .Ended
             case .new, .checking, .count:
+                print("(Consumer)Connecting.")
                 self.callState = .Connecting
             @unknown default:
                 break
