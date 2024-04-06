@@ -35,6 +35,7 @@
 		2035126A29F6637C00139AD3 /* SenderInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126829F6637B00139AD3 /* SenderInfo+CoreDataClass.swift */; };
 		2035126B29F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126929F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift */; };
 		2035126D29F6827900139AD3 /* GroupProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035126C29F6827900139AD3 /* GroupProfileEditView.swift */; };
+		20376B192BBA6936000F666D /* GroupCallingVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20376B182BBA6936000F666D /* GroupCallingVideoView.swift */; };
 		203D5DA52A62CD28003E1A1A /* SearchGroupProfileResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203D5DA42A62CD28003E1A1A /* SearchGroupProfileResultView.swift */; };
 		203D5DA82A6BBF86003E1A1A /* SearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203D5DA72A6BBF86003E1A1A /* SearchState.swift */; };
 		203D5DAA2A6BBFB1003E1A1A /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203D5DA92A6BBFB1003E1A1A /* SoundManager.swift */; };
@@ -246,6 +247,7 @@
 		2035126829F6637B00139AD3 /* SenderInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SenderInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
 		2035126929F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SenderInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		2035126C29F6827900139AD3 /* GroupProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupProfileEditView.swift; sourceTree = "<group>"; };
+		20376B182BBA6936000F666D /* GroupCallingVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCallingVideoView.swift; sourceTree = "<group>"; };
 		203D5DA42A62CD28003E1A1A /* SearchGroupProfileResultView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchGroupProfileResultView.swift; sourceTree = "<group>"; };
 		203D5DA72A6BBF86003E1A1A /* SearchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchState.swift; sourceTree = "<group>"; };
 		203D5DA92A6BBFB1003E1A1A /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
@@ -554,6 +556,7 @@
 				20BBAA4229A669BB00ED3245 /* PersonChatCallingView.swift */,
 				201140F129A49A6600015AD8 /* ChattingView.swift */,
 				20A280132B9C529500D1BECE /* GroupCallingView.swift */,
+				20376B182BBA6936000F666D /* GroupCallingVideoView.swift */,
 			);
 			path = chat;
 			sourceTree = "<group>";
@@ -1224,6 +1227,7 @@
 				201CB7AD29BED1D20036D181 /* Model.xcdatamodeld in Sources */,
 				20A280122B9C516300D1BECE /* SFUProducerViewModel.swift in Sources */,
 				20C86BDA2AC7C81900A29661 /* UploadFileRequest.swift in Sources */,
+				20376B192BBA6936000F666D /* GroupCallingVideoView.swift in Sources */,
 				20C86B702AC7C0C100A29661 /* SignUpRequest.swift in Sources */,
 				20C86BC12AC7C62400A29661 /* UpdateGroupAvatarResponse.swift in Sources */,
 				20C86BE42AC7C8DA00A29661 /* GetStoryInfoRequest.swift in Sources */,

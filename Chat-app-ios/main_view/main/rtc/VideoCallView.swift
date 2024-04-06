@@ -88,11 +88,11 @@ struct VideoCallView: View {
     @ViewBuilder
     private func videoCallingView() -> some View {
         VStack{
-            RTCVideoView(track: self.videoCallVM.remoteVideoTrack,webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershRemoteTrack},
+            RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershRemoteTrack},
                                                                                                                                                                   set: { p in self.videoCallVM.refershRemoteTrack = p}))
             //            .edgesIgnoringSafeArea(.all)
 
-                .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+            .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
             .background{
                 if self.videoCallVM.callState != .Connected{
                     ZStack{
@@ -153,7 +153,7 @@ struct VideoCallView: View {
         }
         .overlay(alignment:.bottomLeading){
             VStack(alignment:.trailing){
-                RTCVideoView(track: self.videoCallVM.localVideoTrack,webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershLocalTrack},
+                RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershLocalTrack},
                                                                                                                                                       set: { p in self.videoCallVM.refershLocalTrack = p}))
                 .frame(width: 150, height: 220)
                 .cornerRadius(25)

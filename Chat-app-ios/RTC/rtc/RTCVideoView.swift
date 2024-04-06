@@ -10,28 +10,36 @@ import WebRTC
 import SwiftUI
 
 struct RTCVideoView : UIViewRepresentable {
-    let track : RTCVideoTrack?
+//    let track : RTCVideoTrack?
     let webClient : WebRTCClient?
     let isRemote : Bool
     let isVoice : Bool
     @Binding var refershTrack : Bool
     func makeUIView(context: Context) -> RTCMTLVideoView {
         let view = RTCMTLVideoView(frame: .zero)
-        if isVoice {
-            return view
-        }
+        #if arch(arm64)
+            // Using metal (arm64 only)
+            print("metal")
+        #else
+            print("NON metal")
+        #endif
         
-        view.videoContentMode = .scaleAspectFill
-        if isRemote {
-            self.webClient?.renderRemoteVideo(renderer: view)
-        }else {
-            self.webClient?.startCapture(renderer: view)
-        }
+//        if isVoice {
+//            return view
+//        }
+//        
+//        view.videoContentMode = .scaleAspectFill
+//        if isRemote {
+//            self.webClient?.renderRemoteVideo(renderer: view)
+//        }else {
+//            self.webClient?.startCapture(renderer: view)
+//        }
 
         return view
     }
     
     func updateUIView(_ uiView: RTCMTLVideoView, context: Context) {
+    
         if refershTrack {
             if isVoice {
                 DispatchQueue.main.async {
@@ -53,3 +61,5 @@ struct RTCVideoView : UIViewRepresentable {
         }
     }
 }
+
+

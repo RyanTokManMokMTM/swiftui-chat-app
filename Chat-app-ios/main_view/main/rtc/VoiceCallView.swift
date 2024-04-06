@@ -128,9 +128,9 @@ struct VoiceCallView: View {
             .padding(.horizontal)
             .background{
                 ZStack{
-                    RTCVideoView(track: self.videoCallVM.remoteVideoTrack,webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: true,refershTrack: self.$videoCallVM.refershLocalTrack).frame(width: 0, height: 0)
-                    
-                    RTCVideoView(track: self.videoCallVM.localVideoTrack,webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: true,refershTrack: self.$videoCallVM.refershRemoteTrack).frame(width: 0, height: 0)
+                    RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: true,refershTrack: self.$videoCallVM.refershLocalTrack).frame(width: 0, height: 0)
+                  
+                    RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: true,refershTrack: self.$videoCallVM.refershRemoteTrack).frame(width: 0, height: 0)
                   
                 }
                 .hidden()

@@ -27,7 +27,7 @@ extension RTCIceConnectionState: CustomStringConvertible {
 protocol WebRTCClientDelegate: class {
     func webRTCClient(_ client: WebRTCClient, sendData data: Data)
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
-//    func webRTCClient(_ client: WebRTCClient, didReceivedRemoteStream stream: RTCVideoTrack)
+    func webRTCClient(_ client: WebRTCClient, didReceivedRemoteStream stream: RTCMediaStream)
     
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
     func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data)
@@ -58,6 +58,7 @@ class WebRTCClient : NSObject {
     var localVideoTrack : RTCVideoTrack?
     var localAudioTrack : RTCAudioTrack?
     var remoteVIdeoTrack : RTCVideoTrack?
+    var remoteAudioTrack : RTCAudioTrack?
     var videoCapture : RTCVideoCapturer?
     
     private var hsaReceivedSDP = false
@@ -78,7 +79,10 @@ class WebRTCClient : NSObject {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement" : "true"])
         let config = genConfig()
         self.peerConn = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: self)
-        
+        guard let peerConn = peerConn else {
+            print("Peer connection set Up error")
+            return
+        }
         createMedia(isProducer: isProducer)
     }
     
@@ -91,7 +95,7 @@ class WebRTCClient : NSObject {
     }
     
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void){
-        guard let peerConn = peerConn else {
+        guard let peerConn = self.peerConn else {
             print("Peer connection have't created.")
             return
         }
@@ -187,6 +191,7 @@ class WebRTCClient : NSObject {
         localAudioTrack = nil
         videoCapture = nil
         remoteVIdeoTrack = nil
+        remoteAudioTrack = nil
     }
     
     //MARK: set video to true/false or check video is enable
@@ -220,10 +225,10 @@ extension WebRTCClient {
     private func genConfig() -> RTCConfiguration {
         let config = RTCConfiguration()
         //MARK: do we need SSL?
-        let cert = RTCCertificate.generate(withParams:  ["expires": NSNumber(value: 100000),"name": "RSASSA-PKCS1-v1_5"])
+//        let cert = RTCCertificate.generate(withParams:  ["expires": NSNumber(value: 100000),"name": "RSASSA-PKCS1-v1_5"])
         config.iceServers = [RTCIceServer(urlStrings: Config.default.IceServers)]
         config.sdpSemantics = RTCSdpSemantics.unifiedPlan //sdp plan
-        config.certificate = cert
+//        config.certificate = cert
         return config
     }
     
@@ -248,8 +253,11 @@ extension WebRTCClient {
         if let dataChannel = createDataChannel() {
             dataChannel.delegate = self
             self.localDataChannel = dataChannel
+        }else{
+            print("Create data channel failed")
         }
     }
+    
     
     
     private func createMediaAsConsumer() {
@@ -257,19 +265,7 @@ extension WebRTCClient {
             print("peer connection haven't created.")
             return
         }
-        let streamID = "stream"
-        //MARK: no need to add track as a consumner
-        //put the source to peer connection and send
-//        let audioTrack = createAutioTrack()
-//        self.localAudioTrack = audioTrack
-//        peerConn.add(audioTrack, streamIds: [streamID])
-        
-//        let videoTrack = createVideoTrack()
-//        self.localVideoTrack = videoTrack
-//        peerConn.add(videoTrack, streamIds: [streamID])
-        
         remoteVIdeoTrack = peerConn.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
-        
         //TODO: Data channel for data only?
         if let dataChannel = createDataChannel() {
             dataChannel.delegate = self
@@ -279,13 +275,13 @@ extension WebRTCClient {
     
     private func createVideoTrack() -> RTCVideoTrack{
         let source = WebRTCClient.factory.videoSource()
-
+//        self.videoCapture = RTCCameraVideoCapturer(delegate: source)
         #if targetEnvironment(simulator)
         self.videoCapture = RTCFileVideoCapturer(delegate: source)
         #else
         self.videoCapture = RTCCameraVideoCapturer(delegate: source)
         #endif
-        
+//        
         let track = WebRTCClient.factory.videoTrack(with: source, trackId: "video0")
         return track
     }
@@ -312,6 +308,7 @@ extension WebRTCClient {
     
     func sendData(_ data: Data) {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
+        print(self.remoteDataChannel  == nil)
         self.remoteDataChannel?.sendData(buffer)
     }
     
@@ -320,7 +317,7 @@ extension WebRTCClient {
             return
         }
     
-        guard let (camera,format,fps) = frontCamera() else {
+        guard let (camera,format,fps) = backCamera() else {
             return
         }
         
@@ -352,7 +349,7 @@ extension WebRTCClient {
                                   format: format,
                                   fps: Int(fps.maxFrameRate))
         }else {
-            guard let (camera,format,fps) = backCamera() else {
+            guard let (camera,format,fps) = frontCamera() else {
                 return
             }
             
@@ -403,6 +400,10 @@ extension WebRTCClient {
     }
     
     func renderRemoteVideo(renderer : RTCVideoRenderer) {
+        guard let _ = self.remoteVIdeoTrack else{
+            debugPrint("Render video - video track is nil")
+            return
+        }
         self.remoteVIdeoTrack?.add(renderer)
     }
 }
@@ -428,8 +429,8 @@ extension WebRTCClient {
 //        //candindate ->
 //        guard let peerConn = self.peerConn ,hasReceivedSPD else {
 //            return
-//        }
-//         
+//        }channel
+//
 //        peerConn.add(candindate){ err in
 //            if err != nil {
 //                print("add candindate failed : \(err!.localizedDescription)")
@@ -447,7 +448,10 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
-        debugPrint("peerConnection did add stream")
+        debugPrint("peerConnection did add stream to connection..........")
+        debugPrint(stream.streamId)
+        
+//        remoteVIdeoTrack = self.peerConn?.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {
@@ -476,7 +480,7 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
-        print("didOpen Data Channel")
+        print("didOpen Data Channel ----- Can send the message via data channel")
         self.remoteDataChannel = dataChannel
     }
 }
@@ -487,6 +491,7 @@ extension WebRTCClient: RTCDataChannelDelegate {
     }
     
     func dataChannel(_ dataChannel: RTCDataChannel, didReceiveMessageWith buffer: RTCDataBuffer) {
+        print("Received message")
         self.delegate?.webRTCClient(self, didReceiveData: buffer.data)
     }
 }

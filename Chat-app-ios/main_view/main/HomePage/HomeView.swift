@@ -107,9 +107,15 @@ struct HomeView: View {
             }
         }
         .fullScreenCover(isPresented: self.$producerVM.isIncomingCall){
-           GroupCallingView()
-                .environmentObject(producerVM)
-                .environmentObject(consumerVM)
+            if self.producerVM.callingType == .Voice {
+                GroupCallingView()
+                     .environmentObject(producerVM)
+                     .environmentObject(consumerVM)
+            }else {
+                GroupCallingVideoView()
+                     .environmentObject(producerVM)
+                     .environmentObject(consumerVM)
+            }
         }
 
         .sheet(isPresented: $isShowSheet){

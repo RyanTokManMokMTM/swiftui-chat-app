@@ -156,6 +156,7 @@ struct ChattingView: View {
                                 .foregroundColor(Color.green)
                                 .bold()
                         }
+                        
                         Button(action:{
                             DispatchQueue.main.async {
                                 setUpReceiverInfo()
@@ -185,7 +186,7 @@ struct ChattingView: View {
                         }
                         Button(action:{
                             DispatchQueue.main.async {
-                                setUpVideoCallingInfo()
+                                setUpVideoCallingForGroup()
                             }
 
                         }){
@@ -1546,6 +1547,7 @@ extension ChattingView {
             return
         }
         
+        
         self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
         self.sfuProducerVM.voicePrepare() //TODO: To disable video
         self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
@@ -1567,14 +1569,18 @@ extension ChattingView {
             print("clientId(Producer) not exist")
             return
         }
-//        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
-//        self.sfuProducerVM.videoPrepare() //TODO: To enable video
-//        self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
-//        self.sfuProducerVM.callingType = .Video //TODO: Type is voice
-//        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
-//        
-//        //Sending the offer
-//        self.sfuProducerVM.sendOffer(type:.Video) //TODO: sending offer to receiver
+        
+        //Sending the offer
+        self.videoCallVM.sendOffer(type:.Video) //TODO: sending offer to receiver
+        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
+        self.sfuProducerVM.videoPrepare() //TODO: To disable video
+        self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
+        self.sfuProducerVM.callingType = .Video //TODO: Type is voice
+        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
+        
+        //Sending the offer
+        self.sfuProducerVM.sendOffer(type:.Video) //TODO: sending offer to receiver
+        self.sfuConsumerVM.setUpSessionManager(sessionId,callType: .Video)
     }
 
 }

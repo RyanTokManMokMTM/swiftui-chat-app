@@ -225,6 +225,13 @@ extension RTCViewModel : WebRTCClientDelegate{
         self.sendSingleMessage(data)
     }
     
+    func webRTCClient(_ client: WebRTCClient, didReceivedRemoteStream stream: RTCMediaStream) {
+        DispatchQueue.main.async{
+            self.refershRemoteTrack = true
+            
+        }
+    }
+    
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
 //        print("receivd a local candindate!")
         guard let candinateData = candidate.JSONData() else {

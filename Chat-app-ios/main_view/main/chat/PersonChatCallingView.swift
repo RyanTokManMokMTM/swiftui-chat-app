@@ -15,7 +15,7 @@ struct PersonChatCallingView: View {
     var body: some View {
 //        ZStack(alignment: .bottomLeading){
             ZStack{
-                RTCVideoView(track: self.videoCallVM.remoteVideoTrack,webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershRemoteTrack},
+                RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershRemoteTrack},
                                                                                                                                                       set: { p in self.videoCallVM.refershRemoteTrack = p}))
                 .edgesIgnoringSafeArea(.all)
                 .background(BlurView().edgesIgnoringSafeArea(.all))
@@ -23,7 +23,7 @@ struct PersonChatCallingView: View {
             }
 
             .overlay(alignment:.bottomLeading){
-                RTCVideoView(track: self.videoCallVM.localVideoTrack,webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershLocalTrack},
+                RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershLocalTrack},
                                                                                                                                                       set: { p in self.videoCallVM.refershLocalTrack = p}))
                 .frame(width: 150, height: 220)
                 .cornerRadius(25)

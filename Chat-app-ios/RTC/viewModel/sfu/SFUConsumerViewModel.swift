@@ -265,6 +265,7 @@ class SFUConsumer  : ObservableObject{
     @Published var receivedMessage : String = ""
 
     @Published var remoteVideoTrack : RTCVideoTrack?
+    @Published var remoteAudioTrack : RTCAudioTrack?
     @Published var localVideoTrack : RTCVideoTrack?
 
     @Published var refershRemoteTrack : Bool = false
@@ -327,10 +328,11 @@ class SFUConsumer  : ObservableObject{
     
     func prepare(){
         remoteVideoTrack = self.webRTCClient?.remoteVIdeoTrack
+        remoteAudioTrack = self.webRTCClient?.remoteAudioTrack
         refershRemoteTrack = true
     }
     
-    
+
     private func clear(){
 //        self.sessionId = nil
         self.clientId = nil
@@ -391,6 +393,10 @@ extension SFUConsumer {
 }
 
 extension SFUConsumer : WebRTCClientDelegate{
+    func webRTCClient(_ client: WebRTCClient, didReceivedRemoteStream stream: RTCMediaStream) {
+        
+    }
+    
     func webRTCClient(_ client: WebRTCClient, sendData data: Data) {
         print("TODO: Send Data")
 //        self.sendSingleMessage(data)

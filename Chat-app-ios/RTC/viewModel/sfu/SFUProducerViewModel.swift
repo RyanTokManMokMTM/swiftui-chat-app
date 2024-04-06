@@ -23,8 +23,11 @@ class SFProducerViewModel : ObservableObject {
     @Published var IsReceivedMessage : Bool = false
     @Published var receivedMessage : String = ""
     
-    @Published var remoteVideoTrack : RTCVideoTrack?
     @Published var localVideoTrack : RTCVideoTrack?
+    @Published var localAudioTrack : RTCAudioTrack?
+    
+    @Published var remoteVideoTrack : RTCVideoTrack?
+    @Published var remoteAudioTrack : RTCAudioTrack?
     
     @Published var refershRemoteTrack : Bool = false
     @Published var refershLocalTrack : Bool = false
@@ -83,8 +86,11 @@ class SFProducerViewModel : ObservableObject {
     }
     
     func prepare(){
-        remoteVideoTrack = self.webRTCClient?.remoteVIdeoTrack
         localVideoTrack = self.webRTCClient?.localVideoTrack
+//        localAudioTrack = self.webRTCClient?.localAudioTrack
+        
+//        remoteAudioTrack = self.webRTCClient?.remoteAudioTrack
+        remoteVideoTrack = self.webRTCClient?.remoteVIdeoTrack
         refershRemoteTrack = true
         refershLocalTrack = true
     }
@@ -110,6 +116,8 @@ class SFProducerViewModel : ObservableObject {
             self.localCanindate = 0
             self.refershRemoteTrack = true
             self.refershLocalTrack = true
+            self.localVideoTrack = nil
+            self.remoteVideoTrack = nil
             
 //            self.toUserUUID = nil
 //            self.userName = nil
@@ -146,6 +154,9 @@ extension SFProducerViewModel {
                     self.isSetLoaclSDP = true
                 }
                 
+                print("OFFER: =====================================")
+                print(sdp)
+                print("OFFER END: =====================================")
                 //DO WE SEND USER NAME AND UUID AND AVATAR TOO?
                 if let sdpData = sdp.JSONData(type: type) {
                     //send via websocket
@@ -195,6 +206,11 @@ extension SFProducerViewModel : WebRTCClientDelegate{
         print("TODO: Send Data")
 //        self.sendSingleMessage(data)
     }
+    func webRTCClient(_ client: WebRTCClient, didReceivedRemoteStream stream: RTCMediaStream) {
+        DispatchQueue.main.async {
+            self.refershRemoteTrack = true
+        }
+    }
     
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
 //        print("receivd a local candindate!")
@@ -216,6 +232,8 @@ extension SFProducerViewModel : WebRTCClientDelegate{
             let message = String(data: data, encoding: .utf8) ?? ("Binary \(data.count) bytes")
             self.receivedMessage = message
             self.IsReceivedMessage = true
+            
+            print("Received message : -> \(message)")
         }
     }
     
@@ -306,8 +324,9 @@ extension SFProducerViewModel {
            
             break
         case .answer(let answer):
-            print("Recevie answer:") //receving answer -> offer is the remoteSDP for the receiver
-            
+            print("ANS ==============================================") //receving answer -> offer is the remoteSDP for the receiver
+            print(answer)
+            print("ANS ==============================================")
             if self.isSetRemoteSDP {
                 debugPrint("Not need to send more answer")
                 return
