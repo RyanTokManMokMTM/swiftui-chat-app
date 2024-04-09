@@ -17,24 +17,6 @@ struct RTCVideoView : UIViewRepresentable {
     @Binding var refershTrack : Bool
     func makeUIView(context: Context) -> RTCMTLVideoView {
         let view = RTCMTLVideoView(frame: .zero)
-        #if arch(arm64)
-            // Using metal (arm64 only)
-            print("metal")
-        #else
-            print("NON metal")
-        #endif
-        
-//        if isVoice {
-//            return view
-//        }
-//        
-//        view.videoContentMode = .scaleAspectFill
-//        if isRemote {
-//            self.webClient?.renderRemoteVideo(renderer: view)
-//        }else {
-//            self.webClient?.startCapture(renderer: view)
-//        }
-
         return view
     }
     

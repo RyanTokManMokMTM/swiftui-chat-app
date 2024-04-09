@@ -20,8 +20,6 @@
 		20164E3B29BADCDA00F61813 /* SearchUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20164E3A29BADCDA00F61813 /* SearchUserViewModel.swift */; };
 		20164E3D29BAE51700F61813 /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20164E3C29BAE51700F61813 /* CustomSearchBar.swift */; };
 		20198A252A500B3E00860018 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20198A242A500B3E00860018 /* View.swift */; };
-		201A45D92BA6CD4000344A95 /* SFUProducerStreamingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A45D82BA6CD4000344A95 /* SFUProducerStreamingView.swift */; };
-		201A45DB2BA6CD5400344A95 /* SFUConsumerStreamingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A45DA2BA6CD5400344A95 /* SFUConsumerStreamingView.swift */; };
 		201CB7AD29BED1D20036D181 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 201CB7AB29BED1D20036D181 /* Model.xcdatamodeld */; };
 		201CB7B329BEEAFE0036D181 /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CB7B229BEEAFE0036D181 /* NavigationState.swift */; };
 		201E9CC02A99DC910068429A /* StoryViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201E9CBF2A99DC910068429A /* StoryViewer.swift */; };
@@ -107,7 +105,7 @@
 		209F7AC129BC42DC003701E8 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209F7AC029BC42DC003701E8 /* PersistenceController.swift */; };
 		20A1B4F029F5252C0088FD6A /* OtherUserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A1B4EF29F5252C0088FD6A /* OtherUserProfileView.swift */; };
 		20A280122B9C516300D1BECE /* SFUProducerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280112B9C516300D1BECE /* SFUProducerViewModel.swift */; };
-		20A280142B9C529500D1BECE /* GroupCallingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280132B9C529500D1BECE /* GroupCallingView.swift */; };
+		20A280142B9C529500D1BECE /* GroupCallingAudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280132B9C529500D1BECE /* GroupCallingAudioView.swift */; };
 		20A280172B9C5B0F00D1BECE /* request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280162B9C5B0F00D1BECE /* request.swift */; };
 		20A280192B9C5B1B00D1BECE /* response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280182B9C5B1B00D1BECE /* response.swift */; };
 		20A280222B9D74A200D1BECE /* SFUConsumerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A280212B9D74A200D1BECE /* SFUConsumerViewModel.swift */; };
@@ -231,8 +229,6 @@
 		20164E3A29BADCDA00F61813 /* SearchUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserViewModel.swift; sourceTree = "<group>"; };
 		20164E3C29BAE51700F61813 /* CustomSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
 		20198A242A500B3E00860018 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
-		201A45D82BA6CD4000344A95 /* SFUProducerStreamingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUProducerStreamingView.swift; sourceTree = "<group>"; };
-		201A45DA2BA6CD5400344A95 /* SFUConsumerStreamingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUConsumerStreamingView.swift; sourceTree = "<group>"; };
 		201CB7AC29BED1D20036D181 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		201CB7B229BEEAFE0036D181 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
 		201E9CBF2A99DC910068429A /* StoryViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewer.swift; sourceTree = "<group>"; };
@@ -321,7 +317,7 @@
 		209F7AC229BC64D4003701E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		20A1B4EF29F5252C0088FD6A /* OtherUserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserProfileView.swift; sourceTree = "<group>"; };
 		20A280112B9C516300D1BECE /* SFUProducerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUProducerViewModel.swift; sourceTree = "<group>"; };
-		20A280132B9C529500D1BECE /* GroupCallingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCallingView.swift; sourceTree = "<group>"; };
+		20A280132B9C529500D1BECE /* GroupCallingAudioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCallingAudioView.swift; sourceTree = "<group>"; };
 		20A280162B9C5B0F00D1BECE /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
 		20A280182B9C5B1B00D1BECE /* response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = response.swift; sourceTree = "<group>"; };
 		20A280212B9D74A200D1BECE /* SFUConsumerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUConsumerViewModel.swift; sourceTree = "<group>"; };
@@ -463,8 +459,8 @@
 		201A45D72BA6CD2500344A95 /* SFU */ = {
 			isa = PBXGroup;
 			children = (
-				201A45D82BA6CD4000344A95 /* SFUProducerStreamingView.swift */,
-				201A45DA2BA6CD5400344A95 /* SFUConsumerStreamingView.swift */,
+				20A280132B9C529500D1BECE /* GroupCallingAudioView.swift */,
+				20376B182BBA6936000F666D /* GroupCallingVideoView.swift */,
 			);
 			path = SFU;
 			sourceTree = "<group>";
@@ -550,13 +546,12 @@
 		203D5D9E2A62CB0E003E1A1A /* chat */ = {
 			isa = PBXGroup;
 			children = (
+				20DC2E4E2BC42F5800B31C3D /* New Group */,
 				201A45D72BA6CD2500344A95 /* SFU */,
 				20D3984C2AE667A800DE66FC /* Sticker */,
 				2073D66E29A252B800AA29D9 /* Message.swift */,
 				20BBAA4229A669BB00ED3245 /* PersonChatCallingView.swift */,
 				201140F129A49A6600015AD8 /* ChattingView.swift */,
-				20A280132B9C529500D1BECE /* GroupCallingView.swift */,
-				20376B182BBA6936000F666D /* GroupCallingVideoView.swift */,
 			);
 			path = chat;
 			sourceTree = "<group>";
@@ -1096,6 +1091,13 @@
 			path = Sticker;
 			sourceTree = "<group>";
 		};
+		20DC2E4E2BC42F5800B31C3D /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		20F47B2B29C598BD003D5CD0 /* uikit */ = {
 			isa = PBXGroup;
 			children = (
@@ -1185,7 +1187,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				201A45D92BA6CD4000344A95 /* SFUProducerStreamingView.swift in Sources */,
 				205888E02AF5DF3B002C5086 /* AddUserStickerRequest.swift in Sources */,
 				20C86BE02AC7C87F00A29661 /* CreateStoryResponse.swift in Sources */,
 				20C86BF92AC7C99500A29661 /* CreateStoryLikeResponse.swift in Sources */,
@@ -1292,7 +1293,6 @@
 				20C86C042AC7CBE100A29661 /* UpdateUserCoverResponse.swift in Sources */,
 				20E0966829FE766800B5EBA7 /* Doc.swift in Sources */,
 				20C86B862AC7C21C00A29661 /* UpdateUserStateResponse.swift in Sources */,
-				201A45DB2BA6CD5400344A95 /* SFUConsumerStreamingView.swift in Sources */,
 				20D398602AE67C4100DE66FC /* StickerGroupResources+CoreDataProperties.swift in Sources */,
 				208B4CBA29F3CA3F001F2EF1 /* UserProfileEditView.swift in Sources */,
 				20D3985F2AE67C4100DE66FC /* StickerGroupResources+CoreDataClass.swift in Sources */,
@@ -1318,7 +1318,7 @@
 				2090350129FD06FB00DE66AF /* VideoPlayerView.swift in Sources */,
 				204C4A4429B72A22007AA02E /* ProfileView.swift in Sources */,
 				203D5DAC2A6BC983003E1A1A /* StoryUserView.swift in Sources */,
-				20A280142B9C529500D1BECE /* GroupCallingView.swift in Sources */,
+				20A280142B9C529500D1BECE /* GroupCallingAudioView.swift in Sources */,
 				20C86B802AC7C1B200A29661 /* UpdateUserInfoRequest.swift in Sources */,
 				208F5DCD29F4E8A600549483 /* StatusMessageEditView.swift in Sources */,
 				20C86C082AC7CE1100A29661 /* requests.swift in Sources */,

@@ -111,10 +111,7 @@ struct VoiceCallView: View {
                 }
                 
                 Spacer()
-                Text("connection state : \(self.videoCallVM.connectionStatus.description)")
-                Text("call State : \(self.videoCallVM.callState.rawValue)")
-                Text("local : \(self.videoCallVM.localCanindate)")
-                Text("remote : \(self.videoCallVM.remoteCanindate)")
+
 //
                 if self.videoCallVM.callState == .Incoming {
                     self.IncomingCall()

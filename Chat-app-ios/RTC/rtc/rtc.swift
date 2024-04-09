@@ -247,7 +247,7 @@ extension WebRTCClient {
         self.localVideoTrack = videoTrack
         peerConn.add(videoTrack, streamIds: [streamID])
         
-        remoteVIdeoTrack = peerConn.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
+//        remoteVIdeoTrack = peerConn.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
         
         //TODO: Data channel for data only?
         if let dataChannel = createDataChannel() {
@@ -450,7 +450,18 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         debugPrint("peerConnection did add stream to connection..........")
         debugPrint(stream.streamId)
-        
+        debugPrint("audio tracks \(stream.audioTracks.count)")
+        debugPrint("video tracks \(stream.videoTracks.count)")
+        if let track = stream.videoTracks.first {
+              print("video track faund")
+             remoteVIdeoTrack = peerConnection.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
+            self.remoteVIdeoTrack = track
+          }
+          
+          if let audioTrack = stream.audioTracks.first{
+              print("audio track faund")
+//              audioTrack.source.volume = 8
+          }
 //        remoteVIdeoTrack = self.peerConn?.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
     }
     

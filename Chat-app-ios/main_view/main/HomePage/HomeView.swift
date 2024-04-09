@@ -108,7 +108,7 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: self.$producerVM.isIncomingCall){
             if self.producerVM.callingType == .Voice {
-                GroupCallingView()
+                GroupCallingAudioView()
                      .environmentObject(producerVM)
                      .environmentObject(consumerVM)
             }else {

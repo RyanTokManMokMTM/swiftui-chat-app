@@ -33,7 +33,8 @@ class SFUConsumerManager : ObservableObject {
     private var cancellables = [AnyCancellable]()
     init(){
         self.consumerMap.forEach({
-                    let c = $0.objectWillChange.sink(receiveValue: { self.objectWillChange.send() })
+                    let c = $0.objectWillChange.sink(
+                        receiveValue: { self.objectWillChange.send() })
                     self.cancellables.append(c)
                 })
         self.webSocket = Websocket.shared
@@ -50,15 +51,15 @@ class SFUConsumerManager : ObservableObject {
             print("Calling Type is nil")
             return
         }
-        DispatchQueue.main.async {
-            print("Starting Consuming Producer......")
+//        DispatchQueue.main.async {
+//            print("Starting Consuming Producer......")
             let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId)
             self.addConsumer(consumer: consumer)
            
             consumer.sfuManagerDelegate = self
             consumer.start()
             consumer.sendOffer(type: callType)
-        }
+//        }
     }
     
     func handleProducers(prodcuersList : [SfuProducerUserInfo]){
@@ -135,13 +136,44 @@ class SFUConsumerManager : ObservableObject {
         }
     
     private func findConsumerIndexById(producerId : String) -> Int?{
-        
         return self.consumerMap.firstIndex(where: {$0.clientId == producerId})
     }
     
-    private func addConsumer(consumer : SFUConsumer) {
-        self.consumerMap.append(consumer)
+    private func closeConsumer(producerId : String){
+        guard let i = self.consumerMap.firstIndex(where: {$0.clientId == producerId}) else {
+            print("Close - Consumer not exist")
+            return
+        }
+        print("DisConnect consumer")
+        DispatchQueue.main.async {
+            print("Consumer Count \(self.consumerMap.count)")
+            self.consumerMap[i].DisConnect()
+            self.consumerMap.remove(at: i)
+            print("Consumer Count \(self.consumerMap.count)")
+        }
     }
+    
+    private func addConsumer(consumer : SFUConsumer) {
+        DispatchQueue.main.async {
+            self.consumerMap.append(consumer)
+        }
+    }
+    
+    
+    func closeAllConsumer(){
+        DispatchQueue.main.async {
+            self.consumerMap.forEach({ $0.webRTCClient?.disconnect()})
+            self.cancellables.forEach({ $0.cancel()})
+//            self.reset()
+        }
+    }
+    
+    private func reset(){
+        self.sessionId = nil
+        self.callType = nil
+//        self.consumerMap = []
+    }
+    
 
 }
 
@@ -225,7 +257,15 @@ extension SFUConsumerManager : WebSocketDelegate {
             break
             
         case EventType.SFU_EVENT_CONSUMER_CLOSE.rawValue:
-            print("Handling a Producer left the session...")
+            do{
+                //Receive ice candindate.
+                print("Consumer closed.")
+                let resp = try JSONDecoder().decode(SFUCloseConnectionResp.self, from: Data(content.utf8))
+                print(resp)
+                self.closeConsumer(producerId: resp.producer_id)
+            }catch(let err){
+                print(err.localizedDescription)
+            }
         
             break
         case EventType.SFU_EVENT_PRODUCER_CONNECTED.rawValue:
