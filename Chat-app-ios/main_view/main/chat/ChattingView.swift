@@ -1548,7 +1548,7 @@ extension ChattingView {
         }
         
         
-        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
+        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId, room: self.chatUserData) //TODO: creating a new peer if it don't init and setting RTC device
         self.sfuProducerVM.voicePrepare() //TODO: To disable video
         self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
         self.sfuProducerVM.callingType = .Voice //TODO: Type is voice
@@ -1572,7 +1572,7 @@ extension ChattingView {
         
         //Sending the offer
         self.videoCallVM.sendOffer(type:.Video) //TODO: sending offer to receiver
-        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId) //TODO: creating a new peer if it don't init and setting RTC device
+        self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId, room: self.chatUserData) //TODO: creating a new peer if it don't init and setting RTC device
         self.sfuProducerVM.videoPrepare() //TODO: To disable video
         self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
         self.sfuProducerVM.callingType = .Video //TODO: Type is voice

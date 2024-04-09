@@ -30,13 +30,15 @@ class SFUConsumerManager : ObservableObject {
 //    static var shared  = SFUConsumerManager()
     private var webSocket : Websocket?
     //Need to know for which client. and set it  to that webRTC client
-    private var cancellables = [AnyCancellable]()
+    private
+    var cancellables = [AnyCancellable]()
     init(){
-        self.consumerMap.forEach({
-                    let c = $0.objectWillChange.sink(
-                        receiveValue: { self.objectWillChange.send() })
-                    self.cancellables.append(c)
-                })
+        self.consumerMap = []
+//        self.consumerMap.forEach({
+//                    let c = $0.objectWillChange.sink(
+//                        receiveValue: { self.objectWillChange.send() })
+//                    self.cancellables.append(c)
+//                })
         self.webSocket = Websocket.shared
         self.webSocket?.sessionConsumerDelegate = self
     }
@@ -53,7 +55,7 @@ class SFUConsumerManager : ObservableObject {
         }
 //        DispatchQueue.main.async {
 //            print("Starting Consuming Producer......")
-            let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId)
+        let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId, index: self.consumerMap.count)
             self.addConsumer(consumer: consumer)
            
             consumer.sfuManagerDelegate = self
@@ -144,12 +146,13 @@ class SFUConsumerManager : ObservableObject {
             print("Close - Consumer not exist")
             return
         }
+        if self.consumerMap.isEmpty {
+            return
+        }
         print("DisConnect consumer")
         DispatchQueue.main.async {
-            print("Consumer Count \(self.consumerMap.count)")
             self.consumerMap[i].DisConnect()
             self.consumerMap.remove(at: i)
-            print("Consumer Count \(self.consumerMap.count)")
         }
     }
     
@@ -163,15 +166,14 @@ class SFUConsumerManager : ObservableObject {
     func closeAllConsumer(){
         DispatchQueue.main.async {
             self.consumerMap.forEach({ $0.webRTCClient?.disconnect()})
-            self.cancellables.forEach({ $0.cancel()})
-//            self.reset()
+            self.reset()
         }
     }
     
     private func reset(){
         self.sessionId = nil
         self.callType = nil
-//        self.consumerMap = []
+        self.consumerMap = []
     }
     
 
@@ -295,6 +297,7 @@ extension SFUConsumerManager : WebSocketDelegate {
 //For current user used.
 //MARK: same as
 class SFUConsumer  : ObservableObject{
+    @Published var index : Int
     @Published var isConnectd : Bool = false
     @Published var isSetLoaclSDP : Bool = false
     @Published var isSetRemoteSDP : Bool = false
@@ -329,7 +332,8 @@ class SFUConsumer  : ObservableObject{
 
     
     
-    init(userInfo : SfuProducerUserInfo,producerId : String){
+    init(userInfo : SfuProducerUserInfo,producerId : String,index : Int){
+        self.index = index
         self.userInfo = userInfo
         self.clientId = producerId
     }

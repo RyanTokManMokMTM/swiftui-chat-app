@@ -17,30 +17,38 @@ struct RTCVideoView : UIViewRepresentable {
     @Binding var refershTrack : Bool
     func makeUIView(context: Context) -> RTCMTLVideoView {
         let view = RTCMTLVideoView(frame: .zero)
+        DispatchQueue.main.async {
+            if isRemote {
+                self.webClient?.renderRemoteVideo(renderer: view)
+            }else {
+                self.webClient?.startCapture(renderer: view)
+            }
+            refershTrack = false
+        }
         return view
     }
     
     func updateUIView(_ uiView: RTCMTLVideoView, context: Context) {
-    
-        if refershTrack {
-            if isVoice {
-                DispatchQueue.main.async {
-                    refershTrack = false
-                }
-
-                return
-            }
-            
-            DispatchQueue.main.async {
-                if isRemote {
-                    self.webClient?.renderRemoteVideo(renderer: uiView)
-                }else {
-                    self.webClient?.startCapture(renderer: uiView)
-                }
-                refershTrack = false
-            }
-            
-        }
+//        return uiView
+//        if refershTrack {
+//            if isVoice {
+//                DispatchQueue.main.async {
+//                    refershTrack = false
+//                }
+//
+//                return
+//            }
+//            
+//            DispatchQueue.main.async {
+//                if isRemote {
+//                    self.webClient?.renderRemoteVideo(renderer: uiView)
+//                }else {
+//                    self.webClient?.startCapture(renderer: uiView)
+//                }
+//                refershTrack = false
+//            }
+//            
+//        }
     }
 }
 

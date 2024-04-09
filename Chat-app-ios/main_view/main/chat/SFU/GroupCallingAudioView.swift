@@ -14,23 +14,44 @@ struct GroupCallingAudioView: View {
     @EnvironmentObject private var userVM : UserViewModel
     @EnvironmentObject private var producerVM : SFProducerViewModel
     @EnvironmentObject private var cosnumerVM : SFUConsumerManager
-    let columns = Array(repeating: GridItem(spacing: 10, alignment: .center), count: 4)
+    let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 3)
     @State private var messageToWebRTC : String = ""
     var body: some View {
-        VStack{
-            ScrollView(.vertical,showsIndicators: false){
-                LazyVGrid(columns: self.columns,spacing: 5){
-                    renderProducerStreaming()
-                    
-                    ForEach(self.$cosnumerVM.consumerMap,id:\.clientId) { consumer in
-                        ConsumerInfo(consumer: consumer)
-                            .padding(.horizontal,5)
+        ZStack {
+            AsyncImage(url: producerVM.room?.AvatarURL ?? URL(string: ""), content: {img in
+                img
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay{
+                        BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
                     }
+                
+            }, placeholder: {
+                ProgressView()
+                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+            })
+            VStack{
+                ScrollView(.vertical,showsIndicators: false){
+                    LazyVGrid(columns: self.columns){
+                        renderProducerStreaming()
+                        
+                        ForEach(self.$cosnumerVM.consumerMap,id:\.clientId) { consumer in
+                            ConsumerInfo(consumer: consumer)
+                        }
+                    }
+                    
                 }
-                .padding(.horizontal,10)
-            }
+              
 
-            callingBtn()
+                callingBtn()
+            }
+            .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+            .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+//            .padding(.bottom)
+//            .padding(.horizontal)
+            
         }
 //        .onChange(of: self.producerVM.callState){ state in
 //                            print("State Changed : \(state)")
@@ -52,23 +73,24 @@ struct GroupCallingAudioView: View {
                 img
                     .resizable()
                     .aspectRatio( contentMode: .fill)
-                    .frame(width: 45,height: 45)
+                    .frame(width: 50,height: 50)
                     .clipShape(Circle())
                 
             }, placeholder: {
                 ProgressView()
-                    .frame(width: 40,height: 40)
+                    .frame(width: 50,height: 50)
             })
             .padding(.top,10)
             
             Text(self.userVM.profile?.name ?? "--")
+                .foregroundStyle(.white)
                 .font(.system(size: 12))
                 .bold()
                 .padding(.vertical,5)
-            
-            Text(self.producerVM.callState == .Connected ? "Connected" : "Connecting...")
-                .font(.system(size: 8))
-                .bold()
+//            
+//            Text(self.producerVM.callState == .Connected ? "Connected" : "Connecting...")
+//                .font(.system(size: 8))
+//                .bold()
         }
         .frame(width: 100,height: 100)
         .background(BlurView().clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
@@ -182,18 +204,16 @@ struct ConsumerInfo : View {
                     
                 }, placeholder: {
                     ProgressView()
-                        .frame(width: 40,height: 40)
+                        .frame(width: 45,height: 45)
                 })
                 .padding(.top,10)
                 
                 Text(consumer.userInfo.producer_user_name)
+                    .foregroundStyle(.white)
                     .font(.system(size: 12))
                     .bold()
                     .padding(.vertical,5)
                 
-                Text(consumer.callState == .Connected ? "Connected" : "Connecting...")
-                    .font(.system(size: 8))
-                    .bold()
             }
             .frame(width: 100,height: 100)
             .background(BlurView().clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))

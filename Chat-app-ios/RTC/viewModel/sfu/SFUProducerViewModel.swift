@@ -13,7 +13,7 @@ import SwiftUI
 //For current user used.
 //MARK: same as
 class SFProducerViewModel : ObservableObject {
-    
+    var room : ActiveRooms?
     @Published var isConnectd : Bool = false
     @Published var isSetLoaclSDP : Bool = false
     @Published var isSetRemoteSDP : Bool = false
@@ -68,9 +68,10 @@ class SFProducerViewModel : ObservableObject {
     }
     
     
-    func start(sessionId : String,clientId : String){
+    func start(sessionId : String,clientId : String, room : ActiveRooms){
         self.sessionId = sessionId
         self.clientId = clientId
+        self.room = room
         createNewPeer()
         prepare()
     }
@@ -103,6 +104,7 @@ class SFProducerViewModel : ObservableObject {
         self.webRTCClient = nil
         self.localVideoTrack = nil
         self.remoteVideoTrack = nil
+        self.room = nil
         refershRemoteTrack = true
         refershLocalTrack = true
     }
@@ -118,7 +120,7 @@ class SFProducerViewModel : ObservableObject {
             self.refershLocalTrack = true
             self.localVideoTrack = nil
             self.remoteVideoTrack = nil
-            
+            self.room = nil
 //            self.toUserUUID = nil
 //            self.userName = nil
 //            self.userAvatar = nil

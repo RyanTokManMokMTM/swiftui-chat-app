@@ -20,24 +20,44 @@ struct GroupCallingVideoView: View {
     let columns = Array(repeating: GridItem(spacing: 10, alignment: .center), count: 2)
    
     var body: some View {
-        VStack{
-            ScrollView(.vertical,showsIndicators: false){
-                LazyVGrid(columns: self.columns,spacing: 5){
-                    renderProducerStreaming()
-                    if !self.cosnumerVM.consumerMap.isEmpty {
-                        ForEach(0..<self.cosnumerVM.consumerMap.count,id:\.self) { i in
-                            ConsumerVideoInfo(index: i)
-                                .environmentObject(cosnumerVM)
+        ZStack {
+            AsyncImage(url: producerVM.room?.AvatarURL ?? URL(string: ""), content: {img in
+                img
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay{
+                        BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
+                    }
+                
+            }, placeholder: {
+                ProgressView()
+                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+            })
+            
+            VStack{
+                ScrollView(.vertical,showsIndicators: false){
+                    LazyVGrid(columns: self.columns,spacing: 5){
+                        renderProducerStreaming()
+                        ForEach($cosnumerVM.consumerMap,id :\.index) { consumer in
+                            ConsumerVideoInfo(consumer: consumer)
                                 .padding(.horizontal,5)
                     
-                    }
-                 
-                
+                    
+                     
+                    
+                        }
                     }
                 }
+                callingBtn()
             }
-            callingBtn()
+            .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+            .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+            .padding(.bottom)
+            .padding(.horizontal)
         }
+     
 //        .onChange(of: self.producerVM.callState){ state in
 //                            print("State Changed : \(state)")
 //                            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
@@ -64,12 +84,12 @@ struct GroupCallingVideoView: View {
                     img
                         .resizable()
                         .aspectRatio( contentMode: .fill)
-                        .frame(width: 10,height: 10)
+                        .frame(width: 30,height: 30)
                         .clipShape(Circle())
                     
                 }, placeholder: {
                     ProgressView()
-                        .frame(width: 10,height: 10)
+                        .frame(width: 30,height:30)
                 })
                 .padding(.vertical,5)
                 .padding(.horizontal,3)
@@ -79,16 +99,14 @@ struct GroupCallingVideoView: View {
                     .font(.system(size: 10))
                     .bold()
                     .padding(.vertical,5)
+
+//                Text(self.producerVM.callState == .Connected ? "Connected" : "Connecting...")
+//                    .font(.system(size: 10))
+//                    .bold()
+//                    .foregroundColor(.white)
+//                
                 
-                
-                
-                Text(self.producerVM.callState == .Connected ? "Connected" : "Connecting...")
-                    .font(.system(size: 10))
-                    .bold()
-                    .foregroundColor(.white)
-                
-                
-            }
+            }.padding(.horizontal,8)
         }
     
     }
@@ -188,46 +206,43 @@ struct GroupCallingVideoView: View {
 
 
 struct ConsumerVideoInfo : View {
-    @EnvironmentObject private var consumerVM : SFUConsumerManager
-    var index : Int
+    @Binding var consumer : SFUConsumer
     var body: some View {
-        RTCVideoView(webClient: consumerVM.consumerMap[index].webRTCClient, isRemote: true, isVoice: false,
-                         refershTrack: Binding<Bool>(get: {return consumerVM.consumerMap[index].refershRemoteTrack},
-                         set: { p in consumerVM.consumerMap[index].refershRemoteTrack = p}))
+        RTCVideoView(webClient: consumer.webRTCClient, isRemote: true, isVoice: false,
+                     refershTrack: $consumer.refershRemoteTrack)
 
             .frame(width: 180,height: 250)
             .clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners]))
-            .background(consumerVM.consumerMap[index].webRTCClient?.remoteVIdeoTrack == nil ?  Color.red.clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])):  Color.black.clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
+    
+            .background(Color.black.clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
             .overlay(alignment: .bottomLeading){
                 HStack(spacing:5){
-                    AsyncImage(url: consumerVM.consumerMap[index].userInfo.AvatarURL, content: { img in
+                    AsyncImage(url: consumer.userInfo.AvatarURL, content: { img in
                         img
                             .resizable()
                             .aspectRatio( contentMode: .fill)
-                            .frame(width: 10,height: 10)
+                            .frame(width: 30,height: 30)
                             .clipShape(Circle())
                         
                     }, placeholder: {
                         ProgressView()
-                            .frame(width: 10,height: 10)
+                            .frame(width: 30,height: 30)
                     })
                     .padding(.vertical,5)
                     .padding(.horizontal,3)
                     
-                    Text(consumerVM.consumerMap[index].userInfo.producer_user_name)
+                    Text(consumer.userInfo.producer_user_name)
                         .foregroundColor(.white)
                         .font(.system(size: 10))
                         .bold()
                         .padding(.vertical,5)
                     
-                    Text(consumerVM.consumerMap[index].callState == .Connected ? "Connected" : "Connecting...")
-                        .foregroundColor(.white)
-                        .font(.system(size: 10))
-                        .bold()
-                        .padding(.horizontal,5)
-                }
+//                    Text(consumer.callState == .Connected ? "Connected" : "Connecting...")
+//                        .foregroundColor(.white)
+//                        .font(.system(size: 10))
+//                        .bold()
+//                        .padding(.horizontal,5)
+                }.padding(.horizontal,8)
             }
-        
-    
     }
 }
