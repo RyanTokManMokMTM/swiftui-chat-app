@@ -102,13 +102,13 @@ struct Message: View {
     private func connectionState() -> Color {
         var color : Color = .clear
         switch self.videoCallVM.connectionStatus {
-        case .connected, .completed:
+        case .connected:
             color = .green
         case .disconnected:
             color = .orange
         case .failed, .closed:
             color = .red
-        case .new, .checking, .count:
+        case .new, .connecting:
             color = .black
         @unknown default:
             color = .black

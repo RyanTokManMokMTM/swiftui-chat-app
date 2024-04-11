@@ -20,12 +20,14 @@ struct Consumer {
 //Handling any message from webClient
 protocol SFUConsumserManagerDelegate : class {
     func SFUConsumserManager(_ message : Data,signalType: SFUSignalType,producerId : String?)
+    func SFUConsumserManager(_ connectionStatus : RTCPeerConnectionState, consumerId : String)
 }
 
 @MainActor
 class SFUConsumerManager : ObservableObject {
     @Published var sessionId : String?
-    @Published var consumerMap : [SFUConsumer] = []
+    @Published var connectedConsumerMap : [SFUConsumer] = []
+    @Published var pendingConsumer : [String : SFUConsumer] = [:]
     private var callType : CallingType? = nil //by default
 //    static var shared  = SFUConsumerManager()
     private var webSocket : Websocket?
@@ -33,7 +35,8 @@ class SFUConsumerManager : ObservableObject {
     private
     var cancellables = [AnyCancellable]()
     init(){
-        self.consumerMap = []
+        self.connectedConsumerMap = []
+        self.pendingConsumer = [:]
 //        self.consumerMap.forEach({
 //                    let c = $0.objectWillChange.sink(
 //                        receiveValue: { self.objectWillChange.send() })
@@ -55,8 +58,9 @@ class SFUConsumerManager : ObservableObject {
         }
 //        DispatchQueue.main.async {
 //            print("Starting Consuming Producer......")
-        let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId, index: self.consumerMap.count)
-            self.addConsumer(consumer: consumer)
+             let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId, index: self.connectedConsumerMap.count)
+//            self.addConsumer(consumer: consumer)
+             self.pendingConsumer(producerID: producerId, consumer: consumer)
            
             consumer.sfuManagerDelegate = self
             consumer.start()
@@ -76,34 +80,45 @@ class SFUConsumerManager : ObservableObject {
     func processSignalingMessage(_ message: String,websocketMessage : WSMessage, clientId : String) -> Void {
         print("Process Signaling for(Consumer) \(clientId)")
         print(message)
-        guard let i = self.findConsumerIndexById(producerId: clientId) else {
+
+//            
+        let c : SFUConsumer
+        
+        if self.pendingConsumer[clientId] != nil {
+            c = self.pendingConsumer[clientId]!
+        }else {
+            guard let i = self.findConsumerIndexById(producerId: clientId) else {
                 print("consumer not found")
                 return
             }
             
+            c = self.connectedConsumerMap[i]
+        }
+        
+        
             let signalMessage = SignalMessage.from(message: message)
 //    
             switch signalMessage {
             case .candidate(let candidate):
                 print("Recevie candidate(CONSUMER)")
-                if !self.consumerMap[i].isSetRemoteSDP {
+                if !c.isSetRemoteSDP {
                     print("Not yet set remote DESC before candidate(Consumer)............!!!!!!!!!!!!!")
-                    self.consumerMap[i].updateCandindateList(candindate: candidate)
+                    c.updateCandindateList(candindate: candidate)
                 }else{
-                    let candindateList = self.consumerMap[i].getCandidateList()
+                    let candindateList = c.getCandidateList()
                     if !candindateList.isEmpty {
                         candindateList.forEach{ice in
-                            self.consumerMap[i].webRTCClient?.handleCandidateMessage(ice,completion: { error in
+                            c.webRTCClient?.handleCandidateMessage(ice,completion: { error in
                                 DispatchQueue.main.async {
-                                    self.consumerMap[i].remoteCanindate += 1
+                                    c.remoteCanindate += 1
                                 }
                             })
                         }
-                        self.consumerMap[i].cleanCandidateList()
+                        c.cleanCandidateList()
                     }
-                    self.consumerMap[i].webRTCClient?.handleCandidateMessage(candidate,completion: { error in
+                    c.webRTCClient?.handleCandidateMessage(candidate,completion: { error in
                         DispatchQueue.main.async {
-                            self.consumerMap[i].remoteCanindate += 1
+                           c.remoteCanindate += 1
                         }
                     })
                 }
@@ -112,14 +127,14 @@ class SFUConsumerManager : ObservableObject {
             case .answer(let answer):
                 print("Recevie answer(CONSUMER)") //receving answer -> offer is the remoteSDP for the receiver
 //
-                if self.consumerMap[i].isSetRemoteSDP {
+                if c.isSetRemoteSDP {
                     debugPrint("Not need to send more answer")
                     return
                 }
     
-                self.consumerMap[i].webRTCClient?.handleRemoteDescription(answer, completion: { err  in
+                c.webRTCClient?.handleRemoteDescription(answer, completion: { err  in
                     DispatchQueue.main.async {
-                        self.consumerMap[i].isSetRemoteSDP = true //JUST FOR TESTING
+                       c.isSetRemoteSDP = true //JUST FOR TESTING
                     }
                 })
     //            SoundManager.shared.stopPlaying()
@@ -138,34 +153,48 @@ class SFUConsumerManager : ObservableObject {
         }
     
     private func findConsumerIndexById(producerId : String) -> Int?{
-        return self.consumerMap.firstIndex(where: {$0.clientId == producerId})
+        return self.connectedConsumerMap.firstIndex(where: {$0.clientId == producerId})
     }
     
     private func closeConsumer(producerId : String){
-        guard let i = self.consumerMap.firstIndex(where: {$0.clientId == producerId}) else {
+        guard let i = self.connectedConsumerMap.firstIndex(where: {$0.clientId == producerId}) else {
             print("Close - Consumer not exist")
             return
         }
-        if self.consumerMap.isEmpty {
+        if self.connectedConsumerMap.isEmpty {
             return
         }
         print("DisConnect consumer")
         DispatchQueue.main.async {
-            self.consumerMap[i].DisConnect()
-            self.consumerMap.remove(at: i)
+            self.connectedConsumerMap[i].DisConnect()
+            self.connectedConsumerMap.remove(at: i)
         }
     }
     
+    private func pendingConsumer(producerID : String,consumer : SFUConsumer) {
+        DispatchQueue.main.async {
+            self.pendingConsumer[producerID] = consumer
+        }
+    }
+    
+    private func removeConConsumerFromPendingConsumer(producerID : String) {
+        DispatchQueue.main.async {
+            self.pendingConsumer.removeValue(forKey: producerID)
+        }
+    }
+    
+    
     private func addConsumer(consumer : SFUConsumer) {
         DispatchQueue.main.async {
-            self.consumerMap.append(consumer)
+            self.connectedConsumerMap.append(consumer)
         }
     }
     
     
     func closeAllConsumer(){
         DispatchQueue.main.async {
-            self.consumerMap.forEach({ $0.webRTCClient?.disconnect()})
+            self.connectedConsumerMap.forEach({ $0.webRTCClient?.disconnect()})
+            self.pendingConsumer.forEach({$0.value.webRTCClient?.disconnect()})
             self.reset()
         }
     }
@@ -173,7 +202,8 @@ class SFUConsumerManager : ObservableObject {
     private func reset(){
         self.sessionId = nil
         self.callType = nil
-        self.consumerMap = []
+        self.connectedConsumerMap = []
+        self.pendingConsumer = [:]
     }
     
 
@@ -209,6 +239,16 @@ extension SFUConsumerManager : SFUConsumserManagerDelegate {
             break
         }
         
+    }
+    
+    func SFUConsumserManager(_ connectionStatus : RTCPeerConnectionState, consumerId : String) {
+        guard let pendingConsumer = self.pendingConsumer[consumerId] else{
+            print("Consumer Not found")
+            return
+        }
+        print("Consumer Connected")
+        self.addConsumer(consumer: pendingConsumer)
+        self.removeConConsumerFromPendingConsumer(producerID: consumerId)
     }
 }
 
@@ -303,7 +343,7 @@ class SFUConsumer  : ObservableObject{
     @Published var isSetRemoteSDP : Bool = false
     @Published var localCanindate : Int = 0
     @Published var remoteCanindate : Int = 0
-    @Published var connectionStatus : RTCIceConnectionState = .closed
+    @Published var connectionStatus : RTCPeerConnectionState = .closed
     @Published var IsReceivedMessage : Bool = false
     @Published var receivedMessage : String = ""
 
@@ -440,6 +480,30 @@ extension SFUConsumer : WebRTCClientDelegate{
     func webRTCClient(_ client: WebRTCClient, didReceivedRemoteStream stream: RTCMediaStream) {
         
     }
+
+    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCPeerConnectionState) {
+        DispatchQueue.main.async {
+            self.connectionStatus = state
+            switch state {
+            case .connected:
+//                SoundManager.shared.stopPlaying()
+                self.callState = .Connected
+                print("(Consumer)Connected.")
+                if let clientId = self.clientId {
+                    self.sfuManagerDelegate?.SFUConsumserManager(state, consumerId: clientId)
+                }
+     
+            case .closed,.disconnected,.failed:
+                print("(Consumer)Ended.")
+                self.callState = .Ended
+            case .new,.connecting:
+                print("(Consumer)Connecting.")
+                self.callState = .Connecting
+            @unknown default:
+                break
+            }
+        }
+    }
     
     func webRTCClient(_ client: WebRTCClient, sendData data: Data) {
         print("TODO: Send Data")
@@ -468,25 +532,9 @@ extension SFUConsumer : WebRTCClientDelegate{
         }
     }
     
-    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState){
-        print("Consuming Producer Connection Status Changed :\(state)")
-        DispatchQueue.main.async {
-            self.connectionStatus = state
-            switch state {
-            case .connected, .completed:
-//                SoundManager.shared.stopPlaying()
-                self.callState = .Connected
-                print("(Consumer)Connected.")
-            case .disconnected,.failed, .closed:
-                print("(Consumer)Ended.")
-                self.callState = .Ended
-            case .new, .checking, .count:
-                print("(Consumer)Connecting.")
-                self.callState = .Connecting
-            @unknown default:
-                break
-            }
-        }
+    func webRTCClient(_ client: WebRTCClient, didChangeIceConnectionState state: RTCIceConnectionState){
+        print("Consuming Producer Iceeeeeee Connection Status Changed :\(state)")
+        
        
     }
 }

@@ -19,7 +19,7 @@ class SFProducerViewModel : ObservableObject {
     @Published var isSetRemoteSDP : Bool = false
     @Published var localCanindate : Int = 0
     @Published var remoteCanindate : Int = 0
-    @Published var connectionStatus : RTCIceConnectionState = .closed
+    @Published var connectionStatus : RTCPeerConnectionState = .closed
     @Published var IsReceivedMessage : Bool = false
     @Published var receivedMessage : String = ""
     
@@ -204,6 +204,25 @@ extension SFProducerViewModel {
 }
 
 extension SFProducerViewModel : WebRTCClientDelegate{
+    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCPeerConnectionState) {
+        
+        DispatchQueue.main.async {
+            self.connectionStatus = state
+            switch state {
+            case .connected:
+                self.callState = .Connected
+                print("Produecer connection : \( self.callState)")
+            case .disconnected,.failed, .closed:
+                
+                self.callState = .Ended
+            case .new, .connecting:
+                self.callState = .Connecting
+            @unknown default:
+                break
+            }
+        }
+    }
+    
     func webRTCClient(_ client: WebRTCClient, sendData data: Data) {
         print("TODO: Send Data")
 //        self.sendSingleMessage(data)
@@ -239,22 +258,8 @@ extension SFProducerViewModel : WebRTCClientDelegate{
         }
     }
     
-    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState){
-        DispatchQueue.main.async {
-            self.connectionStatus = state
-            switch state {
-            case .connected, .completed:
-                SoundManager.shared.stopPlaying()
-                self.callState = .Connected
-            case .disconnected,.failed, .closed:
-                
-                self.callState = .Ended
-            case .new, .checking, .count:
-                self.callState = .Connecting
-            @unknown default:
-                break
-            }
-        }
+    func webRTCClient(_ client: WebRTCClient, didChangeIceConnectionState state: RTCIceConnectionState){
+    
        
     }
 }

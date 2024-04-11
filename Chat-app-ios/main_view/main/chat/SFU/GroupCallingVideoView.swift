@@ -40,7 +40,7 @@ struct GroupCallingVideoView: View {
                 ScrollView(.vertical,showsIndicators: false){
                     LazyVGrid(columns: self.columns,spacing: 5){
                         renderProducerStreaming()
-                        ForEach($cosnumerVM.consumerMap,id :\.index) { consumer in
+                        ForEach($cosnumerVM.connectedConsumerMap,id :\.index) { consumer in
                             ConsumerVideoInfo(consumer: consumer)
                                 .padding(.horizontal,5)
                     

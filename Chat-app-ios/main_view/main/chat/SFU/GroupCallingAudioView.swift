@@ -37,7 +37,7 @@ struct GroupCallingAudioView: View {
                     LazyVGrid(columns: self.columns){
                         renderProducerStreaming()
                         
-                        ForEach(self.$cosnumerVM.consumerMap,id:\.clientId) { consumer in
+                        ForEach(self.$cosnumerVM.connectedConsumerMap,id:\.clientId) { consumer in
                             ConsumerInfo(consumer: consumer)
                         }
                     }

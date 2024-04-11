@@ -29,7 +29,8 @@ protocol WebRTCClientDelegate: class {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCClient(_ client: WebRTCClient, didReceivedRemoteStream stream: RTCMediaStream)
     
-    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
+    func webRTCClient(_ client: WebRTCClient, didChangeIceConnectionState state: RTCIceConnectionState)
+    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCPeerConnectionState)
     func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data)
 }
 
@@ -473,9 +474,15 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
         debugPrint("peerConnection should negotiate")
     }
     
-    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        debugPrint("peerConnection new connection state: \(newState)")
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCPeerConnectionState) {
+        debugPrint("peerConnection new  connection state: \(newState)")
         self.delegate?.webRTCClient(self, didChangeConnectionState: newState)
+    }
+    
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
+        debugPrint("peerConnection new ice connection state: \(newState)")
+//        self.delegate?.webRTCClient(self, didChangeConnectionState: newState)
+        self.delegate?.webRTCClient(self, didChangeIceConnectionState: newState)
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {
