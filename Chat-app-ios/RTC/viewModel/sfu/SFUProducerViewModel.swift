@@ -61,15 +61,16 @@ class SFProducerViewModel : ObservableObject {
             return
         }
         self.webRTCClient = WebRTCClient()
-        self.webRTCClient?.setUp()
+        self.webRTCClient?.setUp(callType: self.callingType)
         self.webRTCClient?.delegate = self
     }
     
     
-    func start(sessionId : String,clientId : String, room : ActiveRooms){
+    func start(sessionId : String,clientId : String, room : ActiveRooms,type : CallingType){
         self.sessionId = sessionId
         self.clientId = clientId
         self.room = room
+        self.callingType = type
         createNewPeer()
         prepare()
     }

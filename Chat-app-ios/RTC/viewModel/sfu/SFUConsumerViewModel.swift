@@ -56,9 +56,10 @@ class SFUConsumer  : ObservableObject{
 
     
     
-    init(userInfo : SfuProducerUserInfo,producerId : String){
+    init(userInfo : SfuProducerUserInfo,producerId : String,type : CallingType){
         self.userInfo = userInfo
         self.clientId = producerId
+        self.callingType = type
     }
     
     func createNewPeer(){
@@ -66,7 +67,7 @@ class SFUConsumer  : ObservableObject{
             return
         }
         self.webRTCClient = WebRTCClient()
-        self.webRTCClient?.setUp(isProducer: false)
+        self.webRTCClient?.setUp(isProducer: false,callType: self.callingType)
         self.webRTCClient?.delegate = self
     }
     
@@ -94,9 +95,9 @@ class SFUConsumer  : ObservableObject{
 
     
     func prepare(){
-        remoteVideoTrack = self.webRTCClient?.remoteVIdeoTrack
-        remoteAudioTrack = self.webRTCClient?.remoteAudioTrack
-        refershRemoteTrack = true
+        self.remoteVideoTrack = self.webRTCClient?.remoteVIdeoTrack
+        self.remoteAudioTrack = self.webRTCClient?.remoteAudioTrack
+        self.refershRemoteTrack = self.webRTCClient?.refershRemoteTrack ?? false
     }
     
 
@@ -107,8 +108,8 @@ class SFUConsumer  : ObservableObject{
         self.webRTCClient = nil
         self.localVideoTrack = nil
         self.remoteVideoTrack = nil
-        refershRemoteTrack = true
-        refershLocalTrack = true
+        refershRemoteTrack = false
+        refershLocalTrack = false
     }
     
     
@@ -172,6 +173,7 @@ extension SFUConsumer : WebRTCClientDelegate{
 //                SoundManager.shared.stopPlaying()
                 self.callState = .Connected
                 print("(Consumer)Connected.")
+                BenHubState.shared.AlertMessage(sysImg: "phone.connection", message: "\(self.userInfo.producer_user_name) joined the room.")
                 if let clientId = self.clientId {
                     self.sfuManagerDelegate?.SFUConsumserManager(state, consumerId: clientId)
                 }
@@ -179,6 +181,8 @@ extension SFUConsumer : WebRTCClientDelegate{
             case .closed,.disconnected,.failed:
                 print("(Consumer)Ended.")
                 self.callState = .Ended
+                BenHubState.shared.AlertMessage(sysImg: "phone.down.fill", message: "\(self.userInfo.producer_user_name) left the room.")
+
             case .new,.connecting:
                 print("(Consumer)Connecting.")
                 self.callState = .Connecting

@@ -29,7 +29,10 @@ struct RTCVideoView : UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: RTCMTLVideoView, context: Context) {
-//        return uiView
+        if isRemote {
+            self.webClient?.renderRemoteVideo(renderer: uiView)
+        }
+//        return ui
 //        if refershTrack {
 //            if isVoice {
 //                DispatchQueue.main.async {

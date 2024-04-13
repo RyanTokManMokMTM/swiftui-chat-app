@@ -91,12 +91,13 @@ class RTCViewModel : ObservableObject {
             return
         }
         self.webRTCClient = WebRTCClient()
-        self.webRTCClient?.setUp()
+        self.webRTCClient?.setUp(callType: self.callingType)
         self.webRTCClient?.delegate = self
     }
     
     
-    func start(){
+    func start( type : CallingType){
+        self.callingType = type
         createNewPeer()
         prepare()
     }

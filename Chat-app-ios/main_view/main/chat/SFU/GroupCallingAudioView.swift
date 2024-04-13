@@ -11,13 +11,14 @@ struct GroupCallingAudioView: View {
     //Many Consumer
     var sessionId : String? = nil
     @StateObject private var ws = Websocket.shared
+    @StateObject private var hub = BenHubState.shared
     @EnvironmentObject private var userVM : UserViewModel
     @EnvironmentObject private var producerVM : SFProducerViewModel
     @EnvironmentObject private var cosnumerVM : SFUConsumersManager
     let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 3)
     @State private var messageToWebRTC : String = ""
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             AsyncImage(url: producerVM.room?.AvatarURL ?? URL(string: ""), content: {img in
                 img
                     .resizable()
@@ -32,7 +33,14 @@ struct GroupCallingAudioView: View {
                 ProgressView()
                     .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
             })
+            
             VStack{
+                Text(producerVM.room?.name ?? "--")
+                    .font(.system(size: 15))
+                    .fontWeight(.medium)
+                    .foregroundStyle(.white)
+                    .padding(.vertical,5)
+                
                 ScrollView(.vertical,showsIndicators: false){
                     LazyVGrid(columns: self.columns){
                         renderProducerStreaming()
@@ -49,6 +57,14 @@ struct GroupCallingAudioView: View {
             }
             .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
             .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+        }
+        .alert(isAlert: $hub.isPresented){
+            switch hub.type{
+            case .normal,.system:
+                BenHubAlertView(message: hub.message, sysImg: hub.sysImg)
+            case .messge:
+                BenHubAlertWithMessage( message: hub.message,info: hub.info!)
+            }
         }
 
     }

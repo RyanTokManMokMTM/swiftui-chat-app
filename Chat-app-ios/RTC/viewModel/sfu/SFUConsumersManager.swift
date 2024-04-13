@@ -42,7 +42,8 @@ class SFUConsumersManager : ObservableObject {
             print("Calling Type is nil")
             return
         }
-        let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId)
+        
+        let consumer = SFUConsumer(userInfo: producerInfo, producerId: producerId,type: callType)
         self.newPendingConsumer(producerID: producerId, consumer: consumer)
         consumer.sfuManagerDelegate = self
         consumer.start()
@@ -142,9 +143,10 @@ class SFUConsumersManager : ObservableObject {
             return
         }
         DispatchQueue.main.async {
+            let c = self.connectedConsumerMap[i]
             self.connectedConsumerMap[i].DisConnect()
             self.connectedConsumerMap.remove(at: i)
-        }
+       }
     }
     
     

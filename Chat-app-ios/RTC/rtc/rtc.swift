@@ -43,6 +43,7 @@ class WebRTCClient : NSObject {
         return RTCPeerConnectionFactory(encoderFactory: vef, decoderFactory: vdf)
     }()
     
+    
     //Variable
     
     //how many candinate is connected
@@ -52,7 +53,9 @@ class WebRTCClient : NSObject {
     
     weak var delegate: WebRTCClientDelegate?
     private var hasReceivedSPD = false
-    private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveVideo:kRTCMediaConstraintsValueTrue,kRTCMediaConstraintsOfferToReceiveAudio:kRTCMediaConstraintsValueTrue]
+    private let mediaConstrains = [
+        kRTCMediaConstraintsOfferToReceiveVideo:kRTCMediaConstraintsValueTrue,
+        kRTCMediaConstraintsOfferToReceiveAudio:kRTCMediaConstraintsValueTrue]
     
     private var peerConn : RTCPeerConnection?
     private var localVideoSource : RTCVideoSource?
@@ -61,6 +64,8 @@ class WebRTCClient : NSObject {
     var remoteVIdeoTrack : RTCVideoTrack?
     var remoteAudioTrack : RTCAudioTrack?
     var videoCapture : RTCVideoCapturer?
+    
+    var refershRemoteTrack : Bool = false
     
     private var hsaReceivedSDP = false
     private var localDataChannel: RTCDataChannel?
@@ -76,20 +81,21 @@ class WebRTCClient : NSObject {
         
     }
 
-    func setUp(isProducer : Bool = true){
+    func setUp(isProducer : Bool = true,callType : CallingType){
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement" : "true"])
         let config = genConfig()
         self.peerConn = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: self)
+
         guard let peerConn = peerConn else {
             print("Peer connection set Up error")
             return
         }
-        createMedia(isProducer: isProducer)
+        createMedia(isProducer: isProducer,callType : callType)
     }
     
-    func createMedia(isProducer : Bool){
+    func createMedia(isProducer : Bool,callType : CallingType){
         if isProducer{
-            createMedia()
+            createMedia(callType : callType)
         }else {
             createMediaAsConsumer()
         }
@@ -207,6 +213,15 @@ class WebRTCClient : NSObject {
         }
     }
     
+    var RemoveVideoIsEnable : Bool {
+        print("Remote track getting.........")
+        if remoteVIdeoTrack == nil {
+            return false
+        }
+        return remoteVIdeoTrack!.isEnabled
+    }
+    
+    
     //MARK: set audio to true/false or check audio is enable
     var AudioIsEnable : Bool {
         get {
@@ -218,6 +233,7 @@ class WebRTCClient : NSObject {
             localAudioTrack?.isEnabled = newValue
         }
     }
+    
 
 }
 
@@ -233,7 +249,7 @@ extension WebRTCClient {
         return config
     }
     
-    private func createMedia() {
+    private func createMedia(callType : CallingType) {
         guard let peerConn = peerConn else {
             print("peer connection haven't created.")
             return
@@ -243,10 +259,13 @@ extension WebRTCClient {
         let audioTrack = createAutioTrack()
         self.localAudioTrack = audioTrack
         peerConn.add(audioTrack, streamIds: [streamID])
-        
-        let videoTrack = createVideoTrack()
-        self.localVideoTrack = videoTrack
-        peerConn.add(videoTrack, streamIds: [streamID])
+//        
+        if callType == .Video {
+            if let videoTrack = createVideoTrack() {
+                self.localVideoTrack = videoTrack
+                peerConn.add(videoTrack, streamIds: [streamID])
+            }
+        }
         
 //        remoteVIdeoTrack = peerConn.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
         
@@ -274,13 +293,14 @@ extension WebRTCClient {
         }
     }
     
-    private func createVideoTrack() -> RTCVideoTrack{
+    private func createVideoTrack() -> RTCVideoTrack?{
         let source = WebRTCClient.factory.videoSource()
 //        self.videoCapture = RTCCameraVideoCapturer(delegate: source)
         #if targetEnvironment(simulator)
-        self.videoCapture = RTCFileVideoCapturer(delegate: source)
+//            self.videoCapture = RTCFileVideoCapturer(delegate: source)
+            return nil
         #else
-        self.videoCapture = RTCCameraVideoCapturer(delegate: source)
+            self.videoCapture = RTCCameraVideoCapturer(delegate: source)
         #endif
 //        
         let track = WebRTCClient.factory.videoTrack(with: source, trackId: "video0")
@@ -457,10 +477,12 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
               print("video track faund")
              remoteVIdeoTrack = peerConnection.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
             self.remoteVIdeoTrack = track
+            self.refershRemoteTrack = true
           }
           
           if let audioTrack = stream.audioTracks.first{
               print("audio track faund")
+              self.remoteAudioTrack = audioTrack
 //              audioTrack.source.volume = 8
           }
 //        remoteVIdeoTrack = self.peerConn?.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack

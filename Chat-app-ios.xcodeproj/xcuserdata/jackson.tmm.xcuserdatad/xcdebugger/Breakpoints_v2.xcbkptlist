@@ -3,4 +3,54 @@
    uuid = "6FC01543-16F2-4137-9435-DFD4E111255D"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E81BAD73-17AF-4AE8-98B7-54D8BCB94ECF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Chat-app-ios/main_view/main/chat/SFU/GroupCallingVideoView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "E81BAD73-17AF-4AE8-98B7-54D8BCB94ECF - 347626accb129a8e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.ConsumerVideoInfo.body.getter : some"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/Chat-app-ios/main_view/main/chat/SFU/GroupCallingVideoView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "234"
+                  endingLineNumber = "234"
+                  offsetFromSymbolStart = "308">
+               </Location>
+               <Location
+                  uuid = "E81BAD73-17AF-4AE8-98B7-54D8BCB94ECF - 347626accb129a8e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Chat_app_ios.ConsumerVideoInfo.body.getter : some"
+                  moduleName = "Chat-app-ios"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jackson.tmm/Desktop/Projects/swiftui-chat-app/Chat-app-ios/main_view/main/chat/SFU/GroupCallingVideoView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "234"
+                  endingLineNumber = "234"
+                  offsetFromSymbolStart = "248">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

@@ -110,6 +110,7 @@ struct HomeView: View {
                 GroupCallingAudioView()
                      .environmentObject(producerVM)
                      .environmentObject(consumerVM)
+                
             }else {
                 GroupCallingVideoView()
                      .environmentObject(producerVM)
