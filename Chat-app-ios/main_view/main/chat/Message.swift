@@ -15,7 +15,7 @@ struct Message: View {
     @EnvironmentObject private var UDM : UserDataModel
     @EnvironmentObject private var videoCallVM : RTCViewModel
     @EnvironmentObject private var producerVM : SFProducerViewModel
-    @EnvironmentObject private var consumerVM : SFUConsumerManager
+    @EnvironmentObject private var consumerVM : SFUConsumersManager
     @EnvironmentObject var stickerShopVM : StickerShopViewModel
     @Binding var isActive : Bool
     @Binding var isAddStory : Bool

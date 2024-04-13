@@ -82,7 +82,7 @@ class RTCViewModel : ObservableObject {
     init(){
         self.webSocket = Websocket.shared
         self.webSocket?.delegate = self
-        createNewPeer()
+//        createNewPeer()
     
     }
     

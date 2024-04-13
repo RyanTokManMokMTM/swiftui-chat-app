@@ -273,7 +273,7 @@ class Websocket : ObservableObject {
                             self.sessionDelegate?.webSocket(self, didReceive: msg) //If producer
                             break
                         case EventType.SFU_EVENT_PRODUCER_CONNECTED.rawValue:
-                            print("Current Producer connected")
+//                            print("Current Producer connected")
                             self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
                             break
                             
@@ -286,7 +286,7 @@ class Websocket : ObservableObject {
                             break
                             
                         case EventType.SFU_EVENT_SEND_NEW_PRODUCER.rawValue:
-                            print("SFU_EVENT_SEND_NEW_PRODUCER: \(msg.content ?? "--")")
+//                            print("SFU_EVENT_SEND_NEW_PRODUCER: \(msg.content ?? "--")")
                             self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
                             break
                             
@@ -720,7 +720,7 @@ extension Websocket {
     }
     
     private func sendSFUMessage(content : String,eventType : EventType){
-        print("Sending \(eventType) to server～～～～～～～～～～～～～～～～～")
+//        print("Sending \(eventType) to server～～～～～～～～～～～～～～～～～")
         let wsMSG = WSMessage(
             messageID: UUID().uuidString,
             replyMessageID: nil,

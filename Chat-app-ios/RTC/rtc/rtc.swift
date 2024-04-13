@@ -411,7 +411,7 @@ extension WebRTCClient {
 
 extension WebRTCClient {
     func handleCandidateMessage(_ candidate: RTCIceCandidate,completion: @escaping (Error?) -> ()) {
-        print("add candindate to peer connection")
+//        print("add candindate to peer connection")
         
         self.peerConn?.add(candidate, completionHandler: completion)
     }

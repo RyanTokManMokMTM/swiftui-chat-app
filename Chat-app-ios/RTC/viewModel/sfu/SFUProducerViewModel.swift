@@ -54,8 +54,6 @@ class SFProducerViewModel : ObservableObject {
     init(){
         self.webSocket = Websocket.shared
         self.webSocket?.sessionDelegate = self
-        createNewPeer()
-    
     }
     
     func createNewPeer(){
@@ -141,32 +139,18 @@ class SFProducerViewModel : ObservableObject {
 extension SFProducerViewModel {
     func sendOffer(type : CallingType){
         if self.isConnectd && !self.isSetRemoteSDP && !self.isSetLoaclSDP {
-            //is connecte and not set remote and not set ans
-            print("sending offer with sessionId :\(self.sessionId?.description ?? "KNOW.")")
-//            guard let url = Bundle.main.url(forResource: "call", withExtension: ".mp3") else {
-//                self.callState = .Ended
-//                return
-//            }
-//            
-//            SoundManager.shared.playSound(url: url)
-            
-            //Connecting...
             self.webRTCClient?.offer(){ sdp in
                 DispatchQueue.main.async {
                     self.isSetLoaclSDP = true
                 }
-                
-                print("OFFER: =====================================")
-                print(sdp)
-                print("OFFER END: =====================================")
                 //DO WE SEND USER NAME AND UUID AND AVATAR TOO?
                 if let sdpData = sdp.JSONData(type: type) {
                     //send via websocket
-                    print("sendeing offer signal")
+//                    print("sendeing offer signal")
                     self.sendSingleMessage(sdpData,signalType: .SDP)
 
                 }else {
-                    print("SDP sending ferror")
+                    print("SDP sending error")
                 }
             }
         }
@@ -211,7 +195,7 @@ extension SFProducerViewModel : WebRTCClientDelegate{
             switch state {
             case .connected:
                 self.callState = .Connected
-                print("Produecer connection : \( self.callState)")
+//                print("Produecer connection : \( self.callState)")
             case .disconnected,.failed, .closed:
                 
                 self.callState = .Ended
@@ -305,11 +289,9 @@ extension SFProducerViewModel {
         switch signalMessage {
         case .candidate(let candidate):
             
-            print("Received ice :\(candidate.sdpMid)")
-            print("Received ice :\(candidate.sdpMLineIndex)")
-            print("Received ice :\(candidate.sdp)")
+           
             if !isSetRemoteSDP {
-                print("Not yet set remote DESC before candidate............!!!!!!!!!!!!!")
+//                print("Not yet set remote DESC before candidate............!!!!!!!!!!!!!")
                 self.candidateList.append(candidate)
             }else{
                 if !self.candidateList.isEmpty {
@@ -331,9 +313,9 @@ extension SFProducerViewModel {
            
             break
         case .answer(let answer):
-            print("ANS ==============================================") //receving answer -> offer is the remoteSDP for the receiver
-            print(answer)
-            print("ANS ==============================================")
+//            print("ANS ==============================================") //receving answer -> offer is the remoteSDP for the receiver
+//            print(answer)
+//            print("ANS ==============================================")
             if self.isSetRemoteSDP {
                 debugPrint("Not need to send more answer")
                 return
@@ -466,7 +448,6 @@ extension SFProducerViewModel : WebSocketDelegate {
                 //Receive ice candindate.
                 let resp = try JSONDecoder().decode(SFUSendIceCandindateReq.self, from: Data(content.utf8))
                 if resp.is_producer{
-                    print("received an ice candindate(Producer)！！！！！！！！！！！！！！")
                     self.processSignalingMessage(resp.ice_candidate_type,websocketMessage: data)
                 }
             }catch(let err){

@@ -31,7 +31,7 @@ struct HomeView: View {
     
     @StateObject private var videoCallVM = RTCViewModel()
     @StateObject private var producerVM = SFProducerViewModel()
-    @StateObject private var consumerVM = SFUConsumerManager()
+    @StateObject private var consumerVM = SFUConsumersManager()
     @StateObject var hub = BenHubState.shared
     @State private var index = 0
     @State private var search = ""
@@ -93,7 +93,6 @@ struct HomeView: View {
                     }
                     
                 }
-            //            .searchable(text: $search,placement: .navigationBarDrawer,prompt: "search")
         }
         .fullScreenCover(isPresented: self.$videoCallVM.isIncomingCall){
             if self.videoCallVM.callingType == .Voice {
@@ -128,9 +127,3 @@ struct HomeView: View {
     
 
 }
-//
-//struct HomeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HomeView(isShowMenu: .constant(false), menuTab: .constant(0))
-//    }
-//}

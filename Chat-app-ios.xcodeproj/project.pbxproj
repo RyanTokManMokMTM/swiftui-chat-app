@@ -56,9 +56,9 @@
 		205888EE2AF76541002C5086 /* BasicStoryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888ED2AF76541002C5086 /* BasicStoryInfo.swift */; };
 		205888F02AF77A10002C5086 /* StickerInfoBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888EF2AF77A10002C5086 /* StickerInfoBottomSheetView.swift */; };
 		205888F22AF77C6C002C5086 /* GetStickerInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205888F12AF77C6C002C5086 /* GetStickerInfoResponse.swift */; };
+		205BDD892BCA68E40036B7F7 /* SFUConsumersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205BDD882BCA68E40036B7F7 /* SFUConsumersManager.swift */; };
 		2065B37929B88E86004B6F2D /* Websocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2065B37829B88E86004B6F2D /* Websocket.swift */; };
 		2065B37B29B8A885004B6F2D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2065B37A29B8A885004B6F2D /* SearchView.swift */; };
-		2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2069095329F2AB15000EB157 /* GroupContentView.swift */; };
 		206BF1822A18B04900535F79 /* ringing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 206BF1812A18B04900535F79 /* ringing.mp3 */; };
 		206BF1842A18BC5300535F79 /* calling.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 206BF1832A18BC5300535F79 /* calling.mp3 */; };
 		206BF1862A18C00A00535F79 /* endcall.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 206BF1852A18C00A00535F79 /* endcall.mp3 */; };
@@ -211,7 +211,6 @@
 		20F2D9AB2B86361600E1EF7D /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 20F2D9AA2B86361600E1EF7D /* WebRTC */; };
 		20F2D9AE2B86367700E1EF7D /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 20F2D9AD2B86367700E1EF7D /* WebRTC */; };
 		20F47B2D29C598D2003D5CD0 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F47B2C29C598D2003D5CD0 /* DocumentPicker.swift */; };
-		20FCCEB42B122F420033CA7B /* multipleRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FCCEB32B122F420033CA7B /* multipleRTC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -239,7 +238,6 @@
 		203417D02A08E2C10076C942 /* rtc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rtc.swift; sourceTree = "<group>"; };
 		203417D32A08E79E0076C942 /* config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = config.swift; sourceTree = "<group>"; };
 		203417DA2A091E980076C942 /* RTCVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTCVideoView.swift; sourceTree = "<group>"; };
-		203417DE2A091F620076C942 /* VideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallView.swift; sourceTree = "<group>"; };
 		2035126829F6637B00139AD3 /* SenderInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SenderInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
 		2035126929F6637C00139AD3 /* SenderInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SenderInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		2035126C29F6827900139AD3 /* GroupProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupProfileEditView.swift; sourceTree = "<group>"; };
@@ -266,9 +264,9 @@
 		205888ED2AF76541002C5086 /* BasicStoryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicStoryInfo.swift; sourceTree = "<group>"; };
 		205888EF2AF77A10002C5086 /* StickerInfoBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerInfoBottomSheetView.swift; sourceTree = "<group>"; };
 		205888F12AF77C6C002C5086 /* GetStickerInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStickerInfoResponse.swift; sourceTree = "<group>"; };
+		205BDD882BCA68E40036B7F7 /* SFUConsumersManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFUConsumersManager.swift; sourceTree = "<group>"; };
 		2065B37829B88E86004B6F2D /* Websocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Websocket.swift; sourceTree = "<group>"; };
 		2065B37A29B8A885004B6F2D /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
-		2069095329F2AB15000EB157 /* GroupContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupContentView.swift; sourceTree = "<group>"; };
 		206BF1812A18B04900535F79 /* ringing.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ringing.mp3; sourceTree = "<group>"; };
 		206BF1832A18BC5300535F79 /* calling.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = calling.mp3; sourceTree = "<group>"; };
 		206BF1852A18C00A00535F79 /* endcall.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = endcall.mp3; sourceTree = "<group>"; };
@@ -421,7 +419,6 @@
 		20E0966729FE766800B5EBA7 /* Doc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Doc.swift; sourceTree = "<group>"; };
 		20EA19B72A174430006427F9 /* serverConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serverConfig.swift; sourceTree = "<group>"; };
 		20F47B2C29C598D2003D5CD0 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
-		20FCCEB32B122F420033CA7B /* multipleRTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = multipleRTC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -512,7 +509,6 @@
 				208B4CB929F3CA3F001F2EF1 /* UserProfileEditView.swift */,
 				206D250D29F41D59008E3727 /* EditView.swift */,
 				208F5DCC29F4E8A600549483 /* StatusMessageEditView.swift */,
-				2069095329F2AB15000EB157 /* GroupContentView.swift */,
 				2099ACDD29BB02E1008CDFEA /* UserContentView.swift */,
 				20A1B4EF29F5252C0088FD6A /* OtherUserProfileView.swift */,
 			);
@@ -546,7 +542,6 @@
 		203D5D9E2A62CB0E003E1A1A /* chat */ = {
 			isa = PBXGroup;
 			children = (
-				20DC2E4E2BC42F5800B31C3D /* New Group */,
 				201A45D72BA6CD2500344A95 /* SFU */,
 				20D3984C2AE667A800DE66FC /* Sticker */,
 				2073D66E29A252B800AA29D9 /* Message.swift */,
@@ -603,8 +598,6 @@
 				203417D02A08E2C10076C942 /* rtc.swift */,
 				203417D32A08E79E0076C942 /* config.swift */,
 				203417DA2A091E980076C942 /* RTCVideoView.swift */,
-				203417DE2A091F620076C942 /* VideoCallView.swift */,
-				20FCCEB32B122F420033CA7B /* multipleRTC.swift */,
 			);
 			path = rtc;
 			sourceTree = "<group>";
@@ -827,6 +820,7 @@
 			children = (
 				20A280112B9C516300D1BECE /* SFUProducerViewModel.swift */,
 				20A280212B9D74A200D1BECE /* SFUConsumerViewModel.swift */,
+				205BDD882BCA68E40036B7F7 /* SFUConsumersManager.swift */,
 			);
 			path = sfu;
 			sourceTree = "<group>";
@@ -1091,13 +1085,6 @@
 			path = Sticker;
 			sourceTree = "<group>";
 		};
-		20DC2E4E2BC42F5800B31C3D /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "New Group";
-			sourceTree = "<group>";
-		};
 		20F47B2B29C598BD003D5CD0 /* uikit */ = {
 			isa = PBXGroup;
 			children = (
@@ -1234,7 +1221,6 @@
 				20C86BE42AC7C8DA00A29661 /* GetStoryInfoRequest.swift in Sources */,
 				205888EE2AF76541002C5086 /* BasicStoryInfo.swift in Sources */,
 				20CE5D2D29A354EA001371A7 /* dummyData.swift in Sources */,
-				20FCCEB42B122F420033CA7B /* multipleRTC.swift in Sources */,
 				2022AFA729C99F4B00C47383 /* URL.swift in Sources */,
 				20B1267C2A10E5E6009FF2AB /* VideoCallView.swift in Sources */,
 				20C86BD22AC7C6F900A29661 /* DeleteMessageResponse.swift in Sources */,
@@ -1331,7 +1317,6 @@
 				205888F22AF77C6C002C5086 /* GetStickerInfoResponse.swift in Sources */,
 				20A8895229C04E6E00B5BED2 /* UserDatas+CoreDataClass.swift in Sources */,
 				20C86BD82AC7C79200A29661 /* UploadImageResponse.swift in Sources */,
-				2069095429F2AB15000EB157 /* GroupContentView.swift in Sources */,
 				20C86BA32AC7C37600A29661 /* CreateGroupResponse.swift in Sources */,
 				205888EA2AF5E01E002C5086 /* IsUserStickerExistResponse.swift in Sources */,
 				20C86C062AC7CC3A00A29661 /* LeaveGroupRequest.swift in Sources */,
@@ -1373,6 +1358,7 @@
 				20C86BC62AC7C68900A29661 /* GroupInfo.swift in Sources */,
 				20BBAA4329A669BB00ED3245 /* PersonChatCallingView.swift in Sources */,
 				20A8895329C04E6E00B5BED2 /* UserDatas+CoreDataProperties.swift in Sources */,
+				205BDD892BCA68E40036B7F7 /* SFUConsumersManager.swift in Sources */,
 				20C86BAB2AC7C41900A29661 /* DeleteGroupRequest.swift in Sources */,
 				20A8AA3C29B49BCA00B0243E /* ChatAppService.swift in Sources */,
 				20CE5D2529A352C9001371A7 /* FriendRow.swift in Sources */,

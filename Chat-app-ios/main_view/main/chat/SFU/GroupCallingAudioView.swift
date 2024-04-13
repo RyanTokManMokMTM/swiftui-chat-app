@@ -13,7 +13,7 @@ struct GroupCallingAudioView: View {
     @StateObject private var ws = Websocket.shared
     @EnvironmentObject private var userVM : UserViewModel
     @EnvironmentObject private var producerVM : SFProducerViewModel
-    @EnvironmentObject private var cosnumerVM : SFUConsumerManager
+    @EnvironmentObject private var cosnumerVM : SFUConsumersManager
     let columns = Array(repeating: GridItem(spacing: 5, alignment: .center), count: 3)
     @State private var messageToWebRTC : String = ""
     var body: some View {
@@ -37,7 +37,7 @@ struct GroupCallingAudioView: View {
                     LazyVGrid(columns: self.columns){
                         renderProducerStreaming()
                         
-                        ForEach(self.$cosnumerVM.connectedConsumerMap,id:\.clientId) { consumer in
+                        ForEach(self.$cosnumerVM.connectedConsumerMap,id:\.uuid) { consumer in
                             ConsumerInfo(consumer: consumer)
                         }
                     }
@@ -49,18 +49,7 @@ struct GroupCallingAudioView: View {
             }
             .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
             .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
-//            .padding(.bottom)
-//            .padding(.horizontal)
-            
         }
-//        .onChange(of: self.producerVM.callState){ state in
-//                            print("State Changed : \(state)")
-//                            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
-//                                DispatchQueue.main.async {
-//                                    onClose()
-//                                }
-//                            }
-//                        }
 
     }
     

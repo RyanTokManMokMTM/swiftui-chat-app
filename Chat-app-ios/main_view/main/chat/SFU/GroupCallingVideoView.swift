@@ -15,7 +15,7 @@ struct GroupCallingVideoView: View {
     @StateObject private var ws = Websocket.shared
     @EnvironmentObject private var userVM : UserViewModel
     @EnvironmentObject private var producerVM : SFProducerViewModel
-    @EnvironmentObject private var cosnumerVM : SFUConsumerManager
+    @EnvironmentObject private var cosnumerVM : SFUConsumersManager
     @State private var messageToWebRTC : String = ""
     let columns = Array(repeating: GridItem(spacing: 10, alignment: .center), count: 2)
    
@@ -40,13 +40,9 @@ struct GroupCallingVideoView: View {
                 ScrollView(.vertical,showsIndicators: false){
                     LazyVGrid(columns: self.columns,spacing: 5){
                         renderProducerStreaming()
-                        ForEach($cosnumerVM.connectedConsumerMap,id :\.index) { consumer in
+                        ForEach($cosnumerVM.connectedConsumerMap,id :\.uuid) { consumer in
                             ConsumerVideoInfo(consumer: consumer)
                                 .padding(.horizontal,5)
-                    
-                    
-                     
-                    
                         }
                     }
                 }
@@ -56,16 +52,10 @@ struct GroupCallingVideoView: View {
             .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
             .padding(.bottom)
             .padding(.horizontal)
+            .onChange(of: self.cosnumerVM.connectedConsumerMap.count){ count in
+                    print("Current connected \(count)")
+            }
         }
-     
-//        .onChange(of: self.producerVM.callState){ state in
-//                            print("State Changed : \(state)")
-//                            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
-//                                DispatchQueue.main.async {
-//                                    onClose()
-//                                }
-//                            }
-//                        }
 
     }
     
@@ -100,11 +90,6 @@ struct GroupCallingVideoView: View {
                     .bold()
                     .padding(.vertical,5)
 
-//                Text(self.producerVM.callState == .Connected ? "Connected" : "Connecting...")
-//                    .font(.system(size: 10))
-//                    .bold()
-//                    .foregroundColor(.white)
-//                
                 
             }.padding(.horizontal,8)
         }
