@@ -22,6 +22,11 @@ struct Consumer {
 class SFUConsumer  : ObservableObject{
     let uuid : String = UUID().uuidString
 //    @Published var index : Int
+    @Published var isVideoOn : Bool = true
+    @Published var isAudioOn : Bool = true
+    @Published var isSpeakerOn : Bool = true
+
+    
     @Published var isConnectd : Bool = false
     @Published var isSetLoaclSDP : Bool = false
     @Published var isSetRemoteSDP : Bool = false
@@ -42,9 +47,6 @@ class SFUConsumer  : ObservableObject{
     @Published var isIncomingCall : Bool = false
     @Published var callingType : CallingType = .Voice
 
-    @Published var isSpeakerOn : Bool = true
-    @Published var isAudioOn : Bool  = true
-    @Published var isVideoOn : Bool = true
     @Published var camera : CameraPossion = .front
 
     @Published var clientId : String? = nil
@@ -98,6 +100,25 @@ class SFUConsumer  : ObservableObject{
         self.remoteVideoTrack = self.webRTCClient?.remoteVIdeoTrack
         self.remoteAudioTrack = self.webRTCClient?.remoteAudioTrack
         self.refershRemoteTrack = self.webRTCClient?.refershRemoteTrack ?? false
+    }
+    
+    func updateMediaStataus(mediaType : String, isOn : Bool){
+        DispatchQueue.main.async{
+            switch(mediaType){
+            case SFUMediaType.Audio.rawValue:
+                self.isAudioOn = isOn
+                break
+            case SFUMediaType.Video.rawValue:
+                self.isVideoOn = isOn
+                break
+            case SFUMediaType.Speaker.rawValue:
+                self.isSpeakerOn = isOn
+                break
+            default:
+                print("unknow type")
+                break
+            }
+        }
     }
     
 

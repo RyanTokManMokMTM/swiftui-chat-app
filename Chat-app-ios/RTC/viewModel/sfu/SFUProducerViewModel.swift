@@ -106,6 +106,9 @@ class SFProducerViewModel : ObservableObject {
         self.room = nil
         refershRemoteTrack = true
         refershLocalTrack = true
+        self.isAudioOn = true
+        self.isSpeakerOn = true
+        self.isVideoOn = true
     }
     
     

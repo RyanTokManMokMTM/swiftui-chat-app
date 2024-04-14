@@ -91,6 +91,7 @@ enum EventType : String, CaseIterable {
 
     case SFU_EVENT_GET_PRODUCERS
     case SFU_EVENT_SEND_NEW_PRODUCER
+    case SFU_EVENT_PRODUCER_MEDIA_STATUS
 
     case ALL
     
@@ -113,6 +114,7 @@ enum EventType : String, CaseIterable {
             case .SFU_EVENT_CONSUMER_CLOSE : return "SFU_EVENT_CONSUMER_CLOSE"
             case .SFU_EVENT_GET_PRODUCERS : return "SFU_EVENT_GET_PRODUCERS"
             case .SFU_EVENT_SEND_NEW_PRODUCER : return "SFU_EVENT_SEND_NEW_PRODUCER"
+            case .SFU_EVENT_PRODUCER_MEDIA_STATUS : return "SFU_EVENT_PRODUCER_MEDIA_STATUS"
         
             case .ALL : return "ALL"
         }
@@ -293,6 +295,10 @@ class Websocket : ObservableObject {
                         case EventType.SFU_EVENT_GET_PRODUCERS.rawValue:
 //                            print("SFU_EVENT_GET_PRODUCERS: \(msg.content ?? "--")")
                             self.sessionDelegate?.webSocket(self, didReceive: msg)
+                            break
+                            
+                        case EventType.SFU_EVENT_PRODUCER_MEDIA_STATUS.rawValue:
+                            self.sessionConsumerDelegate?.webSocket(self, didReceive: msg)
                             break
                         default:
                             print("UNKNOW TYPE ： \(type)")
@@ -805,6 +811,19 @@ extension Websocket {
                 return
             }
             self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_CONSUMER_SDP)
+        }catch(let err){
+            print("SFU CONNECT ERROR :\(err.localizedDescription)")
+        }
+    }
+    
+    func sendUpdateMediaStatus(sessionId : String,clientId : String,mediaType : String, isOn : Bool){
+        let req = SFUProducerMediaStatus(session_id: sessionId, client_id: clientId, media_type: mediaType, is_on: isOn)
+        do{
+            let content = try self.jsonEncoder.encode(req)
+            guard let jsonContent = content.toJSONString else {
+                return
+            }
+            self.sendSFUMessage(content: String(jsonContent), eventType: .SFU_EVENT_PRODUCER_MEDIA_STATUS)
         }catch(let err){
             print("SFU CONNECT ERROR :\(err.localizedDescription)")
         }

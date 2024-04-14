@@ -33,3 +33,11 @@ struct SFUSendIceCandindateReq : Codable {
 struct SFUCloseConnectionReq : Encodable {
     let session_id : String
 }
+
+
+struct SFUProducerMediaStatus : Codable {
+    let session_id : String
+    let client_id : String
+    let media_type : String
+    let is_on : Bool
+}

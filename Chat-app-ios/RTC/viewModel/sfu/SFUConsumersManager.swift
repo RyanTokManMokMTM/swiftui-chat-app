@@ -19,10 +19,12 @@ class SFUConsumersManager : ObservableObject {
     @Published var sessionId : String? //In which session
     @Published var connectedConsumerMap : [SFUConsumer] = [] //Which consumer is connected
     @Published var pendingConsumer : [String : SFUConsumer] = [:] //Which consumer is consuming.
+    @Published var onUpdateUI : Bool = false
     private var callType : CallingType? = nil //Which is current calling type
     private var webSocket : Websocket?
 
     init(){
+      
         self.connectedConsumerMap = []
         self.pendingConsumer = [:]
         self.webSocket = Websocket.shared
@@ -130,6 +132,18 @@ class SFUConsumersManager : ObservableObject {
         }
     }
     
+    func updateConsumerMediaStatus(clientId : String, mediaType: String, isOn : Bool){
+        guard let i = self.findConsumerIndexById(producerId: clientId) else{
+            print("consumer not found")
+            return
+        }
+        DispatchQueue.main.async {
+            self.connectedConsumerMap[i].updateMediaStataus(mediaType: mediaType, isOn: isOn)
+            self.onUpdateUI = !self.onUpdateUI
+        }
+      
+    }
+    
     private func findConsumerIndexById(producerId : String) -> Int?{
         return self.connectedConsumerMap.firstIndex(where: {$0.clientId == producerId})
     }
@@ -144,7 +158,7 @@ class SFUConsumersManager : ObservableObject {
         }
         DispatchQueue.main.async {
             withAnimation{
-                let c = self.connectedConsumerMap[i]
+                self.connectedConsumerMap[i]
                 self.connectedConsumerMap[i].DisConnect()
                 self.connectedConsumerMap.remove(at: i)
             }
@@ -296,6 +310,17 @@ extension SFUConsumersManager : WebSocketDelegate {
                 let resp = try JSONDecoder().decode(SFUConnectSessionResp.self, from: Data(content.utf8))
 //                print(resp.session_producers)
                 self.handleProducers(prodcuersList: resp.session_producers)
+            }catch(let err){
+                print(err.localizedDescription)
+            }
+            break
+            
+        case EventType.SFU_EVENT_PRODUCER_MEDIA_STATUS.rawValue:
+            do{
+                //Receive ice candindate.
+                print("SFU_EVENT_PRODUCER_MEDIA_STATUS")
+                let resp = try JSONDecoder().decode(SFUProducerMediaStatus.self, from: Data(content.utf8))
+                self.updateConsumerMediaStatus(clientId: resp.client_id, mediaType: resp.media_type, isOn: resp.is_on)
             }catch(let err){
                 print(err.localizedDescription)
             }

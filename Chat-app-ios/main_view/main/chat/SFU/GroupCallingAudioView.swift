@@ -78,12 +78,12 @@ struct GroupCallingAudioView: View {
                 img
                     .resizable()
                     .aspectRatio( contentMode: .fill)
-                    .frame(width: 50,height: 50)
+                    .frame(width: 35,height: 35)
                     .clipShape(Circle())
                 
             }, placeholder: {
                 ProgressView()
-                    .frame(width: 50,height: 50)
+                    .frame(width: 35,height: 35)
             })
             .padding(.top,10)
             
@@ -92,7 +92,25 @@ struct GroupCallingAudioView: View {
                 .font(.system(size: 12))
                 .bold()
                 .padding(.vertical,5)
-//            
+            
+            HStack{
+                if !self.producerVM.isSpeakerOn {
+                    Image(systemName: "speaker.slash")
+                        .imageScale(.small)
+                        .foregroundColor(.white)
+                        .clipShape(Circle())
+                        .padding(.vertical,5)
+                }
+                
+                if !self.producerVM.isAudioOn {
+                    Image(systemName:  "mic.slash.fill")
+                        .imageScale(.small)
+                        .foregroundColor(.white)
+                        .clipShape(Circle())
+                        .padding(.horizontal,5)
+                }
+            }
+//
 //            Text(self.producerVM.callState == .Connected ? "Connected" : "Connecting...")
 //                .font(.system(size: 8))
 //                .bold()
@@ -115,15 +133,30 @@ struct GroupCallingAudioView: View {
         self.producerVM.isIncomingCall = false
         self.cosnumerVM.closeAllConsumer()
     }
-   
+    
+    private func updateMediaStatus(mediaType: String,isOn : Bool) {
+        guard let sessionId = self.producerVM.sessionId else {
+            print("sesson id is nil")
+            return
+        }
+        
+        guard let clientId = self.userVM.profile?.uuid else{
+            print("clientId id is nil")
+            return
+        }
+        
+        Websocket.shared.sendUpdateMediaStatus(sessionId: sessionId, clientId: clientId, mediaType: mediaType, isOn: isOn)
+    }
     @ViewBuilder
     private func callingBtn() -> some View {
         HStack{
             Button(action:{
                 if self.producerVM.isAudioOn {
                     self.producerVM.mute()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Audio.rawValue, isOn: false)
                 }else {
                     self.producerVM.unmute()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Audio.rawValue, isOn: true)
                 }
             }){
                 VStack(spacing:5){
@@ -168,8 +201,10 @@ struct GroupCallingAudioView: View {
             Button(action:{
                 if self.producerVM.isSpeakerOn {
                     self.producerVM.speakerOff()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Speaker.rawValue, isOn: false)
                 }else {
                     self.producerVM.speakerOn()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Speaker.rawValue, isOn: true)
                 }
             }){
                 VStack(spacing:5){
@@ -204,12 +239,12 @@ struct ConsumerInfo : View {
                     img
                         .resizable()
                         .aspectRatio( contentMode: .fill)
-                        .frame(width: 45,height: 45)
+                        .frame(width: 35,height: 35)
                         .clipShape(Circle())
                     
                 }, placeholder: {
                     ProgressView()
-                        .frame(width: 45,height: 45)
+                        .frame(width: 35,height: 35)
                 })
                 .padding(.top,10)
                 
@@ -218,6 +253,24 @@ struct ConsumerInfo : View {
                     .font(.system(size: 12))
                     .bold()
                     .padding(.vertical,5)
+                
+                HStack{
+                    if !consumer.isSpeakerOn {
+                        Image(systemName: "speaker.slash")
+                            .imageScale(.small)
+                            .foregroundColor(.white)
+                            .clipShape(Circle())
+                            .padding(.vertical,5)
+                    }
+                    
+                    if !consumer.isAudioOn {
+                        Image(systemName:  "mic.slash.fill")
+                            .imageScale(.small)
+                            .foregroundColor(.white)
+                            .clipShape(Circle())
+                            .padding(.horizontal,5)
+                    }
+                }
                 
             }
             .frame(width: 100,height: 100)

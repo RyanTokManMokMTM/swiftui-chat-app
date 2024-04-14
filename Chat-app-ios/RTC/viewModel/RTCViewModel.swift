@@ -23,6 +23,20 @@ enum CallingType : Int {
     }
 }
 
+enum SFUMediaType : String {
+    case Audio
+    case Video
+    case Speaker
+    
+    var rawValue: String {
+        switch self {
+        case .Audio : return "audio"
+        case .Video : return "video"
+        case .Speaker : return "speaker"
+        }
+    }
+}
+
 enum CallingStatus : String {
     case Connected
     case Connecting

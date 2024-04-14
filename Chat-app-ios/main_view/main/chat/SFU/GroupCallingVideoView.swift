@@ -11,7 +11,7 @@ import AVFoundation
 struct GroupCallingVideoView: View {
     //One prodcuer
     //Many Consumer
-    var sessionId : String? = nil
+
     @StateObject private var ws = Websocket.shared
     @StateObject private var hub = BenHubState.shared
     @EnvironmentObject private var userVM : UserViewModel
@@ -83,7 +83,7 @@ struct GroupCallingVideoView: View {
         .clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners]))
         .background(Color.black.clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
         .overlay(alignment:  self.producerVM.webRTCClient?.VideoIsEnable == true ? .bottomLeading : .center ){
-            if self.producerVM.webRTCClient?.VideoIsEnable != true  {
+            if self.producerVM.webRTCClient?.VideoIsEnable != true   {
                 VStack(spacing:5){
                     AsyncImage(url: self.userVM.profile?.AvatarURL ?? URL(string: "")!, content: { img in
                         img
@@ -103,6 +103,23 @@ struct GroupCallingVideoView: View {
                         .font(.system(size: 15))
                         .bold()
                     
+                    HStack{
+                        if !self.producerVM.isSpeakerOn {
+                            Image(systemName: "speaker.slash")
+                                .imageScale(.small)
+                                .foregroundColor(.white)
+                                .clipShape(Circle())
+                                .padding(.vertical,5)
+                        }
+                        
+                        if !self.producerVM.isAudioOn {
+                            Image(systemName:  "mic.slash.fill")
+                                .imageScale(.small)
+                                .foregroundColor(.white)
+                                .clipShape(Circle())
+                                .padding(.horizontal,5)
+                        }
+                    }
                 }
             }else {
                 HStack(spacing:5){
@@ -125,8 +142,29 @@ struct GroupCallingVideoView: View {
                         .font(.system(size: 10))
                         .bold()
                         .padding(.vertical,5)
-
                     
+                    
+                    if !self.producerVM.isSpeakerOn {
+                        Image(systemName: "speaker.slash")
+                            .imageScale(.small)
+                            .foregroundColor(.white)
+                            .padding(5)
+                            .background{
+                                BlurView().clipShape(Circle())
+                            }
+                            .padding(.vertical,5)
+                    }
+                    
+                    if !self.producerVM.isAudioOn {
+                        Image(systemName:  "mic.slash.fill")
+                            .imageScale(.small)
+                            .foregroundColor(.white)
+                            .padding(5)
+                            .background{
+                                BlurView().clipShape(Circle())
+                            }
+                            .padding(.horizontal,5)
+                    }
                 }.padding(.horizontal,8)
             }
            
@@ -142,14 +180,29 @@ struct GroupCallingVideoView: View {
         self.cosnumerVM.closeAllConsumer()
     }
     
+    private func updateMediaStatus(mediaType: String,isOn : Bool) {
+        guard let sessionId = self.producerVM.sessionId else {
+            print("sesson id is nil")
+            return
+        }
+        
+        guard let clientId = self.userVM.profile?.uuid else{
+            print("clientId id is nil")
+            return
+        }
+        Websocket.shared.sendUpdateMediaStatus(sessionId: sessionId, clientId: clientId, mediaType: mediaType, isOn: isOn)
+    }
+    
     @ViewBuilder
     private func callingBtn() -> some View {
         HStack{
             Button(action: {
                 if self.producerVM.isAudioOn {
                     self.producerVM.mute()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Audio.rawValue, isOn: false)
                 }else {
                     self.producerVM.unmute()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Audio.rawValue, isOn: true)
                 }
             }){
                 Image(systemName: self.producerVM.isAudioOn ? "mic.slash.fill" : "mic.fill")
@@ -165,11 +218,13 @@ struct GroupCallingVideoView: View {
             Button(action: {
                 if self.producerVM.isSpeakerOn {
                     self.producerVM.speakerOff()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Speaker.rawValue, isOn: false)
                 }else {
                     self.producerVM.speakerOn()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Speaker.rawValue, isOn: true)
                 }
             }){
-                Image(systemName: self.producerVM.isSpeakerOn ? "speaker.slash" :  "speaker.wave.3.fill")
+                Image(systemName: self.producerVM.isSpeakerOn ? "speaker.slash" :  "speaker.wave.1.fill")
                     .imageScale(.large)
                     .foregroundColor(.white)
                     .padding()
@@ -195,8 +250,10 @@ struct GroupCallingVideoView: View {
             Button(action: {
                 if self.producerVM.isVideoOn {
                     self.producerVM.videoOff()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Video.rawValue, isOn: false)
                 }else {
                     self.producerVM.videoOn()
+                    self.updateMediaStatus(mediaType: SFUMediaType.Video.rawValue, isOn: true)
                 }
             }){
                 Image(systemName: self.producerVM.isVideoOn ? "video.slash" : "video.fill")
@@ -237,8 +294,8 @@ struct ConsumerVideoInfo : View {
             .frame(width: 180,height: 250)
             .clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners]))
             .background(Color.black.clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
-            .overlay(alignment: consumer.webRTCClient?.remoteVIdeoTrack != nil ? .bottomLeading : .center ){
-                if  consumer.webRTCClient?.remoteVIdeoTrack != nil {
+            .overlay(alignment: consumer.webRTCClient?.remoteVIdeoTrack != nil && consumer.isVideoOn ? .bottomLeading : .center ){
+                if  consumer.webRTCClient?.remoteVIdeoTrack != nil && consumer.isVideoOn {
                     HStack(spacing:5){
                         AsyncImage(url: consumer.userInfo.AvatarURL, content: { img in
                             img
@@ -260,12 +317,23 @@ struct ConsumerVideoInfo : View {
                             .bold()
                             .padding(.vertical,5)
                         
-    //                    Text(consumer.callState == .Connected ? "Connected" : "Connecting...")
-    //                        .foregroundColor(.white)
-    //                        .font(.system(size: 10))
-    //                        .bold()
-    //                        .padding(.horizontal,5)
-                    }.padding(.horizontal,8)
+                        if !consumer.isSpeakerOn {
+                            Image(systemName: "speaker.slash")
+                                .imageScale(.small)
+                                .foregroundColor(.white)
+                                .clipShape(Circle())
+                                .padding(.vertical,5)
+                        }
+                        
+                        if !consumer.isAudioOn {
+                            Image(systemName:  "mic.slash.fill")
+                                .imageScale(.small)
+                                .foregroundColor(.white)
+                                .clipShape(Circle())
+                                .padding(.horizontal,5)
+                        }
+
+                    }
                 }else {
                     VStack(spacing:5){
                         AsyncImage(url: consumer.userInfo.AvatarURL, content: { img in
@@ -286,6 +354,31 @@ struct ConsumerVideoInfo : View {
                             .foregroundColor(.white)
                             .font(.system(size: 10))
                             .bold()
+                        
+                        HStack{
+                            if !consumer.isSpeakerOn {
+                                Image(systemName: "speaker.slash")
+                                    .imageScale(.small)
+                                    .foregroundColor(.white)
+                                    .padding(5)
+                                    .background{
+                                        BlurView().clipShape(Circle())
+                                    }
+                                    .padding(.vertical,5)
+                            }
+                            
+                            if !consumer.isAudioOn {
+                                Image(systemName:  "mic.slash.fill")
+                                    .imageScale(.small)
+                                    .foregroundColor(.white)
+                                    .padding(5)
+                                    .background{
+                                        BlurView().clipShape(Circle())
+                                    }
+                                    .padding(.horizontal,5)
+                            }
+
+                        }
                     
                     }
                    
