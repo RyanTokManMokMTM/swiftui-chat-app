@@ -143,9 +143,11 @@ class SFUConsumersManager : ObservableObject {
             return
         }
         DispatchQueue.main.async {
-            let c = self.connectedConsumerMap[i]
-            self.connectedConsumerMap[i].DisConnect()
-            self.connectedConsumerMap.remove(at: i)
+            withAnimation{
+                let c = self.connectedConsumerMap[i]
+                self.connectedConsumerMap[i].DisConnect()
+                self.connectedConsumerMap.remove(at: i)
+            }
        }
     }
     
@@ -168,7 +170,10 @@ class SFUConsumersManager : ObservableObject {
     private func addConsumer(consumer : SFUConsumer) {
         print("Adding Consumer into the list \(consumer.clientId)")
         DispatchQueue.main.async {
-            self.connectedConsumerMap.append(consumer)
+            withAnimation{
+                self.connectedConsumerMap.append(consumer)
+            }
+
         }
     }
     

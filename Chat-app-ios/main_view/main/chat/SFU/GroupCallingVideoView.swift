@@ -237,8 +237,8 @@ struct ConsumerVideoInfo : View {
             .frame(width: 180,height: 250)
             .clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners]))
             .background(Color.black.clipShape(CustomConer(width: 10, height: 10,coners: [.allCorners])))
-            .overlay(alignment: consumer.webRTCClient?.RemoveVideoIsEnable == true ? .bottomLeading : .center ){
-                if  consumer.webRTCClient?.RemoveVideoIsEnable == true {
+            .overlay(alignment: consumer.webRTCClient?.remoteVIdeoTrack != nil ? .bottomLeading : .center ){
+                if  consumer.webRTCClient?.remoteVIdeoTrack != nil {
                     HStack(spacing:5){
                         AsyncImage(url: consumer.userInfo.AvatarURL, content: { img in
                             img

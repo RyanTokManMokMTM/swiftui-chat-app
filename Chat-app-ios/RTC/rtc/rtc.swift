@@ -158,27 +158,6 @@ class WebRTCClient : NSObject {
         }
     }
     
-//    private func setLocalSDP(_ sdp : RTCSessionDescription,type : CallingType) {
-//        guard let peerConn = peerConn else {
-//            print("Peer connection have't created.")
-//            return
-//        }
-//
-//        peerConn.setLocalDescription(sdp) { err in
-//            if let err = err {
-//                print(err)
-//                return
-//            }
-//        }
-//        
-//        
-//        if let data = sdp.JSONData(type: type) {
-//            self.delegate?.webRTCClient(self, sendData: data) //TODO: define in RTCViewModel
-//            print("sent local SDP")
-//        }
-//
-//    }
-    
     private func setCandindate(remoteCandidate : RTCIceCandidate){
         guard let peerConn = peerConn else {
             print("Peer connection have't created.")
@@ -211,14 +190,6 @@ class WebRTCClient : NSObject {
         }set {
             localVideoTrack?.isEnabled = newValue
         }
-    }
-    
-    var RemoveVideoIsEnable : Bool {
-        print("Remote track getting.........")
-        if remoteVIdeoTrack == nil {
-            return false
-        }
-        return remoteVIdeoTrack!.isEnabled
     }
     
     
@@ -267,7 +238,7 @@ extension WebRTCClient {
             }
         }
         
-//        remoteVIdeoTrack = peerConn.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
+        remoteVIdeoTrack = peerConn.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
         
         //TODO: Data channel for data only?
         if let dataChannel = createDataChannel() {
