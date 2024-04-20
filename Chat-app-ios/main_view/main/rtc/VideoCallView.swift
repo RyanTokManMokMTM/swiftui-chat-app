@@ -10,12 +10,11 @@ import SwiftUI
 struct VideoCallView: View {
     @StateObject private var hub = BenHubState.shared
     @EnvironmentObject var videoCallVM : RTCViewModel
-    @EnvironmentObject private var userVM : UserViewModel
     let name : String
     let path : URL
-    
     var body: some View {
-        ZStack(alignment:.top){
+        ZStack{
+
             AsyncImage(url: path, content: {img in
                 img
                     .resizable()
@@ -26,40 +25,37 @@ struct VideoCallView: View {
                         BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
                     }
                     .overlay(alignment:.top){
-                        ZStack{
-                            if self.videoCallVM.callState == .Incoming {
-                                incomingCallView()
-                              
-                            }else {
-                                videoCallingView()
-                            }
+                        if self.videoCallVM.callState == .Incoming {
+                            incomingCallView()
+                        }else {
+                            videoCallingView()
                         }
-                       
+                    
                     }
+                
             }, placeholder: {
                 ProgressView()
                     .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
             })
-            .zIndex(-1)
 
 
         }
+        .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+        .animation(.linear)
         .edgesIgnoringSafeArea(.all)
         .overlay(alignment: .top){
-            HStack(alignment: .top){
+            HStack{
                 Button(action:{
-                    DispatchQueue.main.async {
-                        withAnimation(){
-                            self.videoCallVM.isMinimized = true
-                        }
+                    withAnimation(){
+                        self.videoCallVM.isMinimized = true
                     }
                 }){
                     Image(systemName: "chevron.down")
                         .imageScale(.large)
                         .foregroundColor(.white)
-                        .padding(5)
+                        .scaleEffect(1.3)
                 }
-                .padding(5)
+                .padding(10)
                 .background(BlurView().clipShape(Circle()))
 
                 Spacer()
@@ -88,21 +84,19 @@ struct VideoCallView: View {
             .padding(.horizontal)
 //            .padding()
             .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-            .onChange(of: self.videoCallVM.callState){ state in
-                if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
+
+        }
+        .onChange(of: self.videoCallVM.callState){ state in
+            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
+                DispatchQueue.main.async {
                     SoundManager.shared.stopPlaying()
-                    withAnimation{
-                        self.videoCallVM.isIncomingCall = false
-                    }
+                    self.videoCallVM.isIncomingCall = false
                     self.videoCallVM.DisConnect()
+                    hub.AlertMessage(sysImg: "", message: "Video Call Ended")
                     playEndCallSoundEffect()
                 }
             }
         }
-        .frame(width: UIScreen.main.bounds.width)
-        .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
-        .animation(.linear)
-        
 
     }
     private func playEndCallSoundEffect(){
@@ -120,6 +114,64 @@ struct VideoCallView: View {
             //            .edgesIgnoringSafeArea(.all)
 
             .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+            .background{
+                if self.videoCallVM.callState != .Connected{
+                    ZStack{
+                        AsyncImage(url: path, content: {img in
+                            img
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+                                .edgesIgnoringSafeArea(.all)
+                                .overlay{
+                                    BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
+                                }
+
+                        }, placeholder: {
+                            ProgressView()
+                                .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+                        })
+                        BlurView().edgesIgnoringSafeArea(.all)
+                    }
+                    .overlay(alignment:.top){
+                        VStack{
+                            AsyncImage(url: path, content: {img in
+                                img
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width:120,height: 120)
+                                    .clipShape(Circle())
+
+
+
+                            }, placeholder: {
+                                ProgressView()
+                                    .frame(width:120,height: 120)
+
+                            })
+
+                            Text(name)
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.white)
+
+                            HStack {
+                                
+                                DotView() // 1.
+                                DotView(delay: 0.2) // 2.
+                                DotView(delay: 0.4) // 3.
+                            }
+                            .padding(.vertical,8)
+                        }
+                        .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+                        .padding()
+                    }
+                    
+                }
+
+            }
+
+            
         }
         .overlay(alignment:.bottomLeading){
             VStack(alignment:.trailing){
@@ -179,10 +231,7 @@ struct VideoCallView: View {
                     //TODO: disconnect and reset and send the signal
                     self.videoCallVM.sendDisconnect()
                     self.videoCallVM.DisConnect()
-                    withAnimation{
-                        self.videoCallVM.isIncomingCall = false
-                    }
-                    self.sendCallingMessage(message: "Ended the video call.")
+                    self.videoCallVM.isIncomingCall = false
                 }
             }){
                 Image(systemName: "phone.down.fill")
@@ -231,47 +280,56 @@ struct VideoCallView: View {
     @ViewBuilder
     private func incomingCallView() -> some View {
         VStack{
-            AsyncImage(url: path, content: {img in
-                img
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width:120,height: 120)
-                    .clipShape(Circle())
+            VStack{
                 
+                AsyncImage(url: path, content: {img in
+                    img
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width:120,height: 120)
+                        .clipShape(Circle())
+                    
+                    
+                    
+                }, placeholder: {
+                    ProgressView()
+                        .frame(width:120,height: 120)
+                    
+                })
                 
-                
-            }, placeholder: {
-                ProgressView()
-                    .frame(width:120,height: 120)
-                
-            })
-            
-            Text(name)
-                .font(.title2)
-                .bold()
-                .foregroundColor(.white)
-
-            VStack(spacing:5){
-                Text("Video Calling")
+                Text(name)
+                    .font(.title2)
+                    .bold()
                     .foregroundColor(.white)
-                    .font(.footnote)
-                HStack{
-                    DotView() // 1.
-                    DotView(delay: 0.2) // 2.
-                    DotView(delay: 0.4) // 3.
-                }
-                .padding(.vertical,8)
-            }
-            .padding(.vertical,5)
-            Spacer()
-            IncomingCall()
 
+                VStack(spacing:5){
+                    Text("Video Calling")
+                        .foregroundColor(.white)
+                        .font(.footnote)
+                    HStack{
+                        DotView() // 1.
+                        DotView(delay: 0.2) // 2.
+                        DotView(delay: 0.4) // 3.
+                    }
+                    .padding(.vertical,8)
+
+                }
+                .padding(.vertical,5)
+                
+
+            }
+            .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+            .padding()
+
+            
+            VStack{
+                Spacer()
+                IncomingCall()
+            }
+            .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+            .padding(.horizontal)
         }
-        .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-        .padding(.top,15)
-        .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
-        .padding(.bottom)
-        .padding(.horizontal)
+        .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
 //        .edgesIgnoringSafeArea(.all)
     }
     
@@ -310,10 +368,7 @@ struct VideoCallView: View {
                     DispatchQueue.main.async { //TODO: Send disconnected signal and Disconnect and reset all RTC
                         self.videoCallVM.sendDisconnect()
                         self.videoCallVM.DisConnect()
-                        withAnimation{
-                            self.videoCallVM.isIncomingCall = false
-                        }
-                        self.sendCallingMessage(message: "Ended the video call.")
+                        self.videoCallVM.isIncomingCall = false
                     }
                  
                 }){
@@ -335,45 +390,11 @@ struct VideoCallView: View {
 //            Spacer()
         }
     }
-    
-    
-    private func sendCallingMessage(message : String){
-        if message.isEmpty {
-            return
-        }
-        
-        guard let toUserId = self.videoCallVM.toUserUUID else{
-            print("userId is empty")
-            return
-        }
-        
-        let msgID = UUID().uuidString
-        
-        let msg = WSMessage(
-            messageID:msgID,
-            replyMessageID: nil,
-            avatar: self.userVM.profile!.avatar,
-            fromUserName: self.userVM.profile!.name,
-            fromUUID: self.userVM.profile!.uuid,
-            toUUID: toUserId,
-            content: message,
-            contentType: ContentType.TEXT.rawValue,
-            eventType: EventType.MESSAGE.rawValue,
-            messageType: MessageType.Signal.rawValue,
-            urlPath: nil,
-            fileName: nil,
-            fileSize: nil,
-            contentAvailableTime: nil,
-            contentUUID: nil,
-            contentUserName: nil,
-            contentUserAvatar: nil,
-            contentUserUUID: nil)
-        Websocket.shared.handleMessage(event:.send,msg: msg)
-        
-        
-        Task {
-            await Websocket.shared.checkMessage(messageID: msgID)
-        }
-    }
   
 }
+//
+//struct VideoCall_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VideoCall(name: "Testing", path: URL(string: RESOURCES_HOST + "/default.jpg")!)
+//    }
+//}
