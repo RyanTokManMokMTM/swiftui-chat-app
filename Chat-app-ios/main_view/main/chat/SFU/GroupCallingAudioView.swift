@@ -40,6 +40,21 @@ struct GroupCallingAudioView: View {
                     .fontWeight(.medium)
                     .foregroundStyle(.white)
                     .padding(.vertical,5)
+                    .frame(width: UIScreen.main.bounds.width - 10)
+                    .overlay(alignment:.leading){
+                        Button(action:{
+                            DispatchQueue.main.async {
+                                withAnimation(){
+                                    self.producerVM.isMinimized = true
+                                }
+                            }
+                        }){
+                            Image(systemName: "chevron.down")
+                                .imageScale(.large)
+                                .foregroundColor(.white)
+                                .padding(10)
+                        }
+                    }
                 
                 ScrollView(.vertical,showsIndicators: false){
                     LazyVGrid(columns: self.columns){

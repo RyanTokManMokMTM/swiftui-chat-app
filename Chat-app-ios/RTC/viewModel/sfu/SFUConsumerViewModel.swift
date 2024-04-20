@@ -169,6 +169,7 @@ extension SFUConsumer {
                 if let sdpData = sdp.JSONData(type: type) {
                     //send via websocket
                     print("sendeing offer signal")
+                    print("CONSUMER : OFFER \n \(sdp)")
                     self.sfuManagerDelegate?.SFUConsumserManager(sdpData, signalType: .SDP, producerId: self.clientId)
 
                 }else {

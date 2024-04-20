@@ -40,6 +40,7 @@ class SFProducerViewModel : ObservableObject {
     @Published var isAudioOn : Bool  = true
     @Published var isVideoOn : Bool = true
     @Published var camera : CameraPossion = .front
+    @Published var isMinimized : Bool = false
     
     @Published var  sessionId : String? = nil //Chat group UUID.
     @Published var clientId : String? = nil

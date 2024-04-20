@@ -78,6 +78,7 @@ class RTCViewModel : ObservableObject {
     
     @Published var callState : CallingStatus = .Pending
     @Published var isIncomingCall : Bool = false
+    @Published var isMinimized : Bool = false
     @Published var callingType : CallingType = .Voice
     
     @Published var isSpeakerOn : Bool = true
@@ -99,6 +100,7 @@ class RTCViewModel : ObservableObject {
 //        createNewPeer()
     
     }
+
     
     func createNewPeer(){
         if self.webRTCClient != nil {
@@ -241,10 +243,11 @@ extension RTCViewModel : WebRTCClientDelegate{
             self.connectionStatus = state
             switch state {
             case .connected:
+                print("RTCPeerConnectionState changed connted")
                 SoundManager.shared.stopPlaying()
                 self.callState = .Connected
             case .disconnected,.failed, .closed:
-                
+                print("RTCPeerConnectionState changed disconnected")
                 self.callState = .Ended
             case .new, .connecting:
                 self.callState = .Connecting
@@ -308,6 +311,9 @@ extension RTCViewModel {
     }
     
     func processSignalingMessage(_ message: String,websocketMessage : WSMessage) -> Void {
+        if self.webRTCClient == nil {
+            self.createNewPeer()
+        }
         guard let webRTCClient = webRTCClient else { return }
         print(message)
         let signalMessage = SignalMessage.from(message: message)

@@ -29,9 +29,9 @@ struct HomeView: View {
     @EnvironmentObject private var userStory : UserStoryViewModel
     @Environment(\.colorScheme) var colorScheme
     
-    @StateObject private var videoCallVM = RTCViewModel()
-    @StateObject private var producerVM = SFProducerViewModel()
-    @StateObject private var consumerVM = SFUConsumersManager()
+    @EnvironmentObject private var videoCallVM : RTCViewModel
+    @EnvironmentObject private var producerVM : SFProducerViewModel
+    @EnvironmentObject private var consumerVM : SFUConsumersManager
     @StateObject var hub = BenHubState.shared
     @State private var index = 0
     @State private var search = ""
@@ -93,36 +93,15 @@ struct HomeView: View {
                     }
                     
                 }
-        }
-        .fullScreenCover(isPresented: self.$videoCallVM.isIncomingCall){
-            if self.videoCallVM.callingType == .Voice {
-                VoiceCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
-//                    .environmentObject(userModel)
-                    .environmentObject(videoCallVM)
-            }else {
-                VideoCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
-//                    .environmentObject(userModel)
-                    .environmentObject(videoCallVM)
-            }
-        }
-        .fullScreenCover(isPresented: self.$producerVM.isIncomingCall){
-            if self.producerVM.callingType == .Voice {
-                GroupCallingAudioView()
-                     .environmentObject(producerVM)
-                     .environmentObject(consumerVM)
-                
-            }else {
-                GroupCallingVideoView()
-                     .environmentObject(producerVM)
-                     .environmentObject(consumerVM)
-            }
+                .sheet(isPresented: $isShowSheet){
+                    AddContent(isAddContent: $isShowSheet)
+                        .environmentObject(UDM)
+                        .environmentObject(userModel)
+                }
+
         }
 
-        .sheet(isPresented: $isShowSheet){
-            AddContent(isAddContent: $isShowSheet)
-                .environmentObject(UDM)
-                .environmentObject(userModel)
-        }
+
 
     }
     

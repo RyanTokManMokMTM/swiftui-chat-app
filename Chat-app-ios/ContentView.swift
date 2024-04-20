@@ -9,6 +9,9 @@ import AVFoundation
 
 
 struct ContentView: View {
+    @StateObject private var videoCallVM = RTCViewModel()
+    @StateObject private var producerVM = SFProducerViewModel()
+    @StateObject private var consumerVM = SFUConsumersManager()
     @StateObject var state = SearchState()
     @StateObject var stickerShopVM = StickerShopViewModel()
     @StateObject var UDM : UserDataModel = UserDataModel.shared //Core data model
@@ -18,6 +21,7 @@ struct ContentView: View {
     @StateObject var userModel = UserViewModel()
     @StateObject var userStory = UserStoryViewModel()
     @State private var loginSate = true
+    @State private var isMinimized = false
     @State private var isShowMenu = false
     @State private var menuIndex : Int = 0
     @State private var isShowProfile = false
@@ -26,7 +30,7 @@ struct ContentView: View {
     @Namespace var namespace
     var body: some View {
 
-        ZStack{
+        ZStack(alignment: .bottomTrailing){
             NavigationStack(path:$path.navigationRoomPath){
                 HomeView(isShowMenu: $isShowMenu,menuTab: $menuIndex, isAddStory: $isAddStory)
                     .environmentObject(userModel)
@@ -34,7 +38,9 @@ struct ContentView: View {
                     .environmentObject(storyModel)
                     .environmentObject(userStory)
                     .environmentObject(stickerShopVM)
-
+                    .environmentObject(videoCallVM)
+                    .environmentObject(producerVM)
+                    .environmentObject(consumerVM)
             }
             .accentColor(.green)
             .zIndex(1)
@@ -65,7 +71,9 @@ struct ContentView: View {
                     .environmentObject(userModel)
                     .environmentObject(userStory)
             }
-
+            
+        
+//
 
             if isShowMenu {
                 NavigationStack(){
@@ -139,6 +147,130 @@ struct ContentView: View {
                     .zIndex(3)
 
 
+            }
+            
+            
+            if self.videoCallVM.isIncomingCall {
+                ZStack(alignment: .bottomTrailing){
+                    VStack{
+                        if self.videoCallVM.callingType == .Voice {
+                            VoiceCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
+                                .environmentObject(videoCallVM)
+                                .opacity(self.videoCallVM.isMinimized ? 0 : 1)
+                            
+
+                        }else {
+                            VideoCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
+                                .environmentObject(videoCallVM)
+                                .opacity(self.videoCallVM.isMinimized ? 0 : 1)
+                        }
+                    }
+                    
+                    
+                    if self.videoCallVM.callingType == .Voice{
+                        AsyncImage(url: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!, content: { img in
+                           img
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width:75,height: 75)
+                                .clipShape(Circle())
+                                .shadow(radius: 5)
+                                .onTapGesture {
+                                    withAnimation{
+                                        self.videoCallVM.isMinimized = false
+                                    }
+                                }
+
+                               
+                        }, placeholder: {
+                            ProgressView()
+                                .frame(width:75,height: 75)
+                        })
+                        .zIndex(10)
+                        .opacity(self.videoCallVM.isMinimized ? 1 : 0)
+                        .padding(20)
+                        .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+                        .onTapGesture {
+                            withAnimation{
+                                self.videoCallVM.isMinimized = false
+                            }
+                        }
+                    
+                    }else{
+                        RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershRemoteTrack},
+                                                                                                                                                              set: { p in self.videoCallVM.refershRemoteTrack = p}))
+                        .frame(width: 150, height: 220)
+                        .cornerRadius(25)
+                        .padding()
+                        .background(BlurView().cornerRadius(25).padding())
+                        .opacity(self.videoCallVM.isMinimized ? 1 : 0)
+                        .padding(20)
+                        .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+                        .onTapGesture {
+                            withAnimation{
+                                self.videoCallVM.isMinimized = false
+                            }
+                        }
+                    }
+                }
+                .animation(.default)
+                .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+                .zIndex(4)
+            }else if self.producerVM.isIncomingCall {
+                ZStack(alignment: .bottomTrailing){
+                    VStack{
+                        if self.producerVM.callingType == .Voice {
+                            GroupCallingAudioView()
+                                .environmentObject(userModel)
+                                .environmentObject(producerVM)
+                                .environmentObject(consumerVM)
+                        }else {
+                            GroupCallingVideoView()
+                                .environmentObject(userModel)
+                                .environmentObject(producerVM)
+                                .environmentObject(consumerVM)
+                        }
+                            
+                    
+                    }
+                    .opacity(self.producerVM.isMinimized ? 0 : 1)
+                    
+
+                    AsyncImage(url: self.producerVM.room?.AvatarURL ?? URL(string:RESOURCES_HOST + "/default.jpg")!, content: { img in
+                        img
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width:75,height: 75)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                            .onTapGesture {
+                                withAnimation{
+                                    self.producerVM.isMinimized = false
+                                }
+                            }
+                        
+                        
+                    }, placeholder: {
+                        ProgressView()
+                            .frame(width:75,height: 75)
+                    })
+                    .zIndex(10)
+                    .opacity(self.producerVM.isMinimized ? 1 : 0)
+                    .padding(20)
+                    .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+                    .onTapGesture {
+                        withAnimation{
+                            self.producerVM.isMinimized = false
+                        }
+                    }
+                        
+                    
+                }
+                .animation(.default)
+                .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+                .zIndex(4)
+                
+                
             }
         }
         .onChange(of: loginSate){ state in

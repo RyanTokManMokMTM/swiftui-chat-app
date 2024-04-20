@@ -12,24 +12,48 @@ struct VideoCallView: View {
     @EnvironmentObject var videoCallVM : RTCViewModel
     let name : String
     let path : URL
+    
     var body: some View {
-        ZStack{
-            if self.videoCallVM.callState == .Incoming {
-                incomingCallView()
-            }else {
-                videoCallingView()
-            }
+        ZStack(alignment:.top){
+            AsyncImage(url: path, content: {img in
+                img
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay(){
+                        BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
+                    }
+                    .overlay(alignment:.top){
+                        ZStack{
+                            if self.videoCallVM.callState == .Incoming {
+                                incomingCallView()
+                              
+                            }else {
+                                videoCallingView()
+                            }
+                        }
+                       
+                    }
+            }, placeholder: {
+                ProgressView()
+                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+            })
+            .zIndex(-1)
+
+
         }
         .edgesIgnoringSafeArea(.all)
         .overlay(alignment: .top){
-            HStack{
+            HStack(alignment: .top){
                 Button(action:{
                     DispatchQueue.main.async {
-//                        self.isCallView = false
-                        //TODO: Disconnected...
+                        withAnimation(){
+                            self.videoCallVM.isMinimized = true
+                        }
                     }
                 }){
-                    Image(systemName: "xmark")
+                    Image(systemName: "chevron.down")
                         .imageScale(.large)
                         .foregroundColor(.white)
                         .padding(5)
@@ -63,22 +87,24 @@ struct VideoCallView: View {
             .padding(.horizontal)
 //            .padding()
             .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-
-        }
-        .onChange(of: self.videoCallVM.callState){ state in
-            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
-                DispatchQueue.main.async {
-                    SoundManager.shared.stopPlaying()
-                    self.videoCallVM.isIncomingCall = false
-                    self.videoCallVM.DisConnect()
-                    hub.AlertMessage(sysImg: "", message: "Video Call Ended")
-                    playEndCallSoundEffect()
+            .onChange(of: self.videoCallVM.callState){ state in
+                if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
+                    DispatchQueue.main.async {
+                        SoundManager.shared.stopPlaying()
+                        self.videoCallVM.isIncomingCall = false
+                        self.videoCallVM.DisConnect()
+                        hub.AlertMessage(sysImg: "", message: "Video Call Ended")
+                        playEndCallSoundEffect()
+                    }
                 }
             }
         }
+        .frame(width: UIScreen.main.bounds.width)
+        
 
     }
     private func playEndCallSoundEffect(){
+        print("Calling End calling")
         guard let url = Bundle.main.url(forResource: "endcall", withExtension: ".mp3") else {
             return
         }
@@ -93,63 +119,6 @@ struct VideoCallView: View {
             //            .edgesIgnoringSafeArea(.all)
 
             .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
-            .background{
-                if self.videoCallVM.callState != .Connected{
-                    ZStack{
-                        AsyncImage(url: path, content: {img in
-                            img
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
-                                .edgesIgnoringSafeArea(.all)
-                                .overlay{
-                                    BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
-                                }
-
-                        }, placeholder: {
-                            ProgressView()
-                                .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
-                        })
-                        BlurView().edgesIgnoringSafeArea(.all)
-                    }
-                    .overlay(alignment:.top){
-                        VStack{
-                            AsyncImage(url: path, content: {img in
-                                img
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width:120,height: 120)
-                                    .clipShape(Circle())
-
-
-
-                            }, placeholder: {
-                                ProgressView()
-                                    .frame(width:120,height: 120)
-
-                            })
-
-                            Text(name)
-                                .font(.title2)
-                                .bold()
-                                .foregroundColor(.white)
-
-                            HStack {
-                                DotView() // 1.
-                                DotView(delay: 0.2) // 2.
-                                DotView(delay: 0.4) // 3.
-                            }
-                            Spacer()
-                        }
-                        .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-                        .padding()
-                    }
-                    
-                }
-
-            }
-
-            
         }
         .overlay(alignment:.bottomLeading){
             VStack(alignment:.trailing){
@@ -257,73 +226,48 @@ struct VideoCallView: View {
     
     @ViewBuilder
     private func incomingCallView() -> some View {
-        ZStack{
+        VStack{
             AsyncImage(url: path, content: {img in
                 img
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
-                    .edgesIgnoringSafeArea(.all)
-                    .overlay(){
-                        BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
-                    }
-                    .overlay(alignment:.top){
-                        
-                        VStack{
-                            
-                            AsyncImage(url: path, content: {img in
-                                img
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width:120,height: 120)
-                                    .clipShape(Circle())
-                                
-                                
-                                
-                            }, placeholder: {
-                                ProgressView()
-                                    .frame(width:120,height: 120)
-                                
-                            })
-                            
-                            Text(name)
-                                .font(.title2)
-                                .bold()
-                                .foregroundColor(.white)
-
-                            VStack(spacing:5){
-                                Text("Video Calling")
-                                    .foregroundColor(.white)
-                                    .font(.footnote)
-                                HStack{
-                                    DotView() // 1.
-                                    DotView(delay: 0.2) // 2.
-                                    DotView(delay: 0.4) // 3.
-                                }
-                               
-                            }
-                            .padding(.vertical,5)
-                            
-
-                        }
-                        .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-                        .padding()
-
-                    }
+                    .frame(width:120,height: 120)
+                    .clipShape(Circle())
+                
+                
                 
             }, placeholder: {
                 ProgressView()
-                    .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+                    .frame(width:120,height: 120)
+                
             })
             
-            VStack{
-                Spacer()
-                IncomingCall()
+            Text(name)
+                .font(.title2)
+                .bold()
+                .foregroundColor(.white)
+
+            VStack(spacing:5){
+                Text("Video Calling")
+                    .foregroundColor(.white)
+                    .font(.footnote)
+                HStack{
+                    DotView() // 1.
+                    DotView(delay: 0.2) // 2.
+                    DotView(delay: 0.4) // 3.
+                }
+                .padding(.vertical,10)
             }
-            .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
-            .padding(.horizontal)
+            .padding(.vertical,5)
+            Spacer()
+            IncomingCall()
+
         }
-        .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
+        .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+        .padding(.top,15)
+        .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+        .padding(.bottom)
+        .padding(.horizontal)
 //        .edgesIgnoringSafeArea(.all)
     }
     
@@ -386,9 +330,3 @@ struct VideoCallView: View {
     }
   
 }
-//
-//struct VideoCall_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VideoCall(name: "Testing", path: URL(string: RESOURCES_HOST + "/default.jpg")!)
-//    }
-//}

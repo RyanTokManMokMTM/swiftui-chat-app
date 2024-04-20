@@ -43,112 +43,116 @@ struct VoiceCallView: View {
                     .overlay{
                         BlurView(style: .systemThinMaterialDark).edgesIgnoringSafeArea(.all)
                     }
+                    .overlay(alignment:.top){
+                        VStack(spacing:12){
+                            
+                            HStack{
+                                Button(action:{
+                                    withAnimation(){
+//                                        self.videoCallVM.isIncomingCall = false
+                                        self.videoCallVM.isMinimized = true
+                                    }
+                                }){
+                                    Image(systemName: "chevron.down")
+                                        .imageScale(.large)
+                                        .foregroundColor(.white)
+                                        .scaleEffect(1.3)
+                                }
+                                
+                                Spacer()
+                            }
+                            AsyncImage(url: path, content: {img in
+                                img
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width:120,height: 120)
+                                    .clipShape(Circle())
+                                
+                                
+                                
+                            }, placeholder: {
+                                ProgressView()
+                                    .frame(width:120,height: 120)
+                                
+                            })
+                            
+                            Text(name)
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.white)
+                            
+                            if self.videoCallVM.callState == .Connected {
+                                //TODO Start a timer
+                                Text(timeString(time: TimeInterval(self.counter)))
+                                    .foregroundColor(.white)
+                                    .font(.subheadline)
+                            }else {
+                                
+                                
+                                VStack(spacing:5){
+                                    Text("Voice Calling")
+                                        .foregroundColor(.white)
+                                        .font(.footnote)
+                                    HStack{
+                                        DotView() // 1.
+                                        DotView(delay: 0.2) // 2.
+                                        DotView(delay: 0.4) // 3.
+                                    }
+                                   
+                                }
+                                .padding(.vertical,5)
+                                
+                                
+                                
+                            }
+                            
+                            Spacer()
+
+            //
+                            if self.videoCallVM.callState == .Incoming {
+                                self.IncomingCall()
+                            }else {
+                                self.Connected()
+                            }
+                        }
+                        .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+                        .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+                        .padding(.bottom)
+                        .padding(.horizontal)
+                        .background{
+                            ZStack{
+                                RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: true,refershTrack: self.$videoCallVM.refershLocalTrack).frame(width: 0, height: 0)
+                              
+                                RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: true,refershTrack: self.$videoCallVM.refershRemoteTrack).frame(width: 0, height: 0)
+                              
+                            }
+                            .hidden()
+                        }.onReceive(self.timer){ _ in
+                            if self.videoCallVM.callState != .Connected {
+                                return
+                            }
+                            self.counter += 1
+                        }
+                        .onChange(of: self.videoCallVM.callState){ state in
+                            print("State Changed : \(state)")
+                            if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
+                                DispatchQueue.main.async {
+                                    SoundManager.shared.stopPlaying()
+                                    self.videoCallVM.isIncomingCall = false
+                                    self.videoCallVM.DisConnect()
+                                    hub.AlertMessage(sysImg: "", message: "Voice Call Ended")
+                                    playEndCallSoundEffect()
+                                }
+                            }
+                        }
+                    }
                 
             }, placeholder: {
                 ProgressView()
                     .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
             })
             
-            VStack(spacing:12){
-                
-                HStack{
-                    Button(action:{
-                        withAnimation{
-                            self.videoCallVM.isIncomingCall = false
-                        }
-                    }){
-                        Image(systemName: "chevron.down")
-                            .imageScale(.large)
-                            .foregroundColor(.white)
-                            .scaleEffect(1.3)
-                    }
-                    
-                    Spacer()
-                }
-                AsyncImage(url: path, content: {img in
-                    img
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width:120,height: 120)
-                        .clipShape(Circle())
-                    
-                    
-                    
-                }, placeholder: {
-                    ProgressView()
-                        .frame(width:120,height: 120)
-                    
-                })
-                
-                Text(name)
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.white)
-                
-                if self.videoCallVM.callState == .Connected {
-                    //TODO Start a timer
-                    Text(timeString(time: TimeInterval(self.counter)))
-                        .foregroundColor(.white)
-                        .font(.subheadline)
-                }else {
-                    
-                    
-                    VStack(spacing:5){
-                        if self.videoCallVM.callState == .Incoming {
-                            Text("Voice Calling")
-                                .foregroundColor(.white)
-                                .font(.footnote)
-                        }
-                        HStack{
-                            DotView() // 1.
-                            DotView(delay: 0.2) // 2.
-                            DotView(delay: 0.4) // 3.
-                        }
-                       
-                    }
-                    
-                    
-                }
-                
-                Spacer()
-
-//
-                if self.videoCallVM.callState == .Incoming {
-                    self.IncomingCall()
-                }else {
-                    self.Connected()
-                }
-            }
-            .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
-            .padding(.bottom,UIApplication.shared.windows.first?.safeAreaInsets.bottom)
-            .padding(.bottom)
-            .padding(.horizontal)
-            .background{
-                ZStack{
-                    RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: true,refershTrack: self.$videoCallVM.refershLocalTrack).frame(width: 0, height: 0)
-                  
-                    RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: false, isVoice: true,refershTrack: self.$videoCallVM.refershRemoteTrack).frame(width: 0, height: 0)
-                  
-                }
-                .hidden()
-            }.onReceive(self.timer){ _ in
-                if self.videoCallVM.callState != .Connected {
-                    return
-                }
-                self.counter += 1
-            }
-            .onChange(of: self.videoCallVM.callState){ state in
-                print("State Changed : \(state)")
-                if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
-                    DispatchQueue.main.async {
-                        SoundManager.shared.stopPlaying()
-                        self.videoCallVM.isIncomingCall = false
-                        self.videoCallVM.DisConnect()
-                        hub.AlertMessage(sysImg: "", message: "Voice Call Ended")
-                        playEndCallSoundEffect()
-                    }
-                }
-            }
+           
 
             
         }

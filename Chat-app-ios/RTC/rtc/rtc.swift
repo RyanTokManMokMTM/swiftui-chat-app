@@ -274,8 +274,7 @@ extension WebRTCClient {
             self.videoCapture = RTCCameraVideoCapturer(delegate: source)
         #endif
 //        
-        let track = WebRTCClient.factory.videoTrack(with: source, trackId: "video0")
-        return track
+      return WebRTCClient.factory.videoTrack(with: source, trackId: "video0")
     }
     
     private func createAutioTrack() -> RTCAudioTrack{
@@ -341,7 +340,7 @@ extension WebRTCClient {
                                   format: format,
                                   fps: Int(fps.maxFrameRate))
         }else {
-            guard let (camera,format,fps) = frontCamera() else {
+            guard let (camera,format,fps) = backCamera() else {
                 return
             }
             
@@ -441,18 +440,12 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         debugPrint("peerConnection did add stream to connection..........")
-        debugPrint(stream.streamId)
-        debugPrint("audio tracks \(stream.audioTracks.count)")
-        debugPrint("video tracks \(stream.videoTracks.count)")
         if let track = stream.videoTracks.first {
-              print("video track faund")
-             remoteVIdeoTrack = peerConnection.transceivers.first {$0.mediaType == .video}?.receiver.track as? RTCVideoTrack
             self.remoteVIdeoTrack = track
             self.refershRemoteTrack = true
           }
           
           if let audioTrack = stream.audioTracks.first{
-              print("audio track faund")
               self.remoteAudioTrack = audioTrack
 //              audioTrack.source.volume = 8
           }
@@ -464,7 +457,7 @@ extension WebRTCClient : RTCPeerConnectionDelegate {
     }
     
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
-        debugPrint("peerConnection should negotiate")
+        debugPrint("peerConnection should negotiate ????????????????????????????")
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCPeerConnectionState) {
