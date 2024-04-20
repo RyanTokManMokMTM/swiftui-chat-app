@@ -10,6 +10,7 @@ import Foundation
 struct SFUConnectSessionReq : Encodable {
     let session_id : String
     let SDPType   :  String
+    let callType : String
 }
 
 struct SFUGetSessionProducerReq : Encodable {

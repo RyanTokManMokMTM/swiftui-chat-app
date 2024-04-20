@@ -14,6 +14,20 @@ enum MessageEvent {
     case receive
 }
 
+enum MessageType : Int16{
+    case Signal
+    case Group
+    
+    var rawValue: Int16 {
+        switch(self){
+        case .Signal:
+            return 1
+        case .Group:
+            return 2
+        }
+    }
+}
+
 enum SFUSignalType {
     case SDP
     case Candinate
@@ -684,8 +698,8 @@ extension Websocket {
 }
 
 extension Websocket {
-    func sendSFUSDP(sessionId : String,sdpType : String){
-        let req = SFUConnectSessionReq(session_id: sessionId, SDPType: sdpType)
+    func sendSFUSDP(sessionId : String,sdpType : String,callType : String){
+        let req = SFUConnectSessionReq(session_id: sessionId, SDPType: sdpType,callType: callType)
         do{
             let content = try self.jsonEncoder.encode(req)
             guard let jsonContent = content.toJSONString else {
@@ -830,3 +844,31 @@ extension Websocket {
     }
 }
 
+
+extension Websocket {
+    func checkMessage(messageID : String) async {
+        //TODO: need to be optimized
+        print("acking?")
+        do{
+            try await Task.sleep(nanoseconds: 60_000_000_000)
+        } catch (let err) {
+            print(err.localizedDescription)
+        }
+        
+        let msgUUID = UUID(uuidString: messageID)!
+        guard let message = await UserDataModel.shared.findOneMessage(id: msgUUID) else {
+            print("message not found")
+            return
+        }
+        
+        
+        if message.messageStatus == .ack {
+            print("message is ack.")
+            return
+        }
+        
+        
+        await UserDataModel.shared.updateMessageStatus(msg: message, status: .notAck)
+        print("no ack")
+    }
+}

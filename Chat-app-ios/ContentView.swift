@@ -156,16 +156,17 @@ struct ContentView: View {
                         if self.videoCallVM.callingType == .Voice {
                             VoiceCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
                                 .environmentObject(videoCallVM)
+                                .environmentObject(userModel)
                                 .opacity(self.videoCallVM.isMinimized ? 0 : 1)
                             
 
                         }else {
                             VideoCallView(name: self.videoCallVM.userName ?? "UNKNOW", path: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!)
                                 .environmentObject(videoCallVM)
+                                .environmentObject(userModel)
                                 .opacity(self.videoCallVM.isMinimized ? 0 : 1)
                         }
                     }
-                    
                     
                     if self.videoCallVM.callingType == .Voice{
                         AsyncImage(url: URL(string:RESOURCES_HOST + (self.videoCallVM.userAvatar ?? "/default.jpg"))!, content: { img in
@@ -195,6 +196,7 @@ struct ContentView: View {
                                 self.videoCallVM.isMinimized = false
                             }
                         }
+                        .transition(.opacity)
                     
                     }else{
                         RTCVideoView(webClient: videoCallVM.webRTCClient, isRemote: true, isVoice: false,refershTrack: Binding<Bool>(get: {return self.videoCallVM.refershRemoteTrack},
@@ -211,10 +213,10 @@ struct ContentView: View {
                                 self.videoCallVM.isMinimized = false
                             }
                         }
+                        .transition(.opacity)
                     }
                 }
-                .animation(.default)
-                .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+                .transition(.move(edge: .bottom))
                 .zIndex(4)
             }else if self.producerVM.isIncomingCall {
                 ZStack(alignment: .bottomTrailing){
@@ -263,11 +265,11 @@ struct ContentView: View {
                             self.producerVM.isMinimized = false
                         }
                     }
+                    .transition(.opacity)
                         
                     
                 }
-                .animation(.default)
-                .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+
                 .zIndex(4)
                 
                 

@@ -15,6 +15,7 @@ struct DotView: View {
             .fill(.white)
             .frame(width: 5, height: 5)
             .scaleEffect(scale)
+            .transition(.scale)
             .animation(Animation.easeInOut(duration: 0.6).repeatForever().delay(delay)) // 2.
             .onAppear {
                 withAnimation {
@@ -31,6 +32,7 @@ struct VoiceCallView: View {
     @State private var counter : Int = 0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @EnvironmentObject private var videoCallVM : RTCViewModel
+    @EnvironmentObject private var userVM : UserViewModel
     
     var body: some View {
         ZStack{
@@ -45,22 +47,6 @@ struct VoiceCallView: View {
                     }
                     .overlay(alignment:.top){
                         VStack(spacing:12){
-                            
-                            HStack{
-                                Button(action:{
-                                    withAnimation(){
-//                                        self.videoCallVM.isIncomingCall = false
-                                        self.videoCallVM.isMinimized = true
-                                    }
-                                }){
-                                    Image(systemName: "chevron.down")
-                                        .imageScale(.large)
-                                        .foregroundColor(.white)
-                                        .scaleEffect(1.3)
-                                }
-                                
-                                Spacer()
-                            }
                             AsyncImage(url: path, content: {img in
                                 img
                                     .resizable()
@@ -98,7 +84,7 @@ struct VoiceCallView: View {
                                         DotView(delay: 0.2) // 2.
                                         DotView(delay: 0.4) // 3.
                                     }
-                                   
+                                    .padding(.vertical,8)
                                 }
                                 .padding(.vertical,5)
                                 
@@ -134,15 +120,14 @@ struct VoiceCallView: View {
                             self.counter += 1
                         }
                         .onChange(of: self.videoCallVM.callState){ state in
-                            print("State Changed : \(state)")
                             if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
-                                DispatchQueue.main.async {
-                                    SoundManager.shared.stopPlaying()
+                                SoundManager.shared.stopPlaying()
+                                withAnimation{
                                     self.videoCallVM.isIncomingCall = false
-                                    self.videoCallVM.DisConnect()
-                                    hub.AlertMessage(sysImg: "", message: "Voice Call Ended")
-                                    playEndCallSoundEffect()
                                 }
+                                self.videoCallVM.DisConnect()
+                                playEndCallSoundEffect()
+                            
                             }
                         }
                     }
@@ -151,11 +136,32 @@ struct VoiceCallView: View {
                 ProgressView()
                     .frame(width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height)
             })
-            
-           
-
-            
         }
+        .overlay(alignment: .top){
+        
+            HStack{
+                Button(action:{
+                    withAnimation(){
+//                                        self.videoCallVM.isIncomingCall = false
+                        self.videoCallVM.isMinimized = true
+                    }
+                }){
+                    Image(systemName: "chevron.down")
+                        .imageScale(.large)
+                        .foregroundColor(.white)
+                        .scaleEffect(1.3)
+                }
+                
+                Spacer()
+            }
+            .edgesIgnoringSafeArea(.all)
+            .padding(.horizontal)
+//            .padding()
+            .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
+        }
+        .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+        .animation(.linear)
+        
     }
     
     private func playEndCallSoundEffect(){
@@ -198,10 +204,11 @@ struct VoiceCallView: View {
                     DispatchQueue.main.async { //TODO: Send disconnected signal and Disconnect and reset all RTC
 //                        SoundManager.shared.stopPlaying()
 //                        playEndCallSoundEffect()
+                        
+                        self.sendCallingMessage(message: "Ended the voice call.")
                         self.videoCallVM.sendDisconnect()
                         self.videoCallVM.DisConnect()
                         self.videoCallVM.isIncomingCall = false
-                        
                     }
                  
                 }){
@@ -252,8 +259,10 @@ struct VoiceCallView: View {
                     //TODO: disconnect and reset and send the signal
                     self.videoCallVM.sendDisconnect()
                     self.videoCallVM.DisConnect()
-                    self.videoCallVM.isIncomingCall = false
-                    
+                    withAnimation{
+                        self.videoCallVM.isIncomingCall = false
+                    }
+                    self.sendCallingMessage(message: "Ended the voice call.")
                 }
             }){
                 Circle()
@@ -295,6 +304,47 @@ struct VoiceCallView: View {
         
         // return formated string
         return String(format: "%02i:%02i:%02i", hour, minute, second)
+    }
+    
+    
+    private func sendCallingMessage(message : String){
+        print("Sending ,essage...")
+        if message.isEmpty {
+            return
+        }
+        
+        guard let toUserId = self.videoCallVM.toUserUUID else{
+            print("userId is empty")
+            return
+        }
+        
+        let msgID = UUID().uuidString
+        
+        let msg = WSMessage(
+            messageID:msgID,
+            replyMessageID: nil,
+            avatar: self.userVM.profile!.avatar,
+            fromUserName: self.userVM.profile!.name,
+            fromUUID: self.userVM.profile!.uuid,
+            toUUID: toUserId,
+            content: message,
+            contentType: ContentType.TEXT.rawValue,
+            eventType: EventType.MESSAGE.rawValue,
+            messageType: MessageType.Signal.rawValue,
+            urlPath: nil,
+            fileName: nil,
+            fileSize: nil,
+            contentAvailableTime: nil,
+            contentUUID: nil,
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
+        
+        
+        Task {
+            await Websocket.shared.checkMessage(messageID: msgID)
+        }
     }
 
 }

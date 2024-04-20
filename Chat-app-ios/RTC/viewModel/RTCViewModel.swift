@@ -11,14 +11,14 @@ import WebRTC
 import SwiftUI
 import Combine
 
-enum CallingType : Int {
+enum CallingType : String {
     case Voice
     case Video
     
-    var rawValue: Int {
+    var rawValue: String {
         switch self {
-        case .Voice : return 0
-        case .Video : return 1
+        case .Voice : return "voice"
+        case .Video : return "video"
         }
     }
 }
@@ -85,6 +85,7 @@ class RTCViewModel : ObservableObject {
     @Published var isAudioOn : Bool  = true
     @Published var isVideoOn : Bool = true
     @Published var camera : CameraPossion = .front
+    @Published var room : ActiveRooms? = nil
     //MARK: Singal
     var webSocket : Websocket?
     var queue = [String]()
@@ -112,8 +113,9 @@ class RTCViewModel : ObservableObject {
     }
     
     
-    func start( type : CallingType){
+    func start( type : CallingType,room : ActiveRooms){
         self.callingType = type
+        self.room = room
         createNewPeer()
         prepare()
     }
@@ -143,6 +145,8 @@ class RTCViewModel : ObservableObject {
         self.remoteVideoTrack = nil
         refershRemoteTrack = true
         refershLocalTrack = true
+        self.room = nil
+        self.isMinimized = false
     }
     
     
@@ -154,11 +158,13 @@ class RTCViewModel : ObservableObject {
             self.localCanindate = 0
             self.refershRemoteTrack = true
             self.refershLocalTrack = true
+            self.room = nil
             
             self.toUserUUID = nil
             self.userName = nil
             self.userAvatar = nil
             self.callingType = .Voice
+            self.isMinimized = false
         }
     }
     
@@ -305,9 +311,13 @@ extension RTCViewModel {
             return
         }
         
+        guard let userId = self.toUserUUID else {
+            print("userId is nil")
+            return
+        }
         let sdp = sdpStr as String
 
-        webSocket?.sendRTCSignal(toUUID: self.toUserUUID!, sdp: sdp,type: type)
+        webSocket?.sendRTCSignal(toUUID: userId, sdp: sdp,type: type)
     }
     
     func processSignalingMessage(_ message: String,websocketMessage : WSMessage) -> Void {
@@ -358,14 +368,16 @@ extension RTCViewModel {
                     self.isSetRemoteSDP = true
                 }
             })
-            
+            print(SignalMessage.getCallType(message: message))
             DispatchQueue.main.async{
                 self.callState = .Incoming
                 self.toUserUUID = websocketMessage.fromUUID!
                 self.userName = websocketMessage.fromUserName!
                 self.userAvatar = websocketMessage.avatar!
                 self.callingType = SignalMessage.getCallType(message: message)
-                self.isIncomingCall = true
+                withAnimation{
+                    self.isIncomingCall = true
+                }
 //                NSDataAsset(name: "ringing")
                 guard let url = Bundle.main.url(forResource: "ringing", withExtension: ".mp3") else {
                     return
@@ -449,7 +461,6 @@ extension RTCViewModel {
 extension RTCViewModel : WebSocketDelegate {
     func webSocket(_ webSocket: Websocket, didReceive data: WSMessage) {
         //received
-        print("received a signal")
         self.processSignalingMessage(data.content!,websocketMessage: data)
     }
     
@@ -515,9 +526,9 @@ enum SignalMessage {
             if let messageDict = messageDict,
                let type = messageDict["call"] as? String {
                 
-                if type == "0"{
+                if type == "voice"{
                     return .Voice
-                } else if type == "1" {
+                } else if type == "video" {
                     return .Video
                 }
                 
@@ -526,6 +537,7 @@ enum SignalMessage {
         return .Voice
     }
 }
+
 
 extension String {
     func convertToDictionary() -> [String: Any]? {

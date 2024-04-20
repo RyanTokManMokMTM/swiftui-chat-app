@@ -354,52 +354,60 @@ struct ChattingView: View {
     }
     
     private func setUpVoiceCallingInfo(){
-        self.videoCallVM.start(type: .Voice) //TODO: creating a new peer if it don't init and setting RTC device
+        self.videoCallVM.start(type: .Voice,room: self.chatUserData) //TODO: creating a new peer if it don't init and setting RTC device
         self.videoCallVM.voicePrepare() //TODO: To disable video
         self.videoCallVM.callState = .Connecting //TODO: Current status is connecting
-        self.videoCallVM.isIncomingCall = true //TODO: show the view
+        withAnimation{
+            self.videoCallVM.isIncomingCall = true //TODO: show the view
+//            .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+        }
         
         //Sending the offer
         self.videoCallVM.sendOffer(type:.Voice) //TODO: sending offer to receiver
+        
+        //Sending an set message -> Start a xxx call.
+        self.sendCallingMessage(message: "Stated a voice call.")
     }
     
     private func setUpVideoCallingInfo(){
-        self.videoCallVM.start(type: .Video) //TODO: creating a new peer if it don't init and setting RTC device
+        self.videoCallVM.start(type: .Video,room: self.chatUserData) //TODO: creating a new peer if it don't init and setting RTC device
         self.videoCallVM.videoPrepare() //TODO: To enable video
         self.videoCallVM.callState = .Connecting //TODO: Current status is connecting
-        self.videoCallVM.isIncomingCall = true //TODO: show the view
-        
+        withAnimation{
+            self.videoCallVM.isIncomingCall = true //TODO: show the view
+        }
         //Sending the offer
         self.videoCallVM.sendOffer(type:.Video) //TODO: sending offer to receiver
+        self.sendCallingMessage(message: "Stated a video call.")
     }
 
-    
-    private func checkMessage(messageID : String) async {
-        //TODO: need to be optimized
-        print("acking?")
-        do{
-            try await Task.sleep(nanoseconds: 60_000_000_000)
-        } catch (let err) {
-            print(err.localizedDescription)
-        }
-        
-        let msgUUID = UUID(uuidString: messageID)!
-        guard let message = UserDataModel.shared.findOneMessage(id: msgUUID) else {
-            print("message not found")
-            return
-        }
-        
-        
-        if message.messageStatus == .ack {
-            print("message is ack.")
-            return
-        }
-        
-        
-        UserDataModel.shared.updateMessageStatus(msg: message, status: .notAck)
-        print("no ack")
-    }
-    
+//    
+//    private func checkMessage(messageID : String) async {
+//        //TODO: need to be optimized
+//        print("acking?")
+//        do{
+//            try await Task.sleep(nanoseconds: 60_000_000_000)
+//        } catch (let err) {
+//            print(err.localizedDescription)
+//        }
+//        
+//        let msgUUID = UUID(uuidString: messageID)!
+//        guard let message = UserDataModel.shared.findOneMessage(id: msgUUID) else {
+//            print("message not found")
+//            return
+//        }
+//        
+//        
+//        if message.messageStatus == .ack {
+//            print("message is ack.")
+//            return
+//        }
+//        
+//        
+//        UserDataModel.shared.updateMessageStatus(msg: message, status: .notAck)
+//        print("no ack")
+//    }
+//    
     
     private func isAudio(ext : String) -> Bool {
         return ext == "mp3" || ext == "wav" || ext == "m3u" || ext == "m4a"
@@ -839,7 +847,7 @@ extension ChattingView {
         
         
         Task {
-            await checkMessage(messageID: msgID)
+            await Websocket.shared.checkMessage(messageID: msgID)
         }
         self.text.removeAll()
     }
@@ -856,7 +864,7 @@ extension ChattingView {
 
 
         Task {
-            await checkMessage(messageID: msgID)
+            await Websocket.shared.checkMessage(messageID: msgID)
         }
     }
     
@@ -874,7 +882,7 @@ extension ChattingView {
         Websocket.shared.handleMessage(event:.send,msg: msg)
         
         Task {
-            await checkMessage(messageID: msgID)
+            await  Websocket.shared.checkMessage(messageID: msgID)
         }
         self.text.removeAll()
         DispatchQueue.main.async {
@@ -932,7 +940,7 @@ extension ChattingView {
             
             Websocket.shared.onSendNormal(msg: msg)
             Task {
-                await checkMessage(messageID: message.id!.uuidString)
+                await  Websocket.shared.checkMessage(messageID: message.id!.uuidString)
             }
 
         case .failure(let err):
@@ -1005,7 +1013,7 @@ extension ChattingView {
             Websocket.shared.onSendNormal(msg: msg)
             
             Task {
-                await checkMessage(messageID: message.id!.uuidString)
+                await Websocket.shared.checkMessage(messageID: message.id!.uuidString)
             }
         case .failure(let err):
             print(err.localizedDescription)
@@ -1549,8 +1557,9 @@ extension ChattingView {
         self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId, room: self.chatUserData, type: .Voice) //TODO: creating a new peer if it don't init and setting RTC device
         self.sfuProducerVM.voicePrepare() //TODO: To disable video
         self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
-        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
-        
+        withAnimation{
+            self.sfuProducerVM.isIncomingCall = true //TODO: show the view
+        }
         //Sending the offer
         self.sfuProducerVM.sendOffer(type:.Voice) //TODO: sending offer to receiver
         self.sfuConsumerVM.setUpSessionManager(sessionId,callType: .Voice)
@@ -1572,13 +1581,45 @@ extension ChattingView {
         self.sfuProducerVM.start(sessionId: sessionId,clientId: clientId, room: self.chatUserData, type: .Video) //TODO: creating a new peer if it don't init and setting RTC device
         self.sfuProducerVM.videoPrepare() //TODO: To disable video
         self.sfuProducerVM.callState = .Connecting //TODO: Current status is connecting
-        self.sfuProducerVM.isIncomingCall = true //TODO: show the view
-        
+        withAnimation{
+            self.sfuProducerVM.isIncomingCall = true //TODO: show the view
+        }
         //Sending the offer
         self.sfuProducerVM.sendOffer(type:.Video) //TODO: sending offer to receiver
         self.sfuConsumerVM.setUpSessionManager(sessionId,callType: .Video)
     }
-
+    
+    private func sendCallingMessage(message : String){
+        if message.isEmpty {
+            return
+        }
+        let msgID = UUID().uuidString
+        
+        let msg = WSMessage(
+            messageID:msgID,
+            replyMessageID: nil,
+            avatar: self.userModel.profile!.avatar,
+            fromUserName: self.userModel.profile!.name,
+            fromUUID: self.userModel.profile!.uuid,
+            toUUID: self.chatUserData.id!.uuidString.lowercased(),
+            content: message,
+            contentType: ContentType.TEXT.rawValue,
+            eventType: EventType.MESSAGE.rawValue,
+            messageType: self.chatUserData.message_type,urlPath: nil,
+            fileName: nil,
+            fileSize: nil,
+            contentAvailableTime: nil,
+            contentUUID: nil,
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
+        
+        
+        Task {
+            await Websocket.shared.checkMessage(messageID: msgID)
+        }
+    }
 }
 
 

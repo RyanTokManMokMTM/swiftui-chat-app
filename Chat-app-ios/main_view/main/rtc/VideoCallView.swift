@@ -10,6 +10,7 @@ import SwiftUI
 struct VideoCallView: View {
     @StateObject private var hub = BenHubState.shared
     @EnvironmentObject var videoCallVM : RTCViewModel
+    @EnvironmentObject private var userVM : UserViewModel
     let name : String
     let path : URL
     
@@ -89,22 +90,22 @@ struct VideoCallView: View {
             .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
             .onChange(of: self.videoCallVM.callState){ state in
                 if state == .Ended { //TODO: the connection is disconnected -> Reset all the and disconnect
-                    DispatchQueue.main.async {
-                        SoundManager.shared.stopPlaying()
+                    SoundManager.shared.stopPlaying()
+                    withAnimation{
                         self.videoCallVM.isIncomingCall = false
-                        self.videoCallVM.DisConnect()
-                        hub.AlertMessage(sysImg: "", message: "Video Call Ended")
-                        playEndCallSoundEffect()
                     }
+                    self.videoCallVM.DisConnect()
+                    playEndCallSoundEffect()
                 }
             }
         }
         .frame(width: UIScreen.main.bounds.width)
+        .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+        .animation(.linear)
         
 
     }
     private func playEndCallSoundEffect(){
-        print("Calling End calling")
         guard let url = Bundle.main.url(forResource: "endcall", withExtension: ".mp3") else {
             return
         }
@@ -178,7 +179,10 @@ struct VideoCallView: View {
                     //TODO: disconnect and reset and send the signal
                     self.videoCallVM.sendDisconnect()
                     self.videoCallVM.DisConnect()
-                    self.videoCallVM.isIncomingCall = false
+                    withAnimation{
+                        self.videoCallVM.isIncomingCall = false
+                    }
+                    self.sendCallingMessage(message: "Ended the video call.")
                 }
             }){
                 Image(systemName: "phone.down.fill")
@@ -256,7 +260,7 @@ struct VideoCallView: View {
                     DotView(delay: 0.2) // 2.
                     DotView(delay: 0.4) // 3.
                 }
-                .padding(.vertical,10)
+                .padding(.vertical,8)
             }
             .padding(.vertical,5)
             Spacer()
@@ -306,7 +310,10 @@ struct VideoCallView: View {
                     DispatchQueue.main.async { //TODO: Send disconnected signal and Disconnect and reset all RTC
                         self.videoCallVM.sendDisconnect()
                         self.videoCallVM.DisConnect()
-                        self.videoCallVM.isIncomingCall = false
+                        withAnimation{
+                            self.videoCallVM.isIncomingCall = false
+                        }
+                        self.sendCallingMessage(message: "Ended the video call.")
                     }
                  
                 }){
@@ -326,6 +333,46 @@ struct VideoCallView: View {
 
 
 //            Spacer()
+        }
+    }
+    
+    
+    private func sendCallingMessage(message : String){
+        if message.isEmpty {
+            return
+        }
+        
+        guard let toUserId = self.videoCallVM.toUserUUID else{
+            print("userId is empty")
+            return
+        }
+        
+        let msgID = UUID().uuidString
+        
+        let msg = WSMessage(
+            messageID:msgID,
+            replyMessageID: nil,
+            avatar: self.userVM.profile!.avatar,
+            fromUserName: self.userVM.profile!.name,
+            fromUUID: self.userVM.profile!.uuid,
+            toUUID: toUserId,
+            content: message,
+            contentType: ContentType.TEXT.rawValue,
+            eventType: EventType.MESSAGE.rawValue,
+            messageType: MessageType.Signal.rawValue,
+            urlPath: nil,
+            fileName: nil,
+            fileSize: nil,
+            contentAvailableTime: nil,
+            contentUUID: nil,
+            contentUserName: nil,
+            contentUserAvatar: nil,
+            contentUserUUID: nil)
+        Websocket.shared.handleMessage(event:.send,msg: msg)
+        
+        
+        Task {
+            await Websocket.shared.checkMessage(messageID: msgID)
         }
     }
   

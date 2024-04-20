@@ -268,9 +268,11 @@ extension SFProducerViewModel {
             print("Session Id not yet set")
             return
         }
+        
+
         switch(signalType){
         case .SDP:
-            webSocket?.sendSFUSDP(sessionId: sessionId, sdpType: sdp)
+            webSocket?.sendSFUSDP(sessionId: sessionId, sdpType: sdp, callType: self.callingType.rawValue)
             break
         case .Candinate:
             webSocket?.sendSFUCandindate(sessionId: sessionId, isProducer: true, clientId: clientId, data: sdp)

@@ -74,7 +74,6 @@ final class BenHubState : ObservableObject {
         self.message = message
         self.info = Info(avatarPath: avatarPath, name: name)
         self.type = type
-        
         DispatchQueue.main.async {
             withAnimation{
                 self.isPresented = true
@@ -84,6 +83,7 @@ final class BenHubState : ObservableObject {
     }
     
     func AlertMessage(sysImg : String, message : String) {
+        reset()
         self.sysImg = sysImg
         self.message = message
         

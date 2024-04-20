@@ -81,7 +81,9 @@ struct GroupCallingAudioView: View {
                 BenHubAlertWithMessage( message: hub.message,info: hub.info!)
             }
         }
-
+        .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+        .animation(.linear)
+        
     }
     
     
@@ -145,7 +147,9 @@ struct GroupCallingAudioView: View {
     private func onClose(){
         self.producerVM.sendDisconnect()
         self.producerVM.DisConnect()
-        self.producerVM.isIncomingCall = false
+        withAnimation{
+            self.producerVM.isIncomingCall = false
+        }
         self.cosnumerVM.closeAllConsumer()
     }
     
