@@ -24,6 +24,7 @@ struct StorySubItem : Identifiable {
     var lastAngle : Angle = .degrees(0)
     var scaleFactor : CGFloat = 0
     var lastScaleFactor: CGFloat = 1
+    var itemSize :  CGSize = .zero
     
     //other...
     var textColor : Color = .white

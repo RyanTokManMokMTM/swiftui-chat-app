@@ -172,27 +172,7 @@ struct DrawingScreen: View {
                         }
                         
                         Spacer()
-                        
-                        //                        Button(action:{
-                        ////                            withAnimation{
-                        ////                                self.drawVM.isDrawing = true
-                        ////                            }
-                        ////
-                        ////
-                        ////                            self.drawVM.toolPicker.setVisible(self.drawVM.isDrawing, forFirstResponder: self.drawVM.canvas)
-                        ////                            self.drawVM.canvas.becomeFirstResponder()
-                        ////                            self.drawVM.canvas.isUserInteractionEnabled = self.drawVM.isDrawing
-                        //                        }){
-                        //                            Image(systemName: "pencil.tip")
-                        //                                .imageScale(.large)
-                        //                                .bold()
-                        //                                .foregroundColor(.white)
-                        //                                .padding(8)
-                        //                                .background(BlurView().clipShape(Circle()))
-                        //
-                        //                        }
-                        
-               
+                       
                         
                         PhotosPicker(selection: $selectedPickerItem, matching: .images) {
                             Image(systemName: "photo.on.rectangle.angled")
@@ -359,6 +339,7 @@ struct DrawingScreen: View {
                     Image(systemName: "trash")
                         .imageScale(.medium)
                         .frame(height: 25)
+                        .foregroundColor(.red)
                         .fontWeight(self.isInTransh ? .bold : .none)
 //                        .foregroundColor(self.isInTransh ? .red : .white)
                         .padding(10)
@@ -384,8 +365,8 @@ struct DrawingScreen: View {
                 }
             }
             .onAppear{
-                print(UIScreen.main.bounds.height / 1.22)
-                print(viewHeight)
+//                print(UIScreen.main.bounds.height / 1.22)
+//                print(viewHeight)
             }
             .overlay(alignment:.topTrailing,content: {
                 HStack{

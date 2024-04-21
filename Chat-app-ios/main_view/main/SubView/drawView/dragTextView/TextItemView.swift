@@ -57,12 +57,16 @@ struct TextItem: View {
                         self.currentItemSize.width *= (box.scaleFactor + box.lastScaleFactor) //new width after scale
                         self.currentItemSize.height *= (box.scaleFactor + box.lastScaleFactor) //new heigh after scale
                         //https://i.stack.imgur.com/C6NVo.png
+                        if !self.drawVM.isAddText{
+                            self.drawVM.storySubItems[getTextBoxIndex(box: box)].itemSize = self.currentItemSize
+                        }
                     }
                     return Color.clear
                 }
             }
             .padding(10)
-            .frame(maxWidth: .infinity,alignment: box.alignment)
+//            .frame(maxWidth: .infinity,alignment: box.alignment)
+            .frame(maxWidth: .infinity)
             .gesture(
                 MagnificationGesture().onChanged{v in
                     self.drawVM.storySubItems[getTextBoxIndex(box: box)].scaleFactor = v.magnitude - 1
@@ -78,6 +82,7 @@ struct TextItem: View {
                             self.dragginItemId = box.id
                         }
                         let last = box.lastOffset
+                        print("last offest:\(last)")
                         var new = last
 
                         new.width += v.translation.width
@@ -149,7 +154,6 @@ struct TextItem: View {
         var location = newLocation
         let startWidth = location.width - (self.currentItemSize.width / 2)
         let leadingAignment = -(proxyFrame.width / 2  - 10)
-        
         if !isLeadingAlignment {
             if startWidth >= leadingAignment && startWidth <= leadingAignment + 3{
                 withAnimation{
@@ -164,6 +168,7 @@ struct TextItem: View {
                 }
             }
         }
+        print("\(leadingAignment + (self.currentItemSize.width / 2))")
         withAnimation{
             location.width = isLeadingAlignment ? leadingAignment + (self.currentItemSize.width / 2) : location.width
         }
