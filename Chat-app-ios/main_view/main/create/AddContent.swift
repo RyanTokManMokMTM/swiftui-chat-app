@@ -27,18 +27,32 @@ struct AddContent: View {
                     NavigationLink(destination: SelectGroupMembers(friends: $friends,isAddContent: $isAddContent)
                         .environmentObject(userModel))
                     {
-                        Label("Create a new group", systemImage: "message")
-                            .bold()
-                            .padding(.vertical,5)
+                        
+                        Label{
+                            Text("Create a new group")
+                                .padding(.vertical,5)
+                        } icon: {
+                            Image(systemName: "message")
+                                .foregroundColor(.green)
+                        }
+                        .bold()
                     }
+             
+                    
                     
                     //Joined by gourp ID???
                     NavigationLink(destination: GroupSearchView()
                         .environmentObject(userModel))
                     {
-                        Label("Join a group", systemImage: "person.badge.plus")
-                            .bold()
-                            .padding(.vertical,5)
+                        Label{
+                            Text("Join a group")
+                                .padding(.vertical,5)
+                        } icon: {
+                            Image(systemName: "person.badge.plus")
+                                .foregroundColor(.green)
+                        }
+                        .bold()
+
                     }
 
                     Picker("", selection: $tab){
@@ -94,11 +108,11 @@ struct AddContent: View {
                 }
                 .listStyle(.plain)
                 .navigationBarTitle("Add Content",displayMode: .inline)
+                .accentColor(.green)
                 .toolbar{
                     ToolbarItem(placement: .principal){
                         Text("Add Content")
                             .bold()
-                        
                     }
                     
                     ToolbarItem(placement: .navigationBarLeading){
@@ -110,6 +124,7 @@ struct AddContent: View {
                         }){
                             Image(systemName: "xmark")
                                 .imageScale(.medium)
+                                .foregroundColor(.green)
 //                                .bold()
                         }
                         
@@ -121,6 +136,7 @@ struct AddContent: View {
 //                Text("Create Group")
 //            }
         }
+        .accentColor(.green)
         .onAppear{
             Task.init{
                 await getFriendsList()

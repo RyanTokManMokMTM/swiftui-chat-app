@@ -380,34 +380,6 @@ struct ChattingView: View {
         self.videoCallVM.sendOffer(type:.Video) //TODO: sending offer to receiver
         self.sendCallingMessage(message: "Stated a video call.")
     }
-
-//    
-//    private func checkMessage(messageID : String) async {
-//        //TODO: need to be optimized
-//        print("acking?")
-//        do{
-//            try await Task.sleep(nanoseconds: 60_000_000_000)
-//        } catch (let err) {
-//            print(err.localizedDescription)
-//        }
-//        
-//        let msgUUID = UUID(uuidString: messageID)!
-//        guard let message = UserDataModel.shared.findOneMessage(id: msgUUID) else {
-//            print("message not found")
-//            return
-//        }
-//        
-//        
-//        if message.messageStatus == .ack {
-//            print("message is ack.")
-//            return
-//        }
-//        
-//        
-//        UserDataModel.shared.updateMessageStatus(msg: message, status: .notAck)
-//        print("no ack")
-//    }
-//    
     
     private func isAudio(ext : String) -> Bool {
         return ext == "mp3" || ext == "wav" || ext == "m3u" || ext == "m4a"

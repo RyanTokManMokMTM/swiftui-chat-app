@@ -47,7 +47,7 @@ struct Message: View {
             .listRowInsets(EdgeInsets())
             
             if UDM.info != nil {
-                ForEach($UDM.rooms){ data in
+                ForEach($UDM.rooms,id:\.id){ data in
                     NavigationLink(value: data.wrappedValue) {
                         ContentRow(data: data)
                             .swipeActions{

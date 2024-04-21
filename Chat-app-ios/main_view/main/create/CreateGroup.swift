@@ -71,6 +71,7 @@ struct SelectGroupMembers: View {
                     Text("Next")
                         .font(.headline)
                         .bold()
+                        .foregroundColor(.green)
                 }
                
                 
@@ -145,7 +146,7 @@ struct CreateGroup : View {
     @EnvironmentObject private var groupVM : GroupViewModel
     @EnvironmentObject private var userModel : UserViewModel
     @EnvironmentObject private var UDM : UserDataModel
-    @State private var groupName : String = "New Group Name"
+    @State private var groupName : String = ""
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedData : Data? = nil
     var body: some View {
@@ -174,6 +175,7 @@ struct CreateGroup : View {
                     Text("Create")
                         .font(.headline)
                         .bold()
+                        .foregroundStyle(.green)
                 }
             }
         }
@@ -251,10 +253,10 @@ struct CreateGroup : View {
                   
                 }
  
-            
-            TextEditor(text: $groupName)
+            TextField("group name", text: $groupName)
                 .frame(height:80)
                 .font(.headline)
+                
         }
         .padding(.horizontal)
     }
