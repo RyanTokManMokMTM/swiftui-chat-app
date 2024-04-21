@@ -67,7 +67,7 @@ struct ContentRow: View {
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                                             Spacer()
                         VStack{
-                            Text(data.last_sent_time?.dateDescriptiveString() ?? "")
+                            Text(data.last_sent_time?.sendTimeString() ?? "")
                                 .foregroundColor(.gray)
                                 .font(.system(size: 15))
                         }

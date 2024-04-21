@@ -17,9 +17,9 @@ extension Date{
         let dayBetween = daysBetween(date: Date())
         
         if dayBetween == 0{
-            return "今天"
+            return "Today"
         } else if dayBetween == 1 {
-            return "昨天"
+            return "Yesterday"
         }else if dayBetween < 5 {
             let weekDay = Calendar.current.component(.weekday, from: self) - 1
             return formatter.weekdaySymbols[weekDay]
@@ -32,16 +32,8 @@ extension Date{
         //self = current class date
         let formatter = DateFormatter()
         formatter.dateStyle = dataStyle
-//        let dayBetween = daysBetween(date: Date())
+        let dayBetween = daysBetween(date: Date())
         
-//        if dayBetween == 0{
-//            return "今天"
-//        } else if dayBetween == 1 {
-//            return "昨天"
-//        }else if dayBetween < 5 {
-//            let weekDay = Calendar.current.component(.weekday, from: self) - 1
-//            return formatter.weekdaySymbols[weekDay]
-//        }
         return formatter.string(from: self)
         
     }
@@ -57,7 +49,7 @@ extension Date{
             return formatter.string(from: self)
         } else if dayBetween == 1 {
             formatter.dateFormat = "HH:mm"
-            return "昨天" + formatter.string(from: self)
+            return "Yesterday " + formatter.string(from: self)
         }else if dayBetween < 5 {
             formatter.dateFormat = "HH:mm"
             let weekDay = Calendar.current.component(.weekday, from: self) - 1
