@@ -204,9 +204,12 @@ struct EditGroupView: View {
             self.info?.name = req.group_name
             self.info?.desc = req.group_desc
             
+            
             if let room = UserDataModel.shared.findOneRoom(uuid: UUID(uuidString: self.info!.uuid)!) {
-                room.name = self.text
-                UserDataModel.shared.manager.save()
+                if(self.field == .Name){
+                    room.name = req.group_name
+                    UserDataModel.shared.manager.save()
+                }
             }
             
             present.wrappedValue.dismiss()
