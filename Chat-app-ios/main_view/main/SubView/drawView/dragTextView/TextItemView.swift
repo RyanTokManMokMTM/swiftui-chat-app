@@ -57,7 +57,7 @@ struct TextItem: View {
                         self.currentItemSize.width *= (box.scaleFactor + box.lastScaleFactor) //new width after scale
                         self.currentItemSize.height *= (box.scaleFactor + box.lastScaleFactor) //new heigh after scale
                         //https://i.stack.imgur.com/C6NVo.png
-                        if !self.drawVM.isAddText{
+                        if !self.drawVM.isAddText && getTextBoxIndex(box: box) > self.drawVM.storySubItems.count{
                             self.drawVM.storySubItems[getTextBoxIndex(box: box)].itemSize = self.currentItemSize
                         }
                     }

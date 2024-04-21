@@ -210,9 +210,7 @@ struct ChattingView: View {
                     
                    
                     let fileFormat = data.fileExtension
-//                    let base64Str = fileBase64Encoding(data: data,format: fileFormat)
                     let fileName = UUID().uuidString + "." + fileFormat
-                    //                    print(fileFormat)
                     Task.init{
                         await self.sendFile(data:data,fileName:fileName,fileSize: 0,ext:fileFormat,type:isVideo(ext:fileFormat) ? .VIDEO : .IMAGE)
                     }
@@ -222,7 +220,6 @@ struct ChattingView: View {
         .fileExporter(isPresented: $isFileExport, document: Doc(url: self.fileExportURL), contentType: .data) { result in
             switch result {
             case .success(let url):
-                print(url)
                 hub.isWaiting = false
                 hub.AlertMessage(sysImg: "checkmark", message: "saved file")
             case .failure(let error):
@@ -237,7 +234,6 @@ struct ChattingView: View {
                     let fileData = try Data(contentsOf: data)
                     let fileSize = data.filesize ?? 0
                     let fileName = data.lastPathComponent
-                    print(data.absoluteString)
 
                     let ext = data.pathExtension
                     Task.init{
@@ -301,7 +297,6 @@ struct ChattingView: View {
                         }
                         .onAppear(){
                             DispatchQueue.main.async{
-                                //                                print(messages.count)
                                 withAnimation{
                                     scroll.scrollTo(messages.count - 1)
                                 }
@@ -316,7 +311,6 @@ struct ChattingView: View {
                         }
 
                         .onChange(of: messages.count){ _ in
-                            //                            print(index)
                             if !self.isFetchMore {
                                 withAnimation{
                                     scroll.scrollTo(messages.count - 1)
@@ -335,7 +329,6 @@ struct ChattingView: View {
                                     perform: { point in
                 
                     if !isFetchMore && point.y > 100 && UserDataModel.shared.hasMoreMessage() {
-//                            print(point.y)
                         withAnimation{
                             isFetchMore = true
                         }
@@ -771,7 +764,6 @@ extension ChattingView {
                                         create: true)
                 
                 let savedURL = documentsURL.appendingPathComponent(message.file_name!)
-                print(savedURL.absoluteString)
                 let fileData = try Data(contentsOf: fileURL)
                 try fileData.write(to: savedURL)
                 self.fileExportURL = savedURL
@@ -881,7 +873,6 @@ extension ChattingView {
             //Send to the client and save the message?
             message.tempData = nil
             message.url_path = data.path
-            print(data.path)
             if let index = self.UDM.currentRoomMessage.firstIndex(where: {$0.id == message.id}) {
                 withAnimation{
                     self.UDM.currentRoomMessage[index] = message
@@ -950,10 +941,8 @@ extension ChattingView {
         let resp = await ChatAppService.shared.UploadFile(req: req, fileExt: ext)
         switch resp{
         case .success(let data):
-            print(data)
             message.tempData = nil
             message.url_path = data.path
-            print(data)
             if let index = self.UDM.currentRoomMessage.firstIndex(where: {$0.id == message.id}) {
                 withAnimation{
                     self.UDM.currentRoomMessage[index] = message

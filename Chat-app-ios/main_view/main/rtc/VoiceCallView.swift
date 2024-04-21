@@ -308,7 +308,6 @@ struct VoiceCallView: View {
     
     
     private func sendCallingMessage(message : String){
-        print("Sending ,essage...")
         if message.isEmpty {
             return
         }

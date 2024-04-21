@@ -215,7 +215,6 @@ struct AddContent: View {
     private func CreateActiveRoomUser(data : UserProfile){
         
         if let room = UDM.findOneRoom(uuid: UUID(uuidString: data.uuid)!){
-            print("room is stored")
             self.isAddContent = false
             NavigationState.shared.navigationRoomPath.append(room)
             return
@@ -233,7 +232,6 @@ struct AddContent: View {
     private func CreateActiveRoomGroup(data : GroupInfo){
         
         if let room = UDM.findOneRoom(uuid: UUID(uuidString: data.uuid)!){
-            print("room is stored")
             self.isAddContent = false
             NavigationState.shared.navigationRoomPath.append(room)
             return

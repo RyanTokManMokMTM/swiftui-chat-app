@@ -44,7 +44,7 @@ struct SelectGroupMembers: View {
                         DispatchQueue.main.async {
                             withAnimation{
                                 self.groupVM.UpdateGroupMember(info: data)
-                                print(data.id)
+
                             }
                         }
                     }){
@@ -96,7 +96,6 @@ struct SelectGroupMembers: View {
                             .foregroundColor(.white)
                             .background(BlurView(style: .systemMaterialDark).clipShape(Circle()))
                             .onTapGesture {
-                                print("remove \(data.id)")
                                 DispatchQueue.main.async {
                                     withAnimation{
                                         self.groupVM.DeleteSelectedMember(info: data)
@@ -167,7 +166,6 @@ struct CreateGroup : View {
             ToolbarItem(placement: .navigationBarTrailing){
                 
                 Button(action:{
-                    print("send request to create...")
                     Task.init{
                         await CreateGroup()
                     }
@@ -204,7 +202,6 @@ struct CreateGroup : View {
         var members : [UInt] = []
         var avatarBase64 : String = ""
         self.groupVM.members.forEach{members.append($0.id)}
-        print(members)
         
         if self.selectedData != nil {
             //MARK: encoding image to base64
