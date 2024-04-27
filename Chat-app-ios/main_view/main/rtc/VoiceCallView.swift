@@ -7,23 +7,23 @@
 
 import SwiftUI
 
-struct DotView: View {
-    @State var delay: Double = 0 // 1.
-    @State var scale: CGFloat = 0.5
-    var body: some View {
-        Circle()
-            .fill(.white)
-            .frame(width: 5, height: 5)
-            .scaleEffect(scale)
-            .transition(.scale)
-            .animation(Animation.easeInOut(duration: 0.6).repeatForever().delay(delay)) // 2.
-            .onAppear {
-                withAnimation {
-                    self.scale = 1
-                }
-            }
-    }
-}
+//struct DotView: View {
+//    @State var delay: Double = 0 // 1.
+//    @State var scale: CGFloat = 0.5
+//    var body: some View {
+//        Circle()
+//            .fill(.white)
+//            .frame(width: 5, height: 5)
+//            .scaleEffect(scale)
+//            .transition(.scale)
+//            .animation(Animation.easeInOut(duration: 0.6).repeatForever().delay(delay)) // 2.
+//            .onAppear {
+//                withAnimation {
+//                    self.scale = 1
+//                }
+//            }
+//    }
+//}
 
 struct VoiceCallView: View {
     let name : String
@@ -75,16 +75,14 @@ struct VoiceCallView: View {
                             }else {
                                 
                                 
-                                VStack(spacing:5){
-                                    Text("Voice Calling")
+                                HStack(spacing:5){
+                                    Image(systemName: "phone.badge.waveform")
+                                        .imageScale(.medium)
+                                        .padding(.horizontal,5)
+                                        .foregroundColor(.white)
+                                    Text("Waiting for response")
                                         .foregroundColor(.white)
                                         .font(.footnote)
-                                    HStack{
-                                        DotView() // 1.
-                                        DotView(delay: 0.2) // 2.
-                                        DotView(delay: 0.4) // 3.
-                                    }
-                                    .padding(.vertical,8)
                                 }
                                 .padding(.vertical,5)
                                 

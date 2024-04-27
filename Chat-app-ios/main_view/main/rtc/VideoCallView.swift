@@ -154,14 +154,17 @@ struct VideoCallView: View {
                                 .font(.title2)
                                 .bold()
                                 .foregroundColor(.white)
-
-                            HStack {
-                                
-                                DotView() // 1.
-                                DotView(delay: 0.2) // 2.
-                                DotView(delay: 0.4) // 3.
+                            HStack(spacing:5){
+                                Image(systemName: "phone.badge.waveform")
+                                    .imageScale(.medium)
+                                    .padding(.horizontal,5)
+                                    .foregroundColor(.white)
+                                Text("Waiting for response...")
+                                    .foregroundColor(.white)
+                                    .font(.footnote)
                             }
-                            .padding(.vertical,8)
+                            .padding(.vertical,5)
+
                         }
                         .padding(.top,UIApplication.shared.windows.first?.safeAreaInsets.top)
                         .padding()
@@ -302,17 +305,15 @@ struct VideoCallView: View {
                     .bold()
                     .foregroundColor(.white)
 
-                VStack(spacing:5){
-                    Text("Video Calling")
+                HStack(spacing:5){
+                    Image(systemName: "phone.badge.waveform")
+                        .imageScale(.medium)
+                        .padding(.horizontal,5)
+                        .foregroundColor(.white)
+                    Text("Waiting for response")
                         .foregroundColor(.white)
                         .font(.footnote)
-                    HStack{
-                        DotView() // 1.
-                        DotView(delay: 0.2) // 2.
-                        DotView(delay: 0.4) // 3.
-                    }
-                    .padding(.vertical,8)
-
+                    
                 }
                 .padding(.vertical,5)
                 

@@ -357,6 +357,7 @@ struct OtherStoryCardView: View {
         }
         .onAppear{
             Task {
+                print("Gettting list")
                 await self.getStoriesList(userId: friendInfo.id)
             }
         }
@@ -418,6 +419,7 @@ struct OtherStoryCardView: View {
                 if data.is_liked {
                     self.likeCount = 10
                 }
+                print(data)
             }
         case .failure(let err):
             self.isStoryUnavaiable = true
@@ -436,8 +438,14 @@ struct OtherStoryCardView: View {
                 self.stories = data.stories
                 isLoadingStoriesList = false
                 Task{
-//                    print(data)
+
                     if data.stories.isEmpty {
+                        self.isStoryUnavaiable = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+                            withAnimation{
+                                self.storyModel.isShowStory = false
+                            }
+                        }
                         return
                     }
                     
